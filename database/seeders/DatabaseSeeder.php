@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\UserRole;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -14,9 +13,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $this->call(UserRoleSeeder::class);
-        $this->call(TagSeeder::class);
-        $this->call(DatingCardSeeder::class);
-        $this->call(UserSeeder::class);
+        // \App\Models\User::factory(10)->create();
     }
 }

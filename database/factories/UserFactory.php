@@ -2,11 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\DatingCard;
-use App\Models\UserRole;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class UserFactory extends Factory
 {
@@ -20,15 +17,23 @@ class UserFactory extends Factory
         return [
             'name' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
+            'email_verified_at' => now(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
-            'role_code' => UserRole::inRandomOrder()->first()->code,
-            //Выбирает те картые которые еще не привязаны ни к одному пользователю.
-            'dating_card_id' => DatingCard::whereNotExists(function ($query) {
-                $query->select(DB::raw(1))->from('users')->whereColumn('users.dating_card_id', '=', 'dating_cards.id');
-            })->inRandomOrder()->first(),
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now(),
+            'remember_token' => Str::random(10),
         ];
     }
 
+    /**
+     * Indicate that the model's email address should be unverified.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    public function unverified()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'email_verified_at' => null,
+            ];
+        });
+    }
 }
