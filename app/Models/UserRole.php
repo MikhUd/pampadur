@@ -16,7 +16,7 @@ class UserRole extends Model
      * @var string
      */
     protected $table = 'user_roles';
-    
+
     /**
      * Определяет необходимость отметок времени для модели.
      *

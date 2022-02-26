@@ -17,12 +17,13 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->string('role_code', 32)->nullable();
-            $table->boolean('is_admin')->default(false);
+            $table->string('role_code', 32);
+            $table->unsignedBigInteger('dating_card_id')->nullable();
             $table->string('password');
             $table->timestamps();
 
             $table->foreign('role_code')->references('code')->on('user_roles');
+            $table->foreign('dating_card_id')->references('id')->on('dating_cards');
         });
     }
 
