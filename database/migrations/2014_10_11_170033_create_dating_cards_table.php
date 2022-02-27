@@ -18,6 +18,7 @@ class CreateDatingCardsTable extends Migration
             $table->string('name');
             $table->integer('age');
             $table->text('description');
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->timestamp('published_at')->nullable();
             $table->timestamps();
         });

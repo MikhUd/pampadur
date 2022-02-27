@@ -19,6 +19,7 @@ class DatingCardFactory extends Factory
             'name' => $this->faker->name(),
             'age' => rand(11, 50),
             'description' => Str::random(512),
+            'published_at' => rand(1, 2) == 1 ? $this->faker->dateTimeBetween('now','+14 days',null) : null,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ];
