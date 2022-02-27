@@ -17,8 +17,7 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->string('role_code', 32)->nullable();
-            $table->boolean('is_admin')->default(false);
+            $table->string('role_code', 32);
             $table->string('password');
             $table->timestamps();
 
