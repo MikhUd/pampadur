@@ -4,6 +4,8 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="{{mix('css/app.css')}}">
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <title>Laravel</title>
 
         <!-- Fonts -->
@@ -21,7 +23,9 @@
         </style>
     </head>
     <body class="antialiased">
-        <div id="app"><example-component></example-component></div>
+        <div id="app">
+            <index></index>
+        </div>
         <script src="{{mix('js/app.js')}}"></script>
     </body>
 </html>
