@@ -16,3 +16,4 @@ use App\Http\Controllers\MainController;
 Route::get('/{any}', MainController::class)->where('any', '.*');
 
 Route::post('/registration', [\App\Http\Controllers\Auth\AuthController::class, 'register']);
+Route::post('/login', [\App\Http\Controllers\Auth\AuthController::class, 'login']);

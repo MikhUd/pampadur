@@ -1,21 +1,22 @@
 <template>
-        <div class="mx-auto mt-5" style="width: 100%; max-width: 500px">
+        <form class="mx-auto mt-5" style="width: 100%; max-width: 500px">
             <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
                 <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
-                    Username
-                </label>
-                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Username">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="Email">
+                        Email
+                    </label>
+                    <input v-model="form.Email" v-on:input="checkEmail" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" name="email" type="text" placeholder="Email">
+                    <p class="text-red-500 text-xs italic">{{ form.Errors['Username'] }}</p>
                 </div>
-                <div class="mb-6">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
-                    Password
-                </label>
-                <input class="shadow appearance-none border border-red-500 rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="******************">
-                <p class="text-red-500 text-xs italic">Please choose a password.</p>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                        Password
+                    </label>
+                    <input v-model="form.Password" v-on:input="checkPassword" class="shadow appearance-none border border-red-500 rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" name="password" type="password" placeholder="******************">
+                    <p class="text-red-500 text-xs italic">{{ form.Errors['Password'] }}</p>
                 </div>
                 <div class="flex items-center justify-between">
-                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
+                <button v-on:click.prevent="login" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
                     Sign In
                 </button>
                 <a class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="#">
@@ -26,14 +27,50 @@
             <p class="text-center text-gray-500 text-xs">
                 &copy;2020 Acme Corp. All rights reserved.
             </p>
-        </div>
+        </form>
 </template>
 
 <script>
     export default {
         name: 'Login',
-        mounted() {
-            console.log('Component mounted.')
+        data() {
+            return {
+                form: {
+                    Email: null,
+                    Password: null,
+                    Errors: {}
+                }
+            }
+        },
+        methods: {
+            checkEmail() {
+                this.form.Errors['Email'] = '';
+                if (!this.form.Email) {
+                    this.form.Errors['Email'] = 'Имя пользователя не может быть пустым или больше 30 символов';
+                    return false;
+                }
+                return true;
+            },
+            checkPassword() {
+                this.form.Errors['Password'] = '';
+                if (!this.form.Password || this.form.Password.length < 7) {
+                    this.form.Errors['Password'] = 'Пароль не может быть короче 7 символов';
+                    return false;
+                }
+                return true;
+            },
+            checkAllFields() {
+                return this.checkEmail() & this.checkPassword();
+            },
+            login() {
+                if (!this.checkAllFields()) {
+                    this.$set(this.form.Errors, 'allFields', 'Есть ошибки');
+                    return;
+                }
+                axios.post('/login', {email: this.form.Email, password: this.form.Password}).then(response => {
+                    this.$router.push('/');
+                });
+            }
         }
     }
 </script>

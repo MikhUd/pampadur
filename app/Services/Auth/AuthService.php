@@ -4,8 +4,6 @@ namespace App\Services\Auth;
 
 use App\Services\Interfaces\Auth\AuthServiceContract;
 use App\Services\Interfaces\UserServiceContract;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class AuthService implements AuthServiceContract
 {
@@ -18,7 +16,13 @@ class AuthService implements AuthServiceContract
 
     public function login($request)
     {
-        if (Auth::attempt($request)) {
+        if (auth()->user()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User is already logged in'
+            ], 200);
+        }
+        if (auth()->attempt($request->all())) {
 
             $request->session()->regenerate();
 
@@ -30,22 +34,22 @@ class AuthService implements AuthServiceContract
 
         return response()->json([
             'success' => false,
-        ], 422);
+        ]);
     }
 
     public function register($request)
     {
         if (auth()->user()) {
             return response()->json([
-                'success' => false
-            ], 400);
+                'success' => false,
+                'message' => 'User is already logged in'
+            ], 200);
         }
         $user = $this->userService->create($request->all());
         auth()->login($user);
 
         return response()->json([
             'success' => true,
-            'message' => 'User is already logged in'
-        ], 200);
+        ]);
     }
 }
