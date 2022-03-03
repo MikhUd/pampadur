@@ -31,6 +31,11 @@ class UserRole extends Model
      */
     protected $guarded = ['id'];
 
+    protected $fillable = [
+        'name',
+        'code'
+    ];
+
     public function users()
     {
         return $this->hasMany(User::class, 'role_code', 'code');

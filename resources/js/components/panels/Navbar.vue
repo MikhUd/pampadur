@@ -20,13 +20,13 @@
                 <a class="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium" aria-current="page">
                     <router-link :to="{name: 'home'}">Главная</router-link>
                 </a>
-                
+
                 <a class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                     <router-link :to="{name: 'login'}">Логин</router-link>
                 </a>
 
                 <a class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                    <router-link :to="{name: 'register'}">Регистрация</router-link>
+                    <router-link :to="{name: 'registration'}">Регистрация</router-link>
                 </a>
             </div>
             </div>

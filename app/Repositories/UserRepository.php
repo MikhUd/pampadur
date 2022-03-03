@@ -17,11 +17,7 @@ class UserRepository implements UserRepositoryContract
 
     public function create(array $fields)
     {
-        if ($result = $this->model->create($fields)) {
-            $this->model->clearCache();
-        }
-
-        return $result;
+        return $this->model->create($fields);
     }
 
     public function bindRole(User $user, UserRole $role)

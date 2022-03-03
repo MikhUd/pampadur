@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\UserRegisterRequest;
 use App\Http\Requests\UserLoginRequest;
 use App\Services\Auth\AuthService;
+use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
@@ -18,12 +19,11 @@ class AuthController extends Controller
 
     public function login(UserLoginRequest $request)
     {
-        $this->authService->login($request);
+        return $this->authService->login($request);
     }
 
     public function register(UserRegisterRequest $request)
     {
-        $this->authService->register($request);
+        return $this->authService->register($request);
     }
-
 }

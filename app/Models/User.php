@@ -23,6 +23,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role_code'
     ];
 
     /**
@@ -50,6 +51,11 @@ class User extends Authenticatable
      * @var bool
      */
     public $timestamps = false;
+
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['password'] = bcrypt($value);
+    }
 
     public function role()
     {

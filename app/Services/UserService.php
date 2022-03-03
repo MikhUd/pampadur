@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Log;
 
 class UserService implements UserServiceContract
 {
-    const DEFAULT_USER_ROLE_CODE = 'typical_user';
+    const DEFAULT_USER_ROLE_CODE = 'xdDsklw3w';
 
     private $userRepository;
     private $userRoleRepository;
@@ -31,28 +31,23 @@ class UserService implements UserServiceContract
 
         if (!empty($role['code'])) {
             Log::info('Binding role for user', ['id' => $user->id]);
-            
+
             $result = $this->userRepository->bindRole($user, $role);
-            
+
             return $result;
         }
-        
+
         Log::error('Binding role for user failed', ['id' => $user->id]);
 
         return null;
     }
 
-    public function create(array $fields): ?User
+    public function create(array $fields, string $role = self::DEFAULT_USER_ROLE_CODE): ?User
     {
+        $fields['role_code'] = $role;
         if ($user = $this->userRepository->create($fields)) {
-           $this->bindRole($user);
-
-           Log::info('User successfully created', ['id' => $user->id]);
-
            return $user;
         }
-
-        Log::error('User has not been created');
 
         return null;
     }

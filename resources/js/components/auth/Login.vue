@@ -1,6 +1,5 @@
 <template>
-    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-        <div class="w-full max-w-xs">
+        <div class="mx-auto mt-5" style="width: 100%; max-width: 500px">
             <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
                 <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
@@ -28,7 +27,6 @@
                 &copy;2020 Acme Corp. All rights reserved.
             </p>
         </div>
-    </div>   
 </template>
 
 <script>

@@ -19,16 +19,14 @@ class AuthService implements AuthServiceContract
     public function login($request)
     {
         if (Auth::attempt($request)) {
-            Log::info('User successfully logged in', ['email' => $request->email]);
 
             $request->session()->regenerate();
-            
+
             return response()->json([
                 'success' => true,
             ], 203);
         }
-        
-        Log::error('Attempt to login failed', ['email' => $request->email]);
+
 
         return response()->json([
             'success' => false,
@@ -37,6 +35,17 @@ class AuthService implements AuthServiceContract
 
     public function register($request)
     {
-        return $this->userService->create($request->all());
+        if (auth()->user()) {
+            return response()->json([
+                'success' => false
+            ], 400);
+        }
+        $user = $this->userService->create($request->all());
+        auth()->login($user);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'User is already logged in'
+        ], 200);
     }
 }
