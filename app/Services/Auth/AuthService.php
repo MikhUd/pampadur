@@ -55,7 +55,7 @@ class AuthService implements AuthServiceContract
         }
 
         $user = $this->userService->create($request->all());
-        //$user->createToken($request->device_name)->plainTextToken;
+
         auth()->login($user);
 
         return response()->json([
