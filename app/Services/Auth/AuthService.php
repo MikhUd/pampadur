@@ -2,8 +2,10 @@
 
 namespace App\Services\Auth;
 
+use App\Http\Requests\UserLoginRequest;
 use App\Services\Interfaces\Auth\AuthServiceContract;
 use App\Services\Interfaces\UserServiceContract;
+use Illuminate\Http\JsonResponse;
 
 class AuthService implements AuthServiceContract
 {
@@ -14,7 +16,10 @@ class AuthService implements AuthServiceContract
         $this->userService = $userService;
     }
 
-    public function login($request)
+    /**
+     * @return JsonResponse
+     */
+    public function login($request): JsonResponse
     {
         if (auth()->user()) {
             return response()->json([
@@ -22,6 +27,7 @@ class AuthService implements AuthServiceContract
                 'message' => 'User is already logged in'
             ], 200);
         }
+
         if (auth()->attempt($request->all())) {
 
             $request->session()->regenerate();
@@ -31,13 +37,15 @@ class AuthService implements AuthServiceContract
             ], 203);
         }
 
-
         return response()->json([
             'success' => false,
         ]);
     }
 
-    public function register($request)
+    /**
+     * @return JsonResponse
+     */
+    public function register($request): JsonResponse
     {
         if (auth()->user()) {
             return response()->json([
@@ -45,7 +53,9 @@ class AuthService implements AuthServiceContract
                 'message' => 'User is already logged in'
             ], 200);
         }
+
         $user = $this->userService->create($request->all());
+        //$user->createToken($request->device_name)->plainTextToken;
         auth()->login($user);
 
         return response()->json([

@@ -7,7 +7,7 @@ use App\Models\UserRole;
 
 interface UserRepositoryContract
 {
-    public function create(array $fields);
+    public function create(array $fields): User;
 
-    public function bindRole(User $user, UserRole $role);
+    public function bindRole(User $user, UserRole $role): User;
 }

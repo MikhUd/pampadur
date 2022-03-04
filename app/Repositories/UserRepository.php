@@ -15,12 +15,12 @@ class UserRepository implements UserRepositoryContract
         $this->model = $user;
     }
 
-    public function create(array $fields)
+    public function create(array $fields): User
     {
         return $this->model->create($fields);
     }
 
-    public function bindRole(User $user, UserRole $role)
+    public function bindRole(User $user, UserRole $role): User
     {
         $user->role()->associate($role);
         $user->save();
