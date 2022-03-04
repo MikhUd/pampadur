@@ -119,7 +119,9 @@
             },
             register() {
                 //console.log(window.navigator.userAgent);
+                this.$set(this.$data, 'errors', {});
                 if (!this.checkAllFields()) {
+                    this.$set(this.$data, 'errors', this.errors);
                     return;
                 }
 

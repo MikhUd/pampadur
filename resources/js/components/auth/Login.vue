@@ -6,14 +6,14 @@
                         Email
                     </label>
                     <input v-model="form.email" v-on:input="checkEmail" class="w-93 shadow appearance-none border rounded py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="email" type="text" placeholder="Email">
-                    <p class="text-red-500 text-xs italic">{{ form.errors['email'] }}</p>
+                    <p class="text-red-500 text-xs italic">{{ errors['email'] }}</p>
                 </div>
                 <div class="mb-4">
                     <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
                         Password
                     </label>
                     <input v-model="form.password" v-on:input="checkPassword" class="w-93 shadow appearance-none border border-red-500 rounded py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="******************">
-                    <p class="text-red-500 text-xs italic">{{ form.errors['password'] }}</p>
+                    <p class="text-red-500 text-xs italic">{{ errors['password'] }}</p>
                 </div>
                 <div class="flex items-center justify-between">
                 <button v-on:click.prevent="login" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
@@ -41,9 +41,9 @@
             return {
                 form: {
                     email: null,
-                    password: null,
-                    errors: {}
-                }
+                    password: null
+                },
+                errors: {}
             }
         },
         methods: {
@@ -53,16 +53,17 @@
                     return reg.test(this.form.email);
                 };
 
-                this.form.errors['email'] = '';
+                this.errors['email'] = '';
                 if (!this.form.email || !checkRegular(this.form.email)) {
-                    this.form.errors['email'] = 'Введите корректый адрес';
+                    this.errors['email'] = 'Введите корректый адрес';
                     return false;
                 }
+                return true;
             },
             checkPassword() {
-                this.form.errors['password'] = '';
+                this.errors['password'] = '';
                 if (!this.form.password || this.form.password.length < 7) {
-                    this.form.errors['password'] = 'Пароль не может быть короче 7 символов';
+                    this.errors['password'] = 'Пароль не может быть короче 7 символов';
                     return false;
                 }
                 return true;
@@ -71,9 +72,12 @@
                 return this.checkEmail() & this.checkPassword();
             },
             login() {
+                this.$set(this.$data, 'errors', {});
                 if (!this.checkAllFields()) {
+                    this.$set(this.$data, 'errors', this.errors);
                     return;
                 }
+
                 axios.post('/login', this.form).then(response => {
                     this.$router.push('/');
                 });
