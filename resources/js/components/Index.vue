@@ -12,7 +12,7 @@ import Navbar from './panels/Navbar';
             Navbar
         },
         mounted() {
-            console.log('Component mounted.')
+            this.$store.commit('setAuthUser', window.auth_user);
         }
     }
 </script>

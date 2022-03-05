@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class MainController extends Controller
@@ -11,6 +12,8 @@ class MainController extends Controller
      */
     public function __invoke()
     {
-        return view('index');
+        return view('index', [
+            'auth_user' => Auth::user(),
+        ]);
     }
 }

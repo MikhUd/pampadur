@@ -22,6 +22,10 @@
                 font-family: 'Nunito', sans-serif;
             }
         </style>
+        <!--Храним авторизацию пользователя-->
+        <script>
+            window.auth_user = {!! json_encode($auth_user); !!};
+        </script>
     </head>
     <body class="antialiased">
         <div id="app">

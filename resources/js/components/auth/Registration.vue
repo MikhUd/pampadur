@@ -5,28 +5,28 @@
                     <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
                         Email
                     </label>
-                    <input v-model="form.email" v-on:input="checkEmail" class="w-93 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="email" type="text" placeholder="Email">
+                    <input v-model="form.email" v-on:input="checkEmail" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="email" type="text" placeholder="Email">
                     <p class="text-red-500 text-xs italic">{{ errors['email'] }}</p>
                 </div>
                 <div class="mb-4">
                     <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
                         Username
                     </label>
-                    <input v-model="form.name" v-on:input="checkName" class="w-93 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Username">
-                    <p class="text-red-500 text-xs italic">{{ errors['name'] }}</p>
+                    <input v-model="form.name" v-on:input="checkUsername" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Username">
+                    <p class="text-red-500 text-xs italic">{{ errors['username'] }}</p>
                 </div>
                 <div class="mb-6">
                     <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
                         Password
                     </label>
-                    <input v-model="form.password" v-on:input="checkPassword" class="w-93 shadow appearance-none border border-red-500 rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="******************">
+                    <input v-model="form.password" v-on:input="checkPassword" class="shadow appearance-none border border-red-500 rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="******************">
                     <p class="text-red-500 text-xs italic">{{ errors['password'] }}</p>
                 </div>
                 <div class="mb-6">
                     <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
                         Repeat Password
                     </label>
-                    <input v-model="form.password_confirmation" v-on:input="checkRepeatedPassword" class="w-93 shadow appearance-none border border-red-500 rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" type="password" placeholder="******************">
+                    <input v-model="form.password_confirmation" v-on:input="checkRepeatedPassword" class="shadow appearance-none border border-red-500 rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" type="password" placeholder="******************">
                     <p class="text-red-500 text-xs italic">{{ errors['password_confirmation'] }}</p>
                 </div>
                 <div class="flex items-center justify-between">
@@ -43,11 +43,7 @@
             </p>
         </form>
 </template>
-<style scoped>
-.w-93.px-3 {
-    width:93%;
-}
-</style>
+
 <script>
     export default {
         name: 'Registration',
@@ -61,7 +57,6 @@
                     email: null,
                     password: null,
                     password_confirmation: null,
-                    device_name: 'sdsd'
                 },
                 errors: {
                     type: Array,
@@ -71,23 +66,26 @@
         },
         methods: {
             checkEmail() {
-                const checkRegular = () => {
+                const checkRegular = (email) => {
                     let reg = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/
+                    
                     return reg.test(this.form.email);
                 };
 
                 this.errors['email'] = '';
                 if (!this.form.email || !checkRegular(this.form.email)) {
                     this.errors['email'] = 'Введите корректый адрес';
+
                     return false;
                 }
 
                 return true;
             },
-            checkName() {
-                this.errors['name'] = '';
+            checkUsername() {
+                this.errors['username'] = '';
                 if (!this.form.name) {
-                    this.errors['name'] = 'Имя пользователя не может быть пустым или больше 30 символов';
+                    this.errors['username'] = 'Имя пользователя не может быть пустым или больше 30 символов';
+
                     return false;
                 }
 
@@ -97,6 +95,7 @@
                 this.errors['password'] = '';
                 if (!this.form.password || this.form.password.length < 7) {
                     this.errors['password'] = 'Пароль не может быть короче 7 символов';
+
                     return false;
                 }
 
@@ -106,35 +105,37 @@
                 this.errors['password_confirmation'] = '';
                 if (!this.form.password_confirmation || this.form.password_confirmation != this.form.password) {
                     this.errors['password_confirmation'] = 'Пароли не совпадают';
+
                     return false;
                 }
 
                 return true;
             },
             checkAllFields() {
-                return this.checkEmail() &
-                this.checkName() &
-                this.checkPassword() &
+                return this.checkEmail() & 
+                this.checkUsername() & 
+                this.checkPassword() & 
                 this.checkRepeatedPassword();
             },
             register() {
                 //console.log(window.navigator.userAgent);
-                this.$set(this.$data, 'errors', {});
                 if (!this.checkAllFields()) {
-                    this.$set(this.$data, 'errors', this.errors);
+                    this.$set(this.errors, 'allFields', 'Есть ошибки');
+
+
                     return;
                 }
-
-                axios.post('/register', this.form)
+                axios.post('/registration', this.form)
                 .then(response => {
                     if (response.data.success) {
-                        this.$router.push('/home');
+                        this.$router.push('/');
                         M.toast({html: 'Успешная регистрация!'});
                     }
                 })
                 .catch(error => {
                     if (error.response.data.errors.email) {
-                        this.$set(this.$data, 'errors', {email: "Почта уже зарегана"});
+                        //this.errors['email'] = '123213';
+                        this.$set(this.errors, 'email', error.response.data.errors.email);
                     }
                 });
             }

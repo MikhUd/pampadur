@@ -3,9 +3,12 @@
 namespace App\Services\Auth;
 
 use App\Http\Requests\UserLoginRequest;
+use App\Http\Requests\UserRegisterRequest;
 use App\Services\Interfaces\Auth\AuthServiceContract;
 use App\Services\Interfaces\UserServiceContract;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class AuthService implements AuthServiceContract
 {
@@ -19,7 +22,7 @@ class AuthService implements AuthServiceContract
     /**
      * @return JsonResponse
      */
-    public function login($request): JsonResponse
+    public function login(UserLoginRequest $request): JsonResponse
     {
         if (auth()->user()) {
             return response()->json([
@@ -45,7 +48,7 @@ class AuthService implements AuthServiceContract
     /**
      * @return JsonResponse
      */
-    public function register($request): JsonResponse
+    public function register(UserRegisterRequest $request): JsonResponse
     {
         if (auth()->user()) {
             return response()->json([
@@ -60,6 +63,22 @@ class AuthService implements AuthServiceContract
 
         return response()->json([
             'success' => true,
+        ]);
+    }
+
+    /**
+     * @return JsonResponse
+     */
+    public function logout(Request $request): JsonResponse
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        return response()->json([
+            'success' => true
         ]);
     }
 }

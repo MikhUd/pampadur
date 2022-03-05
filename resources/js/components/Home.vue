@@ -16,14 +16,10 @@
 <script>
     export default {
         mounted() {
-            this.getData()
+            
         },
         methods: {
-            getData() {
-                axios.get('/home').then(res => {
-                    console.log(res);
-                })
-            }
+            
         }
     }
 </script>
