@@ -5,13 +5,21 @@ export default {
     },
     mutations:{
         setAuthUser(state, user) {
+            if (user === null) {
+                localStorage.removeItem('user');
+            } else {
+                localStorage.setItem('user', user);
+            }
             state.user = user;
         },
     },
     actions: {
-        logout() {
-            helper.logout()
-            state.user = null;
+        logout(store) {
+            helper.logout();
+            store.commit("setAuthUser", null);
+        },
+        login(store, user) {
+            store.commit("setAuthUser", user)
         }
     },
     getters:{

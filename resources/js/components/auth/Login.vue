@@ -79,7 +79,8 @@
                 }
 
                 axios.post('/login', this.form).then(response => {
-                    this.$router.push('/');
+                    this.$router.push('/home');
+                    this.$store.dispatch('login', response.data.user);
                 });
             }
         }

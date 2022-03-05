@@ -11,13 +11,13 @@ export default {
                 path: "/registration",
                 title: "Регистрация",
                 auth: false,
-                class:'',
+                class:'right',
             },
             {
                 path: "/login",
                 title: "Логин",
                 auth: false,
-                class:'',
+                class:'right',
             },
         ]
     },

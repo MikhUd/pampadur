@@ -2,7 +2,7 @@
 <nav>
     <div class="nav-wrapper">
       <a href="#" class="brand-logo center">Logo</a>
-      <ul id="nav-mobile" class="left hide-on-med-and-down">
+      <ul id="nav-mobile" class="hide-on-med-and-down">
         <router-link
             v-for="item in nav"
             :to="item.path"
@@ -15,7 +15,7 @@
                     {{item.title}}
                 </a>
         </router-link>
-        <li v-if="this.$store.getters.isLoggedIn">
+        <li class="right" v-if="this.$store.getters.isLoggedIn">
             <a @click="logout()" class="waves-effect waves-light" href="#">
                 Выйти
             </a>
@@ -26,6 +26,8 @@
 </template>
 
 <script>
+    import store from "../../store";
+
     export default {
         computed: {
             nav() {
