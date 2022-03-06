@@ -37,7 +37,7 @@ class AuthService implements AuthServiceContract
 
             return response()->json([
                 'success' => true,
-                'user' => auth()->user()
+                'user' => auth()->user(),
             ], 203);
         }
 
@@ -64,6 +64,7 @@ class AuthService implements AuthServiceContract
 
         return response()->json([
             'success' => true,
+            'user' => auth()->user(),
         ]);
     }
 

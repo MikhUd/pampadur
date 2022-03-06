@@ -139,6 +139,7 @@
                 .then(response => {
                     if (response.data.success) {
                         this.$router.push('/home');
+                        this.$store.dispatch('login', response.data.user);
                         M.toast({html: 'Успешная регистрация!'});
                     }
                 })
