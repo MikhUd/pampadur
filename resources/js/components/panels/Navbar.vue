@@ -1,8 +1,8 @@
 <template>
 <nav>
     <div class="nav-wrapper">
-        <router-link to="/home" class="brand-logo center fixed">
-            <img class="logo_image" src="https://vkclub.su/_data/stickers/diggy/sticker_vk_diggy_039.png" alt="logo_image">
+        <router-link to="/home" class="brand-logo center fixed" style="width: 211px;">
+            <img class="mt-1 logo_image" src="https://vkclub.su/_data/stickers/diggy/sticker_vk_diggy_039.png" alt="logo_image">
             <div class="fixed top-0 left-16">
                 Пампадур
             </div>
