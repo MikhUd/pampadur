@@ -2,7 +2,7 @@
     <form class="mx-auto mt-5" style="width: 100%; max-width: 500px">
             <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
                 <div>
-                    <img class="mx-auto registration_logo" src="https://avatanplus.com/files/resources/original/60280bcb1ccd31779c6e116e.png">
+                    <img draggable="false" class="mx-auto registration_logo" src="https://avatanplus.com/files/resources/original/60280bcb1ccd31779c6e116e.png">
                 </div>
                 <div class="mb-4">
                     <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
