@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\MorphedByMany;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\DatingCard;
 
@@ -26,6 +27,11 @@ class Tag extends Model
      */
     public $timestamps = false;
 
+    /**
+     * Получение анкет по тегу.
+     *
+     * @return MorphedByMany
+     */
     public function datingCards()
     {
         return $this->morphedByMany(DatingCard::class, 'taggable');
