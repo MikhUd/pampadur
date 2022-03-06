@@ -1,6 +1,9 @@
 <template>
     <form class="mx-auto mt-5" style="width: 100%; max-width: 500px">
             <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+                <div class="center">
+                    <img class="registration_logo" src="https://avatanplus.com/files/resources/original/60280bcb1ccd31779c6e116e.png">
+                </div>
                 <div class="mb-4">
                     <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
                         Email
@@ -39,14 +42,18 @@
                 </div>
             </form>
             <p class="text-center text-gray-500 text-xs">
-                &copy;2020 Pampadur. All rights reserved.
+                &copy;2022 Pampadur. All rights reserved.
             </p>
         </form>
 </template>
 <style scoped>
-.w-93.px-3 {
-    width:93%;
-}
+    .w-93.px-3 {
+        width:93%;
+    }
+
+    .registration_logo {
+        width: 100px;
+    }    
 </style>
 <script>
     export default {

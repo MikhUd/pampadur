@@ -25,7 +25,7 @@
                 </div>
             </form>
             <p class="text-center text-gray-500 text-xs">
-                &copy;2020 Acme Corp. All rights reserved.
+                &copy;2022 Pampadur. All rights reserved.
             </p>
         </form>
 </template>
