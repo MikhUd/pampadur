@@ -8,15 +8,8 @@
                     <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
                         Email
                     </label>
-                    <input v-model="form.email" v-on:input="checkEmail" class="w-93 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="email" type="text" placeholder="Email">
+                    <input v-model="form.email" v-on:input="checkEmail" class="w-93 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="email" type="text" placeholder="alex@gmail.com">
                     <p class="text-red-500 text-xs italic">{{ errors['email'] }}</p>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
-                        Username
-                    </label>
-                    <input v-model="form.name" v-on:input="checkName" class="w-93 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Username">
-                    <p class="text-red-500 text-xs italic">{{ errors['name'] }}</p>
                 </div>
                 <div class="mb-6">
                     <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
@@ -64,7 +57,7 @@
         data() {
             return {
                 form: {
-                    name: null,
+                    name: 'username',
                     email: null,
                     password: null,
                     password_confirmation: null,
@@ -86,16 +79,6 @@
                 this.errors['email'] = '';
                 if (!this.form.email || !checkRegular(this.form.email)) {
                     this.errors['email'] = 'Введите корректый адрес';
-
-                    return false;
-                }
-
-                return true;
-            },
-            checkName() {
-                this.errors['name'] = '';
-                if (!this.form.name) {
-                    this.errors['name'] = 'Имя пользователя не может быть пустым или больше 30 символов';
 
                     return false;
                 }
@@ -124,7 +107,6 @@
             },
             checkAllFields() {
                 return this.checkEmail() &
-                this.checkName() &
                 this.checkPassword() &
                 this.checkRepeatedPassword();
             },

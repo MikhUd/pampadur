@@ -13,6 +13,14 @@ let router =  new VueRouter({
             component: () => import('./components/Home'),
         },
         {
+            path: '/',
+            name: 'welcome',
+            component: () => import('./components/Welcome'),
+            meta: {
+                guest: true
+            }
+        },
+        {
             path: '/login',
             name: 'login',
             component: () => import('./components/auth/Login'),
