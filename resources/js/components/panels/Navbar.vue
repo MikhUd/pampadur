@@ -1,9 +1,9 @@
 <template>
 <nav>
     <div class="nav-wrapper">
-        <router-link draggable="false" to="/" class="brand-logo center fixed" style="width: 211px;">
-            <img draggable="false" class="mt-1 logo_image" src="https://vkclub.su/_data/stickers/diggy/sticker_vk_diggy_039.png" alt="logo_image">
-            <div class="fixed top-0 left-16">
+        <router-link draggable="false" to="/" class="brand-logo center fixed">
+            <img draggable="false" class="mb-2 logo-image d-inline" src="https://vkclub.su/_data/stickers/diggy/sticker_vk_diggy_039.png" alt="logo_image">
+            <div class="d-inline logo-text">
                 Пампадур
             </div>
         </router-link>
@@ -58,8 +58,13 @@
     }
     .brand-logo {
         font-family: 'Pacifico', cursive;
+        width: 200px;
     }
-    .logo_image {
+    .logo-image {
         width: 50px;
+    }
+    .logo-text {
+        font-size: 30px;
+        margin-right: 5px;
     }
 </style>

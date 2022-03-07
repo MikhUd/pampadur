@@ -46,11 +46,7 @@ let router =  new VueRouter({
 
 router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.guest)) {
-        // На територию guest'ov)) не может зайти любой....
-        // История тащемто простая, но довольно муторная, как бы это oxxюмиронно не звучало)))))
-        // Тип не каждый авторизованный может зайти, даже не то что бы не каждый, вааще не какой!!!
         if (localStorage.getItem('user') !== null) {
-
             next({
                 path: '/home'
             })

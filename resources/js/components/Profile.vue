@@ -6,7 +6,7 @@
                     <label class="block text-gray-700 text-sm font-bold mb-2" for="name">
                         Имя
                     </label>
-                    <input class="input_name shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="email" type="text" placeholder="Александр">
+                    <input class="input_name shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="name" type="text" placeholder="Александр">
                     <p class="text-red-500 text-xs italic"></p>
                 </div>
                 <div class="mb-6">
@@ -15,24 +15,25 @@
                     </label>
                     <div class="area_about">
                         <form class="col s12">
-                        <div class="row">
-                            <div class="input-field col s12">
-                            <textarea id="textarea1" class="materialize-textarea"></textarea>
+                            <div class="row">
+                                <div class="input-field col s12">
+                                <textarea id="about_me" class="materialize-textarea"></textarea>
+                                </div>
                             </div>
-                        </div>
                         </form>
                     </div>
                     <p class="text-red-500 text-xs italic"></p>
                 </div>
-                <div class="mb-6 max-height: 300px;">
+                <div class="mb-6">
                     <input type="text" class="datepicker">
                 </div>
                 <div class="mb-6">
                     <label class="block text-gray-700 text-sm font-bold mb-2" for="tags">
                         Теги
                     </label>
-                    <input class="w-93 shadow appearance-none border border-red-500 rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" type="text">
-                    <p class="text-red-500 text-xs italic"></p>
+                    <div class="chips">
+                        <input class="custom-class" id="tags">
+                    </div>
                 </div>
                 <div>
               <label class="block text-sm font-medium text-gray-700">
@@ -74,9 +75,12 @@
         mounted() {
             var elems = document.querySelectorAll('.datepicker');
             var instances = M.Datepicker.init(elems);
+            var elems = document.querySelectorAll('.chips');
+            var instances = M.Chips.init(elems);
+
         },
         methods: {
-            
+
         }
     }
 </script>
