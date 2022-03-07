@@ -8,14 +8,20 @@ export default {
                 class:'left',
             },
             {
+                path:'/profile',
+                title:'Профиль',
+                auth: true,
+                class:'left',
+            },
+            {
                 path: "/registration",
-                title: "Регистрация",
+                title: "Зарегистрироваться",
                 auth: false,
                 class:'right',
             },
             {
                 path: "/login",
-                title: "Логин",
+                title: "Войти",
                 auth: false,
                 class:'right',
             },
