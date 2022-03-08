@@ -2,6 +2,9 @@
     <form class="mx-auto mt-5" style="width: 100%; max-width: 1200px">
             <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
                 <h2 class="center">Создайте анкету</h2>
+<div class="flex mt-3">
+
+    <div class="w-1/2">
                 <div class="mb-4">
                     <label class="block text-gray-700 text-sm font-bold mb-2" for="name">
                         Имя
@@ -25,17 +28,29 @@
                     <p class="text-red-500 text-xs italic"></p>
                 </div>
                 <div class="mb-6">
-                    <input type="text" class="datepicker">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="about_me">
+                        Дата рождения
+                    </label>
+                    <div class="birth_date">
+                        <input type="text" class="datepicker">
+                    </div>
                 </div>
                 <div class="mb-6">
                     <label class="block text-gray-700 text-sm font-bold mb-2" for="tags">
                         Теги
                     </label>
-                    <div class="chips">
-                        <input class="custom-class" id="tags">
+                    <div class="tags">
+                        <div class="chips">
+                            <input class="custom-class" id="tags">
+                        </div>
                     </div>
                 </div>
-                <div>
+
+    </div>
+    <div class="w-1/2">
+            
+
+            <div>
               <label class="block text-sm font-medium text-gray-700">
                 Cover photo
               </label>
@@ -56,13 +71,17 @@
                   </p>
                 </div>
               </div>
-                </div>
+            </div>
+    </div>
+
+</div>
+
                 <div class="center">
                     <button id="register" class="rounded-full btn bg-gradient-to-r from-orange-400 to-rose-400 hover:from-rose-400 hover:to-orange-400" type="button">
                         Создать
                     </button>
                 </div>
-        </form>
+            </form>
             <p class="text-center text-gray-500 text-xs">
                 &copy;2022 Pampadur. All rights reserved.
             </p>
@@ -77,6 +96,8 @@
             var instances = M.Datepicker.init(elems);
             var elems = document.querySelectorAll('.chips');
             var instances = M.Chips.init(elems);
+            var elems = document.querySelectorAll('select');
+            var instances = M.FormSelect.init(elems, options);
 
         },
         methods: {
@@ -87,16 +108,16 @@
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
-    .photo_upload {
-        max-width: 50%;
-    }
 
     .input_name {
-        max-width: 47%;
+        max-width: 85%;
     }
 
-    .area_about {
-        max-width: 50%;
+    .area_about,
+    .tags,
+    .photo_upload,
+    .birth_date {
+        max-width: 90%;
     }
 
     h2 {
