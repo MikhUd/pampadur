@@ -2,21 +2,17 @@
     <form class="mx-auto mt-5" style="width: 100%; max-width: 1200px">
         <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
             <h2 class="center">Создайте анкету</h2>
-
             <div class="d-flex mt-3 justify-content-between form">
-
                 <div class="column">
                     <div class="mb-4">
                         <label class="block text-gray-700 text-sm font-bold mb-2" for="name">
                             Имя
                         </label>
-                        <input
-                            class="mx-auto mx-sm-auto input_name shadow appearance-none border rounded py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-                            id="name" type="text" placeholder="Александр">
+                        <input placeholder="Александр" id="name" type="text" class="validate">
                         <p class="text-red-500 text-xs italic"></p>
                     </div>
                     <div class="mb-6">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="about_me">
+                        <label class="block text-gray-700 text-sm font-bold" for="about_me">
                             О себе
                         </label>
                         <div class="area_about">
@@ -48,14 +44,34 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
-
                 <div class="mb-3 column">
+                    <div class="mb-6">
+                        <label class="block text-gray-700 text-sm font-bold">
+                            Пол
+                        </label>
+                        <div class="input-field col s12">
+                            <select>
+                                <option value="1">Мужской</option>
+                                <option value="2">Женский</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-gray-700 text-sm font-bold">
+                            Ищу
+                        </label>
+                        <div class="input-field col s12">
+                            <select>
+                                <option value="1">Девушку</option>
+                                <option value="2">Парня</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="center cover-photo-wrapper">
-                        <div class="mx-auto mt-4 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+                        <div class="mx-auto mt-20 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
                             <label class="block text-sm font-medium text-gray-700 position-absolute">
-                                <p class="position-relative" style="top:-65px">Cover photo</p>
+                                <p class="position-relative" style="top:-65px">Припрекить фото</p>
                             </label>
                             <div class="space-y-1 text-center">
                                 <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="True">
@@ -63,45 +79,50 @@
                                 </svg>
                                 <div class="flex text-sm text-gray-600">
                                     <label for="file-upload" class="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
-                                        <span>Upload a file</span>
+                                        <span>Загрузить файл</span>
                                         <input id="file-upload" name="file-upload" type="file" class="sr-only">
                                     </label>
-                                    <p class="pl-1">or drag and drop</p>
+                                    <p class="pl-1">или перетащите</p>
                                 </div>
                                 <p class="text-xs text-gray-500">
-                                    PNG, JPG, GIF up to 10MB
+                                    PNG, JPG, GIF до 10 МБ
                                 </p>
                             </div>
                         </div>
                         </div>
                 </div>
-
             </div>
-
             <div class="center">
-                <button id="register"
+                <button v-on:click.prevent="create" id="register"
                         class="rounded-full btn bg-gradient-to-r from-orange-400 to-rose-400 hover:from-rose-400 hover:to-orange-400"
                         type="button">
                     Создать
                 </button>
             </div>
         </form>
-        <p class="text-center text-gray-500 text-xs">
-            &copy;2022 Pampadur. All rights reserved.
-        </p>
     </form>
 </template>
 
 <script>
     export default {
+        data() {
+            return {
+                tags: null,
+                birth_date: null,
+            }
+        },
         name: 'Profile',
         mounted() {
-            M.Datepicker.init(document.querySelectorAll('.datepicker'));
-            M.Chips.init(document.querySelectorAll('.chips'));
+            this.birth_date = M.Datepicker.init(document.querySelectorAll('.datepicker'));
+            this.tags = M.Chips.init(document.querySelectorAll('.chips'), {
+                'limit' : 5
+            });
             M.FormSelect.init(document.querySelectorAll('select'));
         },
         methods: {
-
+            create() {
+                console.log(this.birth_date.date);
+            }
         }
     }
 </script>
@@ -132,10 +153,6 @@
             width: 100%;
         }
     }
-
-    .area_about,
-    .tags,
-    .photo_upload,
 
     h2 {
         font-family: 'Pacifico', cursive;

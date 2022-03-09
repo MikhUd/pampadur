@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Services\Interfaces\Auth;
+namespace App\Services\Interfaces;
 
-use App\Http\Requests\UserLoginRequest;
-use App\Http\Requests\UserRegisterRequest;
+use App\Http\Requests\Auth\UserLoginRequest;
+use App\Http\Requests\Auth\UserRegisterRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

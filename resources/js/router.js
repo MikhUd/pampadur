@@ -11,11 +11,17 @@ let router =  new VueRouter({
             path: '/home',
             name: 'home',
             component: () => import('./components/Home'),
+            meta: {
+                guest: false
+            }
         },
         {
             path: '/profile',
             name: 'profile',
             component: () => import('./components/Profile'),
+            meta: {
+                guest: false
+            }
         },
         {
             path: '/',

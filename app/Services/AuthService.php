@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Services\Auth;
+namespace App\Services;
 
-use App\Http\Requests\UserLoginRequest;
-use App\Http\Requests\UserRegisterRequest;
-use App\Services\Interfaces\Auth\AuthServiceContract;
+use App\Http\Requests\Auth\UserLoginRequest;
+use App\Http\Requests\Auth\UserRegisterRequest;
+use App\Services\Interfaces\AuthServiceContract;
 use App\Services\Interfaces\UserServiceContract;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
