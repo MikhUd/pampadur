@@ -8,7 +8,7 @@
                         <label class="block text-gray-700 text-sm font-bold mb-2" for="name">
                             Имя
                         </label>
-                        <input placeholder="Александр" id="name" type="text" class="validate">
+                        <input v-model="form.name" placeholder="Александр" id="name" type="text" class="validate">
                         <p class="text-red-500 text-xs italic"></p>
                     </div>
                     <div class="mb-6">
@@ -19,7 +19,7 @@
                             <form class="col s12">
                                 <div class="row">
                                     <div class="input-field col s12">
-                                        <textarea id="about_me" class="materialize-textarea"></textarea>
+                                        <textarea v-model="form.about" id="about_me" class="materialize-textarea"></textarea>
                                     </div>
                                 </div>
                             </form>
@@ -27,11 +27,11 @@
                         <p class="text-red-500 text-xs italic"></p>
                     </div>
                     <div class="mb-6">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="about_me">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="birth_date">
                             Дата рождения
                         </label>
                         <div class="birth_date">
-                            <input type="text" class="datepicker">
+                            <input @change="setBirthDate" type="text" class="datepicker" id="birth_date">
                         </div>
                     </div>
                     <div class="mb-6">
@@ -40,7 +40,7 @@
                         </label>
                         <div class="tags">
                             <div class="chips">
-                                <input class="custom-class" id="tags">
+                                <input @keyup="setTags" @keydown.space.prevent class="custom-class" id="tags">
                             </div>
                         </div>
                     </div>
@@ -51,7 +51,7 @@
                             Пол
                         </label>
                         <div class="input-field col s12">
-                            <select>
+                            <select v-model="form.gender">
                                 <option value="1">Мужской</option>
                                 <option value="2">Женский</option>
                             </select>
@@ -62,7 +62,7 @@
                             Ищу
                         </label>
                         <div class="input-field col s12">
-                            <select>
+                            <select v-model="form.seeking_for">
                                 <option value="1">Девушку</option>
                                 <option value="2">Парня</option>
                             </select>
@@ -80,12 +80,12 @@
                                 <div class="flex text-sm text-gray-600">
                                     <label for="file-upload" class="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
                                         <span>Загрузить файл</span>
-                                        <input id="file-upload" name="file-upload" type="file" class="sr-only">
+                                        <input @change="handleImageUpload" ref="imageInput" id="file-upload" name="file-upload" type="file" class="sr-only">
                                     </label>
                                     <p class="pl-1">или перетащите</p>
                                 </div>
                                 <p class="text-xs text-gray-500">
-                                    PNG, JPG, GIF до 10 МБ
+                                    PNG, JPG до 10 МБ
                                 </p>
                             </div>
                         </div>
@@ -93,7 +93,7 @@
                 </div>
             </div>
             <div class="center">
-                <button v-on:click.prevent="create" id="register"
+                <button v-on:click.prevent="store" id="register"
                         class="rounded-full btn bg-gradient-to-r from-orange-400 to-rose-400 hover:from-rose-400 hover:to-orange-400"
                         type="button">
                     Создать
@@ -107,21 +107,52 @@
     export default {
         data() {
             return {
-                tags: null,
-                birth_date: null,
+                form: {
+                    name: null,
+                    about: null,
+                    birth_date: null,
+                    tags: null,
+                    gender: null,
+                    seeking_for: null
+                },
+                datePicker: null,
+                chips: null,
+                image: null
             }
         },
         name: 'Profile',
         mounted() {
-            this.birth_date = M.Datepicker.init(document.querySelectorAll('.datepicker'));
-            this.tags = M.Chips.init(document.querySelectorAll('.chips'), {
-                'limit' : 5
+            this.datePicker = M.Datepicker.init(document.querySelectorAll('.datepicker'), {
+                'format' : 'd.mm.yyyy'
+            });
+            this.chips = M.Chips.init(document.querySelectorAll('.chips'), {
+                'limit' : 6
             });
             M.FormSelect.init(document.querySelectorAll('select'));
         },
         methods: {
-            create() {
-                console.log(this.birth_date.date);
+            store() {
+                let formData = new FormData();
+                formData.append('image', this.image);
+                Object.entries(this.form).map(el => {
+                    formData.append(el[0], el[1]);
+                });
+
+                axios.post('/dating-card', formData, {
+                    headers: {"Content-Type": "multipart/form-data"}
+                }).then(() => {
+
+                });
+            },
+            setBirthDate() {
+                this.form.birth_date = this.datePicker.toString();
+            },
+            setTags() {
+                this.form.tags = [];
+                Object.values(this.chips[0].chipsData).map(el => this.form.tags.push(el.tag));
+            },
+            handleImageUpload(){
+                this.image = this.$refs.imageInput.files[0];
             }
         }
     }

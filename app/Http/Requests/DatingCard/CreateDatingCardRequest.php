@@ -13,7 +13,7 @@ class CreateDatingCardRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -27,10 +27,10 @@ class CreateDatingCardRequest extends FormRequest
             'name' => 'required|min:5|max:30',
             'about' => 'required|min:20|max:500',
             'birth_date' => 'required|date',
-            'tags' => 'required|array',
-            'gender' => 'required|string|in:male,female',
-            'seeking_for' => 'required|string|in:male,female',
-            'photo' => 'required|file|mimes:jpg,png|max:10240',
+            'tags' => 'required|string',
+            'gender' => 'required|string|in:1,2',
+            'seeking_for' => 'required|string|in:1,2',
+            'image' => 'required|file|mimes:jpg,png|max:10240',
         ];
     }
 }
