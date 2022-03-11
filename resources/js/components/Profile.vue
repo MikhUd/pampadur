@@ -9,7 +9,7 @@
                             Имя
                         </label>
                         <input v-model="form.name" v-on:input="checkName" placeholder="Александр" id="name" type="text" class="validate">
-                        <p class="text-red-500 text-xs italic">{{ errors['name'] }}</p>
+                        <p class="text-red-500 text-xs italic position-absolute">{{ errors['name'] }}</p>
                     </div>
                     <div class="mb-6">
                         <label class="block text-gray-700 text-sm font-bold" for="about">
@@ -24,7 +24,9 @@
                                 </div>
                             </form>
                         </div>
-                        <p class="text-red-500 text-xs italic">{{ errors['about'] }}</p>
+                        <div class="position-absolute">
+                            <p class="text-red-500 text-xs italic d-block position-relative error">{{ errors['about'] }}</p>
+                        </div>
                     </div>
                     <div class="mb-6">
                         <label class="block text-gray-700 text-sm font-bold mb-2" for="birth_date">
@@ -82,7 +84,7 @@
                                 <div class="flex text-sm text-gray-600">
                                     <label for="file-upload" class="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
                                         <span>Загрузить файл</span>
-                                        <input @change="handleImageUpload" ref="imageInput" id="file-upload" name="file-upload" type="file" class="sr-only">
+                                        <input multiple @change="handleImageUpload" ref="imageInput" id="file-upload" name="file-upload" type="file" class="sr-only">
                                     </label>
                                     <p class="pl-1">или перетащите</p>
                                 </div>
@@ -157,15 +159,22 @@
             setBirthDate() {
                 this.form.birth_date = this.datePicker.toString();
                 this.checkBirthDate();
+                let errors = this.errors;
+                this.$set(this.$data, 'errors', {});
+                this.$set(this.$data, 'errors', errors);
             },
             setTags() {
                 this.form.tags = [];
                 Object.values(this.chips[0].chipsData).map(el => this.form.tags.push(el.tag));
             },
-            handleImageUpload() {
-                let file = this.$refs.imageInput.files[0];
-                file['url'] = URL.createObjectURL(file);
-                this.images.push(file);
+            handleImageUpload(e) {
+                for (let file of this.$refs.imageInput.files) {
+                    file['url'] = URL.createObjectURL(file);
+                    if (!this.images.find(x => x.name === file.name)) {
+                        this.images.push(file);
+                    }
+                }
+                e.target.value = null;
             },
             onDrop() {
                 //console.log(123);
@@ -203,7 +212,6 @@
 
                 if (eighteenYearsOldDateOfBirth < birthDate) {
                     this.errors['birth_date'] = 'Вам нет 18';
-                    console.log(this.errors)
                     return false;
                 }
                 return true;
@@ -217,8 +225,8 @@
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
 
-    .input_name {
-        max-width: 85%;
+    textarea {
+        height: 44px;
     }
     .cover-photo-wrapper {
         margin-left:auto;
@@ -226,10 +234,10 @@
     .column {
         width: 45%;
     }
+    .error {
+        margin-top: -25px;
+    }
     @media only screen and (max-width: 579px) {
-        .input_name {
-            max-width: 93.5%;
-        }
         .cover-photo-wrapper {
             margin: 0 auto;
         }
