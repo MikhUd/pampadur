@@ -15,9 +15,11 @@ class CreateDatingCardsTable extends Migration
     {
         Schema::create('dating_cards', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->integer('age');
-            $table->text('description');
+            $table->string('name', 30);
+            $table->text('about');
+            $table->date('birth_date');
+            $table->integer('gender');
+            $table->integer('seeking_for');
             $table->unsignedBigInteger('user_id')->nullable();
             $table->timestamp('published_at')->nullable();
             $table->timestamps();

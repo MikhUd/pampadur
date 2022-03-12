@@ -122,7 +122,7 @@
                     name: null,
                     about: null,
                     birth_date: null,
-                    tags: null,
+                    tags: [],
                     gender: null,
                     seeking_for: null
                 },
@@ -130,6 +130,7 @@
                 chips: null,
                 images: [],
                 errors: {},
+                location: [],
             }
         },
         name: 'Profile',
@@ -144,12 +145,25 @@
         },
         methods: {
             store() {
+                let coords = [];
+
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        coords.push(position.coords.latitude);
+                        coords.push(position.coords.longitude);
+                    });
+                    this.location.push(coords[0], coords[1]);
+                }
+                //console.log(coords);
                 let formData = new FormData();
-                formData.append('image', this.images);
-                Object.entries(this.form).map(el => {
-                    formData.append(el[0], el[1]);
+                Object.entries(this.images).map(el => {
+                    formData.append('images[]', el[1]);
                 });
 
+                Object.entries(this.form).map(el => {
+                    formData.append(el[0], JSON.stringify(el[1]));
+                });
+              
                 axios.post('/dating-card', formData, {
                     headers: {"Content-Type": "multipart/form-data"}
                 }).then(() => {
@@ -195,11 +209,11 @@
             },
             checkAbout() {
                 this.errors['about'] = '';
-                if (!this.form.about || this.form.about.length < 10) {
+                if (!this.form.about || this.form.about.length < 20) {
                     this.errors['about'] = 'Побольше расскажите о себе';
                     return false;
                 }
-                if (this.form.about.length > 20) {
+                if (this.form.about.length > 50) {
                     this.errors['about'] = 'Не так много';
                     return false;
                 }
@@ -211,7 +225,7 @@
                 const eighteenYearsOldDateOfBirth = new Date().setFullYear(new Date().getFullYear() - 18);
 
                 if (eighteenYearsOldDateOfBirth < birthDate) {
-                    this.errors['birth_date'] = 'Вам нет 18';
+                    this.errors['birth_date'] = 'Вам нет 18 лет';
                     return false;
                 }
                 return true;

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Contracts\HasTags;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -9,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Models\Tag;
 
-class DatingCard extends Model
+class DatingCard extends Model implements HasTags
 {
     use HasFactory;
 
@@ -20,6 +21,13 @@ class DatingCard extends Model
      */
     protected $table = 'dating_cards';
 
+    /**
+     * Атрибуты, для которых запрещено массовое заполнение.
+     *
+     * @var array
+     */
+    protected $guarded = ['id'];
+    
     /**
      * Получение пользователя по анкете.
      *
