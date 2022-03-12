@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Interfaces;
 
+use App\Contracts\HasTags;
 use App\Models\Tag;
 
 interface TagRepositoryContract
@@ -9,4 +10,8 @@ interface TagRepositoryContract
     public function firstOrCreate(array $field): Tag;
     
     public function getByName(array $name): Tag;
+
+    public function bindModel(Tag $tag, HasTags $model): void;
+
+    public function detachModel(Tag $tag, HasTags $model): void;
 }

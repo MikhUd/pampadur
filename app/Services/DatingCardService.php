@@ -11,6 +11,7 @@ use App\Services\Interfaces\TagSynchronizerContract;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class DatingCardService implements DatingCardServiceContract
 {
@@ -40,24 +41,32 @@ class DatingCardService implements DatingCardServiceContract
         $requestFields = $request->toArray();
 
         DB::beginTransaction();
-        $datingCard = $this->datingCardRepository->create(
-            Arr::except($requestFields, [
-                'tags',
-                'images',
-            ])
-        );
-        $datingCard->user()->associate(auth()->user())->save();
 
-        $this->tagSynchronizer->sync(
-            collect($requestFields['tags']),
-            $datingCard
-        );
+        try {
+            $datingCard = $this->datingCardRepository->create(
+                Arr::except($requestFields, [
+                    'tags',
+                    'images',
+                ])
+            );
+            $datingCard->user()->associate(auth()->user())->save();
 
-        $this->imageService->attachImages(
-            $datingCard,
-            $requestFields['images']
-        );
-        DB::commit();
+            $this->tagSynchronizer->sync(
+                collect($requestFields['tags']),
+                $datingCard
+            );
+
+            $this->imageService->attachImages(
+                $datingCard,
+                $requestFields['images']
+            );
+            
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error('Saving dating card failed', ['id' => auth()->user()->id]);
+        }
+        
         return response()->json([
             'success' => true,
             'message' => 'successfully'

@@ -25,14 +25,14 @@ class TagSynchronizer implements TagSynchronizerContract
         $tagsToAttach = function($tags, $model) {
             foreach ($tags as $tag => $name) {
                 $tag = $this->tagRepository->firstOrCreate(['name' => $name]);
-                $tag->datingCards()->attach($model);
+                $this->tagRepository->bindModel($tag, $model);
             };
         };
 
         $tagsToDetach = function($tags, $model) {
             foreach ($tags as $tag => $name) {
                 $tag = $this->tagRepository->getByName(['name' => $name]);
-                $tag->datingCards()->detach($model);
+                $this->tagRepository->detachModel($tag, $model);
             }
         };
 
