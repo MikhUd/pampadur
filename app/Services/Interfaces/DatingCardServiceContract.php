@@ -3,9 +3,9 @@
 namespace App\Services\Interfaces;
 
 use App\Http\Requests\DatingCard\CreateDatingCardRequest;
-use App\Models\DatingCard;
+use Illuminate\Http\JsonResponse;
 
 interface DatingCardServiceContract
 {
-    public function store(CreateDatingCardRequest $request): ?DatingCard;
+    public function store(CreateDatingCardRequest $request): JsonResponse;
 }

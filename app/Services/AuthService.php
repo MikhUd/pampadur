@@ -28,7 +28,7 @@ class AuthService implements AuthServiceContract
             return response()->json([
                 'success' => false,
                 'message' => 'User is already logged in'
-            ], 200);
+            ], 204);
         }
 
         if (auth()->attempt($request->all())) {
@@ -55,7 +55,7 @@ class AuthService implements AuthServiceContract
             return response()->json([
                 'success' => false,
                 'message' => 'User is already logged in'
-            ], 200);
+            ], 204);
         }
 
         $user = $this->userService->create($request->all());
@@ -65,7 +65,7 @@ class AuthService implements AuthServiceContract
         return response()->json([
             'success' => true,
             'user' => auth()->user(),
-        ], 200);
+        ], 203);
     }
 
     /**

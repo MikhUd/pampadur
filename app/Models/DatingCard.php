@@ -2,15 +2,18 @@
 
 namespace App\Models;
 
+use App\Contracts\HasImages;
 use App\Contracts\HasTags;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Models\Tag;
 
-class DatingCard extends Model implements HasTags
+class DatingCard extends Model implements HasTags, HasImages
 {
     use HasFactory;
 
@@ -27,7 +30,7 @@ class DatingCard extends Model implements HasTags
      * @var array
      */
     protected $guarded = ['id'];
-    
+
     /**
      * Получение пользователя по анкете.
      *
@@ -43,8 +46,18 @@ class DatingCard extends Model implements HasTags
      *
      * @return MorphToMany
      */
-    public function tags()
+    public function tags(): MorphToMany
     {
         return $this->morphToMany(Tag::class, 'taggable');
+    }
+
+    /**
+     * Получение фоток анкеты.
+     *
+     * @return MorphMany
+     */
+    public function images(): MorphMany
+    {
+        return $this->morphMany(Image::class, 'imageable');
     }
 }

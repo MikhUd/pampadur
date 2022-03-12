@@ -16,14 +16,16 @@ use App\Repositories\UserRepository;
 use App\Repositories\UserRoleRepository;
 use App\Services\Auth\AuthService;
 use App\Services\DatingCardService;
+use App\Services\ImageService;
 use App\Services\Interfaces\AuthServiceContract;
 use App\Services\Interfaces\DatingCardServiceContract;
+use App\Services\Interfaces\ImageServiceContract;
 use App\Services\Interfaces\TagSynchronizerContract;
 use App\Services\Interfaces\UserServiceContract;
 use App\Services\TagSynchronizer;
 use App\Services\UserService;
 use Illuminate\Support\ServiceProvider;
-use Laravel\Sanctum\Sanctum;
+use Illuminate\Support\Facades\Gate;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -57,7 +59,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(UserServiceContract::class, UserService::class);
 
         $this->app->bind(DatingCardServiceContract::class, DatingCardService::class);
-        
+
+        $this->app->bind(ImageServiceContract::class, ImageService::class);
+
     }
 
     /**
@@ -67,6 +71,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        Gate::define('view-image', function ($user, $image) {
+            //Ну если это карточки - то любой может смотреть
+            if ($image->imageable_type == DatingCard::class) {
+                return true;
+            }
+            return false;
+        });
     }
 }

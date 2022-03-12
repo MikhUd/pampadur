@@ -31,7 +31,7 @@ class CreateDatingCardRequest extends FormRequest
             'tags.*' => [
                 'required',
                 'string',
-                'regex:/^[А-Яа-яA-Za-zёЁ0-9\-\s]+$/u',
+                'regex:/^[А-Яа-яA-Za-zёЁ]+$/u',
             ],
             'gender' => 'required|integer|in:1,2',
             'seeking_for' => 'required|integer|in:1,2',

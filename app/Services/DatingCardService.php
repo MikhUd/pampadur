@@ -6,26 +6,31 @@ use App\Http\Requests\DatingCard\CreateDatingCardRequest;
 use App\Models\DatingCard;
 use App\Repositories\Interfaces\DatingCardRepositoryContract;
 use App\Services\Interfaces\DatingCardServiceContract;
+use App\Services\Interfaces\ImageServiceContract;
 use App\Services\Interfaces\TagSynchronizerContract;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 
 class DatingCardService implements DatingCardServiceContract
 {
     private $datingCardRepository;
     private $tagSynchronizer;
+    private $imageService;
 
-    public function __construct(DatingCardRepositoryContract $datingCardRepository,TagSynchronizerContract $tagSynchronizer)
+    public function __construct(DatingCardRepositoryContract $datingCardRepository,TagSynchronizerContract $tagSynchronizer, ImageServiceContract $imageService)
     {
         $this->datingCardRepository = $datingCardRepository;
         $this->tagSynchronizer = $tagSynchronizer;
+        $this->imageService = $imageService;
     }
 
     /**
      * @return DatingCard
      */
-    public function store(CreateDatingCardRequest $request): ?DatingCard
+    public function store(CreateDatingCardRequest $request): JsonResponse
     {
-        if ($request->user()->datingCard()->exists()) {
+        if (auth()->user()->datingCard()->exists()) {
             return response()->json([
                 'success' => false,
                 'message' => 'User can only have one dating card'
@@ -33,20 +38,30 @@ class DatingCardService implements DatingCardServiceContract
         }
 
         $requestFields = $request->toArray();
-        
+
+        DB::beginTransaction();
         $datingCard = $this->datingCardRepository->create(
             Arr::except($requestFields, [
                 'tags',
                 'images',
             ])
         );
+        $datingCard->user()->associate(auth()->user())->save();
 
         $this->tagSynchronizer->sync(
             collect($requestFields['tags']),
             $datingCard
         );
 
-        return null;
+        $this->imageService->attachImages(
+            $datingCard,
+            $requestFields['images']
+        );
+        DB::commit();
+        return response()->json([
+            'success' => true,
+            'message' => 'successfully'
+        ], 204);
     }
 
 }
