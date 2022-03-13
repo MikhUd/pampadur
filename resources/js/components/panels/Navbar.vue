@@ -41,6 +41,7 @@
         },
         methods: {
             logout() {
+                this.$router.push('/home');
                 return this.$store.dispatch('logout');
             }
         }

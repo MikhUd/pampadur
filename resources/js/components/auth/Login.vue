@@ -90,8 +90,12 @@
                 }
 
                 axios.post('/login', this.form).then(response => {
-                    this.$router.push('/profile');
-                    this.$store.dispatch('login', response.data.user);
+                    if (response.data.success) {
+                        this.$router.push('/profile');
+                        this.$store.dispatch('login', response.data.user);
+                    } else {
+                        this.$set(this.$data, 'errors', {'password': 'Неверный пароль'});
+                    }
                 });
             }
         }

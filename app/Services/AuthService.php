@@ -43,7 +43,8 @@ class AuthService implements AuthServiceContract
 
         return response()->json([
             'success' => false,
-        ], 403);
+            'message' => 'Password is incorrect',
+        ]);
     }
 
     /**

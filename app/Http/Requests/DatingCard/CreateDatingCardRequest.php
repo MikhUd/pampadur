@@ -26,7 +26,7 @@ class CreateDatingCardRequest extends FormRequest
         return [
             'name' => 'required|min:5|max:30',
             'about' => 'required|min:20|max:500',
-            'birth_date' => 'required|integer|max:' . strtotime('-8 years'),
+            'birth_date' => 'required|integer|max:' . strtotime('-18 years'),
             'tags'  => 'array',
             'tags.*' => [
                 'required',

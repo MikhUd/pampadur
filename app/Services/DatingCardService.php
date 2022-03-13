@@ -47,7 +47,7 @@ class DatingCardService implements DatingCardServiceContract
                 Arr::except($requestFields, [
                     'tags',
                     'images',
-                ])
+                 ])
             );
             $datingCard->user()->associate(auth()->user())->save();
 
@@ -67,14 +67,14 @@ class DatingCardService implements DatingCardServiceContract
             Log::error('Saving dating card failed', ['id' => auth()->user()->id]);
             return response()->json([
                 'success' => false,
-                'message' => $e
+                'message' => $e,
             ], 403);
         }
 
         return response()->json([
             'success' => true,
             'datingCard' => $datingCard,
-            'message' => 'successfully'
+            'message' => 'successfully',
         ], 201);
     }
 

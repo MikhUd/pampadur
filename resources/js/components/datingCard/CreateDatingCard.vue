@@ -172,7 +172,7 @@
                 axios.post('/dating-card', formData, {
                     headers: {"Content-Type": "multipart/form-data"}
                 }).then((r) => {
-                    this.$store.dispatch('createDatingCard', r.data.datingCard);
+                    this.$store.dispatch('onDatingCardExists', r.data.datingCard);
                     this.$emit('createDatingCard', {
                         isDatingCardExists: true
                     });

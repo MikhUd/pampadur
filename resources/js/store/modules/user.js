@@ -1,7 +1,8 @@
 import helper from "../../helpers";
 export default {
     state:{
-        user: null
+        user: localStorage.getItem('user') || null,
+        dating_card: localStorage.getItem('dating_card') || null,
     },
     mutations:{
         setAuthUser(state, user) {
@@ -13,19 +14,24 @@ export default {
             state.user = user;
         },
         setDatingCard(state, datingCard) {
-            state.user.dating_card = datingCard;
-            localStorage.setItem('user', state.user);
+            if (datingCard === null) {
+                localStorage.removeItem('dating_card');
+            } else {
+                localStorage.setItem('dating_card', datingCard);
+            }
+            state.dating_card = datingCard;
         }
     },
     actions: {
         logout(store) {
             helper.logout();
             store.commit("setAuthUser", null);
+            store.commit("setDatingCard", null);
         },
         login(store, user) {
             store.commit("setAuthUser", user);
         },
-        createDatingCard(store, datingCard) {
+        onDatingCardExists(store, datingCard) {
             store.commit('setDatingCard', datingCard);
         }
     },
@@ -34,7 +40,7 @@ export default {
             return !!state.user;
         },
         isDatingCardExists(state) {
-            return !!state.user.dating_card;
+            return !!state.dating_card;
         }
     }
 }

@@ -3,14 +3,14 @@
             Koke jambo;
     </div>
     <div v-else>
-        <EditDatingCard @createDatingCard="onCreateDatingCard"></EditDatingCard>
+        <CreateDatingCard @createDatingCard="onCreateDatingCard"></CreateDatingCard>
     </div>
 </template>
 <script>
-import EditDatingCard from './EditDatingCard';
+import CreateDatingCard from './CreateDatingCard';
 export default {
     components: {
-        EditDatingCard
+        CreateDatingCard
     },
     data() {
         return {
@@ -19,6 +19,14 @@ export default {
     },
     mounted() {
         this.isDatingCardExists = this.$store.getters.isDatingCardExists;
+        if (!this.isDatingCardExists) {
+            axios.get('/dating-card').then(response => {
+                if (response.data.status) {
+                    this.isDatingCardExists = response.data.status;
+                    this.$store.dispatch('onDatingCardExists', response.data.datingCard);
+                }
+            });
+        }
     },
     methods: {
         onCreateDatingCard(data) {
