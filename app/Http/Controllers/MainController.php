@@ -13,7 +13,7 @@ class MainController extends Controller
     public function __invoke()
     {
         return view('index', [
-            'auth_user' => Auth::user(),
+            'auth_user' => ($user = Auth::user()) ? $user->load('datingCard') : null,
         ]);
     }
 }

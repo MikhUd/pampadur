@@ -31,6 +31,9 @@ class DatingCard extends Model implements HasTags, HasImages
      */
     protected $guarded = ['id'];
 
+    protected $dates = [
+        'birth_date'
+    ];
     /**
      * Получение пользователя по анкете.
      *

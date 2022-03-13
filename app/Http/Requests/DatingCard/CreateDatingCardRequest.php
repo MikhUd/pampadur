@@ -26,7 +26,7 @@ class CreateDatingCardRequest extends FormRequest
         return [
             'name' => 'required|min:5|max:30',
             'about' => 'required|min:20|max:500',
-            'birth_date' => 'required|date',
+            'birth_date' => 'required|integer|max:' . strtotime('-8 years'),
             'tags'  => 'array',
             'tags.*' => [
                 'required',
@@ -50,7 +50,7 @@ class CreateDatingCardRequest extends FormRequest
         $this->merge([
             'name' => json_decode($this->name),
             'about' => json_decode($this->about),
-            'birth_date' => json_decode($this->birth_date),
+            'birth_date' => strtotime(json_decode($this->birth_date)),
             'seeking_for' => (int)json_decode($this->seeking_for),
             'gender' => (int)json_decode($this->seeking_for),
             'tags' => json_decode($this->tags),

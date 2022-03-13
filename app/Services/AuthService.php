@@ -59,6 +59,8 @@ class AuthService implements AuthServiceContract
         }
 
         $user = $this->userService->create($request->all());
+        $request->session()->invalidate();
+        $request->session()->regenerate();
 
         auth()->login($user);
 

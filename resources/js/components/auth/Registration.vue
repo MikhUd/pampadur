@@ -125,8 +125,8 @@
                 axios.post('/register', this.form)
                 .then(response => {
                     if (response.data.success) {
-                        this.$router.push('/profile');
                         this.$store.dispatch('login', response.data.user);
+                        this.$router.push('/profile');
                         M.toast({html: 'Успешная регистрация!'});
                     }
                 })

@@ -35,11 +35,11 @@ class DatingCardService implements DatingCardServiceContract
             return response()->json([
                 'success' => false,
                 'message' => 'User can only have one dating card'
-            ], 204);
+            ], 203);
         }
 
         $requestFields = $request->toArray();
-
+        $datingCard = null;
         DB::beginTransaction();
 
         try {
@@ -60,17 +60,22 @@ class DatingCardService implements DatingCardServiceContract
                 $datingCard,
                 $requestFields['images']
             );
-            
+
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
             Log::error('Saving dating card failed', ['id' => auth()->user()->id]);
+            return response()->json([
+                'success' => false,
+                'message' => $e
+            ], 403);
         }
-        
+
         return response()->json([
             'success' => true,
+            'datingCard' => $datingCard,
             'message' => 'successfully'
-        ], 204);
+        ], 201);
     }
 
 }

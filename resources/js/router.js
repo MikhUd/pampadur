@@ -18,9 +18,9 @@ let router =  new VueRouter({
         {
             path: '/profile',
             name: 'profile',
-            component: () => import('./components/Profile'),
+            component: () => import('./components/datingCard/Profile'),
             meta: {
-                guest: false
+                auth: true
             }
         },
         {
@@ -53,6 +53,13 @@ let router =  new VueRouter({
 router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.guest)) {
         if (localStorage.getItem('user') !== null) {
+            next({
+                path: '/home'
+            })
+        }
+    }
+    if (to.matched.some(record => record.meta.auth)) {
+        if (localStorage.getItem('user') === null) {
             next({
                 path: '/home'
             })

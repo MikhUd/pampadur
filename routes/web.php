@@ -14,7 +14,7 @@ use App\Http\Controllers\MainController;
 */
 Route::group(['middleware' => 'auth'], function () {
     Route::post('/logout', [\App\Http\Controllers\Auth\AuthController::class, 'logout']);
-    Route::resource('/dating-card', \App\Http\Controllers\DatingCard\DatingCardController::class)->only(['update', 'store']);
+    Route::resource('/dating-card', \App\Http\Controllers\DatingCard\DatingCardController::class)->only(['update', 'store', 'index']);
     Route::get('/files/{path}', \App\Http\Controllers\GetPrivateFilesController::class)->where('path', '.*');
 });
 

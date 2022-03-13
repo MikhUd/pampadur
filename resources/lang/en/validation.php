@@ -145,6 +145,9 @@ return [
         'attribute-name' => [
             'rule-name' => 'custom-message',
         ],
+        'birth_date' => [
+            'max' => 'You are under 18'
+        ]
     ],
 
     /*
