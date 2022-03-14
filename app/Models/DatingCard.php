@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Contracts\HasImages;
 use App\Contracts\HasTags;
+use App\Contracts\HasUser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -13,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Models\Tag;
 
-class DatingCard extends Model implements HasTags, HasImages
+class DatingCard extends Model implements HasTags, HasImages, HasUser
 {
     use HasFactory;
 

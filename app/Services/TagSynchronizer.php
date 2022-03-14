@@ -18,6 +18,7 @@ class TagSynchronizer implements TagSynchronizerContract
 
     /**
      * Синхронизация тегов с БД
+     * 
      * @return void
      */
     public function sync(Collection $tags, HasTags $model): void

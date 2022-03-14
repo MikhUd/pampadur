@@ -105,7 +105,10 @@
                     </div>
                 </div>
             </div>
-            <div class="center">
+            <div class="mt-3">
+                <Map @setCoords="onSetCoords"></Map> 
+            </div>
+            <div class="center mt-3">
                 <button v-on:click.prevent="store" id="register"
                         class="rounded-full btn bg-gradient-to-r from-orange-400 to-rose-400 hover:from-rose-400 hover:to-orange-400"
                         type="button">
@@ -117,7 +120,11 @@
 </template>
 
 <script>
+    import Map from '../maps/Map.vue';
     export default {
+        components: {
+            Map
+        },
         data() {
             return {
                 form: {
@@ -273,9 +280,14 @@
                 }
                 if (!this.form.seeking_for) {
                     isBothCompleted = false;
-                    this.errors['seeking_for'] = 'Укажите тип объекта поисков';
+                    this.errors['seeking_for'] = 'Укажите кого ищете';
                 }
                 return isBothCompleted;
+            },
+            onSetCoords(data) {
+                console.log(123);
+                //this.location = coords;
+                //console.log(this.location);
             },
             checkAllFields() {
                 return this.checkBirthDate() &

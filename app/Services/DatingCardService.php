@@ -19,7 +19,7 @@ class DatingCardService implements DatingCardServiceContract
     private $tagSynchronizer;
     private $imageService;
 
-    public function __construct(DatingCardRepositoryContract $datingCardRepository,TagSynchronizerContract $tagSynchronizer, ImageServiceContract $imageService)
+    public function __construct(DatingCardRepositoryContract $datingCardRepository, TagSynchronizerContract $tagSynchronizer, ImageServiceContract $imageService)
     {
         $this->datingCardRepository = $datingCardRepository;
         $this->tagSynchronizer = $tagSynchronizer;
@@ -27,14 +27,16 @@ class DatingCardService implements DatingCardServiceContract
     }
 
     /**
-     * @return DatingCard
+     * Сохранение анкеты
+     * 
+     * @return JsonResponse
      */
     public function store(CreateDatingCardRequest $request): JsonResponse
     {
         if (auth()->user()->datingCard()->exists()) {
             return response()->json([
                 'success' => false,
-                'message' => 'User can only have one dating card'
+                'message' => 'User can only have one dating card',
             ], 203);
         }
 
@@ -47,9 +49,9 @@ class DatingCardService implements DatingCardServiceContract
                 Arr::except($requestFields, [
                     'tags',
                     'images',
-                 ])
+                ])
             );
-            $datingCard->user()->associate(auth()->user())->save();
+            $this->datingCardRepository->bindUser($datingCard, auth()->user());
 
             $this->tagSynchronizer->sync(
                 collect($requestFields['tags']),
@@ -58,13 +60,14 @@ class DatingCardService implements DatingCardServiceContract
 
             $this->imageService->attachImages(
                 $datingCard,
-                $requestFields['images']
+                $requestFields['images'],
             );
 
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
             Log::error('Saving dating card failed', ['id' => auth()->user()->id]);
+            
             return response()->json([
                 'success' => false,
                 'message' => $e,
@@ -74,7 +77,7 @@ class DatingCardService implements DatingCardServiceContract
         return response()->json([
             'success' => true,
             'datingCard' => $datingCard,
-            'message' => 'successfully',
+            'message' => 'Dating card successfully created',
         ], 201);
     }
 

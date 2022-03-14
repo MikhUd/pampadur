@@ -23,6 +23,8 @@ class UserService implements UserServiceContract
     }
 
     /**
+     * Закрепление роли к пользователю
+     * 
      * @return UserRole
      */
     public function bindRole(User $user, $role_code = self::DEFAULT_USER_ROLE_CODE): ?UserRole
@@ -46,6 +48,8 @@ class UserService implements UserServiceContract
     }
 
     /**
+     * Создание пользователя
+     * 
      * @return User
      */
     public function create(array $fields, string $role = self::DEFAULT_USER_ROLE_CODE): ?User

@@ -15,11 +15,21 @@ class UserRepository implements UserRepositoryContract
         $this->model = $user;
     }
 
+    /**
+     * Создание пользователя.
+     *
+     * @return User
+     */
     public function create(array $fields): User
     {
         return $this->model->create($fields);
     }
 
+    /**
+     * Прикрепление роли к пользователю.
+     *
+     * @return User
+     */
     public function bindRole(User $user, UserRole $role): User
     {
         $user->role()->associate($role);

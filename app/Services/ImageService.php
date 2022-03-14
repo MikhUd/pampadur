@@ -18,7 +18,8 @@ class ImageService implements ImageServiceContract
     }
 
     /**
-     * Закрепление изображений к модели
+     * Прикрепление изображений к модели
+     * 
      * @return void
      */
     public function attachImages(HasImages $model, array $images): void

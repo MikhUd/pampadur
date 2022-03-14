@@ -20,6 +20,8 @@ class AuthService implements AuthServiceContract
     }
 
     /**
+     * Логин
+     * 
      * @return JsonResponse
      */
     public function login(UserLoginRequest $request): JsonResponse
@@ -48,6 +50,8 @@ class AuthService implements AuthServiceContract
     }
 
     /**
+     * Регистрация
+     * 
      * @return JsonResponse
      */
     public function register(UserRegisterRequest $request): JsonResponse
@@ -72,6 +76,8 @@ class AuthService implements AuthServiceContract
     }
 
     /**
+     * Логаут
+     * 
      * @return JsonResponse
      */
     public function logout(Request $request): JsonResponse
