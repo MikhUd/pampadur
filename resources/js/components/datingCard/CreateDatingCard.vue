@@ -106,7 +106,7 @@
                 </div>
             </div>
             <div class="mt-3">
-                <Map @setCoords="onSetCoords"></Map> 
+                <Map @setCoords="onSetCoords"></Map>
             </div>
             <div class="center mt-3">
                 <button v-on:click.prevent="store" id="register"
@@ -176,13 +176,11 @@
                     formData.append(el[0], JSON.stringify(el[1]));
                 });
 
-                axios.post('/dating-card', formData, {
+                axios.post('/api/dating-card', formData, {
                     headers: {"Content-Type": "multipart/form-data"}
-                }).then((r) => {
-                    this.$store.dispatch('onDatingCardExists', r.data.datingCard);
-                    this.$emit('createDatingCard', {
-                        isDatingCardExists: true
-                    });
+                }).then((response) => {
+                    this.$store.dispatch('onDatingCardExists', response.data.datingCard);
+                    this.$emit('createDatingCard');
                 });
             },
             reactiveErrorsArray() {
@@ -284,10 +282,8 @@
                 }
                 return isBothCompleted;
             },
-            onSetCoords(data) {
+            onSetCoords() {
                 console.log(123);
-                //this.location = coords;
-                //console.log(this.location);
             },
             checkAllFields() {
                 return this.checkBirthDate() &

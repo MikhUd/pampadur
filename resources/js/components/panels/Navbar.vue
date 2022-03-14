@@ -42,7 +42,7 @@
         methods: {
             logout() {
                 this.$router.push('/home');
-                return this.$store.dispatch('logout');
+                this.$store.dispatch('onLogout');
             }
         }
     }

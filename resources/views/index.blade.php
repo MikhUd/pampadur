@@ -23,9 +23,6 @@
             }
         </style>
         <!--Храним авторизацию пользователя-->
-        <script>
-            window.auth_user = {!! json_encode($auth_user); !!};
-        </script>
         <script src="https://api-maps.yandex.ru/2.1/?apikey={{ env('YANDEX_API_KEY') }}&lang=ru_RU" type="text/javascript"></script>
     </head>
     <body class="antialiased">

@@ -52,14 +52,14 @@ let router =  new VueRouter({
 
 router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.guest)) {
-        if (localStorage.getItem('user') !== null) {
+        if (store.getters.isLoggedIn) {
             next({
                 path: '/home'
             })
         }
     }
     if (to.matched.some(record => record.meta.auth)) {
-        if (localStorage.getItem('user') === null) {
+        if (!store.getters.isLoggedIn) {
             next({
                 path: '/home'
             })

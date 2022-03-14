@@ -16,14 +16,12 @@
             });
 
             geolocation.get({
-            provider: 'browser',
-            mapStateAutoApply: true
+                provider: 'browser',
+                mapStateAutoApply: true
             }).then(function (result) {
                 result.geoObjects.options.set('preset', 'islands#blueCircleIcon');
                 myMap.geoObjects.add(result.geoObjects);
-                this.$emit('setCoords', {
-                    coords: result.geoObjects.position,
-                });
+                this.$emit('setCoords');
             });
             }
         }
@@ -31,5 +29,5 @@
 </script>
 
 <style scoped>
-    
+
 </style>

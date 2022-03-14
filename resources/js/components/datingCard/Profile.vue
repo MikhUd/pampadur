@@ -19,18 +19,15 @@ export default {
     },
     mounted() {
         this.isDatingCardExists = this.$store.getters.isDatingCardExists;
-        if (!this.isDatingCardExists) {
-            axios.get('/dating-card').then(response => {
-                if (response.data.status) {
-                    this.isDatingCardExists = response.data.status;
-                    this.$store.dispatch('onDatingCardExists', response.data.datingCard);
-                }
-            });
-        }
+
+        axios.get('/api/dating-card').then(response => {
+            this.isDatingCardExists = response.data.status;
+            this.$store.dispatch('onDatingCardExists', response.data.datingCard);
+        });
     },
     methods: {
-        onCreateDatingCard(data) {
-            this.isDatingCardExists = data.isDatingCardExists;
+        onCreateDatingCard() {
+            this.isDatingCardExists = true;
         }
     }
 }

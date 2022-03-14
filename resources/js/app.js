@@ -10,3 +10,5 @@ const app = new Vue({
     router,
     store,
 });
+
+window.axios.defaults.headers.common['Authorization'] = 'Bearer ' + app.$store.getters.getToken;

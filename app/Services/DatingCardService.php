@@ -28,7 +28,7 @@ class DatingCardService implements DatingCardServiceContract
 
     /**
      * Сохранение анкеты
-     * 
+     *
      * @return JsonResponse
      */
     public function store(CreateDatingCardRequest $request): JsonResponse
@@ -67,7 +67,7 @@ class DatingCardService implements DatingCardServiceContract
         } catch (\Exception $e) {
             DB::rollback();
             Log::error('Saving dating card failed', ['id' => auth()->user()->id]);
-            
+
             return response()->json([
                 'success' => false,
                 'message' => $e,
@@ -76,7 +76,7 @@ class DatingCardService implements DatingCardServiceContract
 
         return response()->json([
             'success' => true,
-            'datingCard' => $datingCard,
+            'datingCard' => $datingCard->withoutRelations(),
             'message' => 'Dating card successfully created',
         ], 201);
     }

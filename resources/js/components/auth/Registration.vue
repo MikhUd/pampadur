@@ -122,17 +122,16 @@
                     this.$set(this.$data, 'errors', this.errors);
                     return;
                 }
-                axios.post('/register', this.form)
+                axios.post('/api/register', this.form)
                 .then(response => {
                     if (response.data.success) {
-                        this.$store.dispatch('login', response.data.user);
+                        this.$store.dispatch('onLogin', response.data.token);
                         this.$router.push('/profile');
-                        M.toast({html: 'Успешная регистрация!'});
                     }
                 })
                 .catch(error => {
                     if (error.response.data.errors.email) {
-                        this.$set(this.$data, 'errors', {email: "Почта уже зарегана"});
+                        this.$set(this.$data, 'errors', {email: "Почта уже зарегистрирована"});
                     }
                 });
             }

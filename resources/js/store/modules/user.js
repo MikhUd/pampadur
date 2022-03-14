@@ -1,35 +1,32 @@
 import helper from "../../helpers";
 export default {
     state:{
-        user: localStorage.getItem('user') || null,
-        dating_card: localStorage.getItem('dating_card') || null,
+        token: localStorage.getItem('token') || null,
+        dating_card: JSON.parse(localStorage.getItem('dating_card')) || null,
     },
     mutations:{
-        setAuthUser(state, user) {
-            if (user === null) {
-                localStorage.removeItem('user');
-            } else {
-                localStorage.setItem('user', user);
+        setToken(state, token) {
+            localStorage.setItem('token', token);
+            if (token == null) {
+                localStorage.removeItem('token');
             }
-            state.user = user;
+            state.token = token;
         },
         setDatingCard(state, datingCard) {
-            if (datingCard === null) {
+            localStorage.setItem('dating_card', JSON.stringify(datingCard));
+            if (datingCard == null) {
                 localStorage.removeItem('dating_card');
-            } else {
-                localStorage.setItem('dating_card', datingCard);
             }
             state.dating_card = datingCard;
         }
     },
     actions: {
-        logout(store) {
-            helper.logout();
-            store.commit("setAuthUser", null);
-            store.commit("setDatingCard", null);
+        onLogin(store, token) {
+            store.commit("setToken", token);
         },
-        login(store, user) {
-            store.commit("setAuthUser", user);
+        onLogout(store) {
+            store.commit('setToken', null);
+            store.commit('setDatingCard', null);
         },
         onDatingCardExists(store, datingCard) {
             store.commit('setDatingCard', datingCard);
@@ -37,10 +34,13 @@ export default {
     },
     getters:{
         isLoggedIn(state) {
-            return !!state.user;
+            return !!state.token;
         },
         isDatingCardExists(state) {
             return !!state.dating_card;
+        },
+        getToken(state) {
+            return state.token;
         }
     }
 }

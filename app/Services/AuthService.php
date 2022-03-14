@@ -9,6 +9,7 @@ use App\Services\Interfaces\UserServiceContract;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class AuthService implements AuthServiceContract
 {
@@ -21,10 +22,10 @@ class AuthService implements AuthServiceContract
 
     /**
      * Логин
-     * 
+     *
      * @return JsonResponse
      */
-    public function login(UserLoginRequest $request): JsonResponse
+    public function token(UserLoginRequest $request): JsonResponse
     {
         if (auth()->user()) {
             return response()->json([
@@ -35,11 +36,9 @@ class AuthService implements AuthServiceContract
 
         if (auth()->attempt($request->all())) {
 
-            $request->session()->regenerate();
-
             return response()->json([
                 'success' => true,
-                'user' => auth()->user(),
+                'token' => auth()->user()->createToken(Str::random(5))->plainTextToken,
             ], 203);
         }
 
@@ -51,7 +50,7 @@ class AuthService implements AuthServiceContract
 
     /**
      * Регистрация
-     * 
+     *
      * @return JsonResponse
      */
     public function register(UserRegisterRequest $request): JsonResponse
@@ -60,36 +59,16 @@ class AuthService implements AuthServiceContract
             return response()->json([
                 'success' => false,
                 'message' => 'User is already logged in'
-            ], 204);
+            ]);
         }
 
         $user = $this->userService->create($request->all());
-        $request->session()->invalidate();
-        $request->session()->regenerate();
 
-        auth()->login($user);
+        $token = $user->createToken('test')->plainTextToken;
 
         return response()->json([
             'success' => true,
-            'user' => auth()->user(),
-        ], 203);
-    }
-
-    /**
-     * Логаут
-     * 
-     * @return JsonResponse
-     */
-    public function logout(Request $request): JsonResponse
-    {
-        Auth::logout();
-
-        $request->session()->invalidate();
-
-        $request->session()->regenerateToken();
-
-        return response()->json([
-            'success' => true
-        ], 204);
+            'token' => $token,
+        ], 201);
     }
 }

@@ -5,21 +5,14 @@
             <div class="center mt-5">
                 <button type="button" class="rounded-full btn bg-gradient-to-r from-orange-400 to-rose-400 hover:from-rose-400 hover:to-orange-400">
                     <router-link to="/registration">Создать аккаунт</router-link>
-                </button>  
+                </button>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-    export default {
-        mounted() {
-            
-        },
-        methods: {
-            
-        }
-    }
+    export default {}
 </script>
 
 <style lang="scss">

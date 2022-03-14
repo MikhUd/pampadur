@@ -28,10 +28,10 @@ class DatingCardController extends Controller
 
     public function index(): JsonResponse
     {
-        $datingCard = auth()->user()->datingCard();
+        $datingCard = auth()->user()->datingCard;
         return response()->json([
-            'status' => (bool)$datingCard->exists(),
-            'datingCard' => $datingCard
+            'status' => (bool)$datingCard,
+            'datingCard' => $datingCard ? $datingCard->withoutRelations() : null,
         ], 200);
     }
 }
