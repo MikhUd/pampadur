@@ -3,7 +3,18 @@ import VueRouter from 'vue-router';
 import store from './store';
 Vue.use(VueRouter);
 
-let router =  new VueRouter({
+
+let authGuard = function (to, from, next) {
+    if (!store.getters.isLoggedIn) next({name: 'login'});
+    else next();
+}
+
+let guestGuard = function (to, from, next) {
+    if (store.getters.isLoggedIn) next({name: 'home'});
+    else next();
+}
+
+const router =  new VueRouter({
     mode: 'history',
 
     routes: [
@@ -19,53 +30,26 @@ let router =  new VueRouter({
             path: '/profile',
             name: 'profile',
             component: () => import('./components/datingCard/Profile'),
-            meta: {
-                auth: true
-            }
+            beforeEnter: authGuard
         },
         {
             path: '/',
             name: 'welcome',
             component: () => import('./components/Welcome'),
-            meta: {
-                guest: true
-            }
         },
         {
             path: '/login',
             name: 'login',
             component: () => import('./components/auth/Login'),
-            meta: {
-                guest: true
-            }
+            beforeEnter: guestGuard
         },
         {
             path: '/registration',
             name: 'registration',
             component: () => import('./components/auth/Registration'),
-            meta: {
-                guest: true
-            }
+            beforeEnter: guestGuard
         }
     ]
-});
-
-router.beforeEach((to, from, next) => {
-    if (to.matched.some(record => record.meta.guest)) {
-        if (store.getters.isLoggedIn) {
-            next({
-                path: '/home'
-            })
-        }
-    }
-    if (to.matched.some(record => record.meta.auth)) {
-        if (!store.getters.isLoggedIn) {
-            next({
-                path: '/home'
-            })
-        }
-    }
-    next();
 });
 
 export default router;

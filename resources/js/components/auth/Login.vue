@@ -89,10 +89,10 @@
                     return;
                 }
 
-                axios.post('/api/token', this.form).then(response => {
+                axios.post('/api/get-token', this.form).then(response => {
                     if (response.data.success) {
-                        this.$router.push('/profile');
                         this.$store.dispatch('onLogin', response.data.token);
+                        this.$router.push('/profile');
                     } else {
                         this.$set(this.$data, 'errors', {'password': 'Неверный пароль'});
                     }

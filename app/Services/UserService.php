@@ -11,8 +11,6 @@ use Illuminate\Support\Facades\Log;
 
 class UserService implements UserServiceContract
 {
-    const DEFAULT_USER_ROLE_CODE = 'xdDsklw3w';
-
     private $userRepository;
     private $userRoleRepository;
 
@@ -24,10 +22,10 @@ class UserService implements UserServiceContract
 
     /**
      * Закрепление роли к пользователю
-     * 
+     *
      * @return UserRole
      */
-    public function bindRole(User $user, $role_code = self::DEFAULT_USER_ROLE_CODE): ?UserRole
+    public function bindRole(User $user, $role_code): ?UserRole
     {
         $role = $this->userRoleRepository->firstOrCreate([
             'name' => $role_code,
@@ -49,13 +47,13 @@ class UserService implements UserServiceContract
 
     /**
      * Создание пользователя
-     * 
+     *
      * @return User
      */
-    public function create(array $fields, string $role = self::DEFAULT_USER_ROLE_CODE): ?User
+    public function create(array $fields, string $role = User::DEFAULT_USER_ROLE_CODE): ?User
     {
         $fields['role_code'] = $role;
-        
+
         if ($user = $this->userRepository->create($fields)) {
            return $user;
         }

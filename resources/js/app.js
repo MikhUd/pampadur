@@ -4,11 +4,16 @@ import router from './router';
 import store from './store';
 
 Vue.component('index', require('./components/index.vue').default);
-
 const app = new Vue({
     el: '#app',
     router,
     store,
 });
 
-window.axios.defaults.headers.common['Authorization'] = 'Bearer ' + app.$store.getters.getToken;
+axios.interceptors.request.use(config => {
+    if(localStorage.getItem('token')) {
+        config.headers.common['Authorization'] = 'Bearer ' + store.getters.getToken;
+    }
+    return config;
+});
+

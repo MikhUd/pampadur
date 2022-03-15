@@ -9,7 +9,9 @@ use Illuminate\Http\Request;
 
 interface AuthServiceContract
 {
-    public function token(UserLoginRequest $request): JsonResponse;
+    public function getToken(UserLoginRequest $request): JsonResponse;
 
     public function register(UserRegisterRequest $request): JsonResponse;
+
+    public function deleteToken(): JsonResponse;
 }

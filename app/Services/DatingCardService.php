@@ -37,7 +37,7 @@ class DatingCardService implements DatingCardServiceContract
             return response()->json([
                 'success' => false,
                 'message' => 'User can only have one dating card',
-            ], 203);
+            ], 400);
         }
 
         $requestFields = $request->toArray();
@@ -70,7 +70,7 @@ class DatingCardService implements DatingCardServiceContract
 
             return response()->json([
                 'success' => false,
-                'message' => $e,
+                'message' => "Exception while creating",
             ], 403);
         }
 

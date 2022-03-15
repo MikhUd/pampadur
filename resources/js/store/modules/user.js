@@ -24,7 +24,8 @@ export default {
         onLogin(store, token) {
             store.commit("setToken", token);
         },
-        onLogout(store) {
+        async onLogout(store) {
+            await helper.onLogout();
             store.commit('setToken', null);
             store.commit('setDatingCard', null);
         },

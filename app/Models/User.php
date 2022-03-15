@@ -15,6 +15,7 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    const DEFAULT_USER_ROLE_CODE = 'xdDsklw3w';
     /**
      * Атрибуты доступные для массового заполнения.
      *

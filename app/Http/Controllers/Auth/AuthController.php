@@ -17,13 +17,18 @@ class AuthController extends Controller
         $this->authService = $authService;
     }
 
-    public function token(UserLoginRequest $request)
+    public function getToken(UserLoginRequest $request)
     {
-        return $this->authService->token($request);
+        return $this->authService->getToken($request);
     }
 
     public function register(UserRegisterRequest $request)
     {
         return $this->authService->register($request);
+    }
+
+    public function deleteToken()
+    {
+        return $this->authService->deleteToken();
     }
 }
