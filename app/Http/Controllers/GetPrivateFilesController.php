@@ -2,27 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Image;
-use Illuminate\Support\Facades\Gate;
+use App\Services\Interfaces\PrivateFilesServiceContract;
+use App\Services\PrivateFilesService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class GetPrivateFilesController extends Controller
 {
-    public function __invoke(Request $request, $path)
+    private function getPrivateFilesService()
     {
-        if (!($image = Image::where('path', $path)->first())) {
-            return response()->json([
-                'status' => 'false',
-                'message' => 'Image not found'
-            ]);
-        }
-        if (!Gate::allows('view-image', $image)) {
-            return response()->json([
-                'status' => 'false',
-                'message' => "You don't have permission"
-            ]);
-        }
-        return response()->file(Storage::path($path));
+        return app(PrivateFilesServiceContract::class);
+    }
+    public function __invoke(Request $request): JsonResponse
+    {
+        return $this->getPrivateFilesService()->getFiles($request);
     }
 }

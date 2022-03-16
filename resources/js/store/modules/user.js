@@ -69,6 +69,9 @@ export default {
         },
         getActiveSessionStatus(state) {
             return state.isActiveSession.status;
+        },
+        getDatingCard(state) {
+            return state.dating_card;
         }
     }
 }

@@ -20,8 +20,10 @@ use App\Services\ImageService;
 use App\Services\Interfaces\AuthServiceContract;
 use App\Services\Interfaces\DatingCardServiceContract;
 use App\Services\Interfaces\ImageServiceContract;
+use App\Services\Interfaces\PrivateFilesServiceContract;
 use App\Services\Interfaces\TagSynchronizerContract;
 use App\Services\Interfaces\UserServiceContract;
+use App\Services\PrivateFilesService;
 use App\Services\TagSynchronizer;
 use App\Services\UserService;
 use Illuminate\Support\ServiceProvider;
@@ -61,6 +63,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(DatingCardServiceContract::class, DatingCardService::class);
 
         $this->app->bind(ImageServiceContract::class, ImageService::class);
+
+        $this->app->bind(PrivateFilesServiceContract::class, PrivateFilesService::class);
 
     }
 

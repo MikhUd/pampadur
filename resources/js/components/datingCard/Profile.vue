@@ -1,18 +1,19 @@
 <template>
     <div v-if="this.isDatingCardExists">
-        Koke jambo;
+        <EditDatingCard></EditDatingCard>
     </div>
     <div v-else>
         <CreateDatingCard @createDatingCard="onCreateDatingCard"></CreateDatingCard>
-        <Session/>
     </div>
 </template>
 <script>
 import CreateDatingCard from './CreateDatingCard';
+import EditDatingCard from './EditDatingCard';
 import Session from '../auth/Session.vue';
 export default {
     components: {
         CreateDatingCard,
+        EditDatingCard,
         Session,
     },
     data() {
@@ -22,7 +23,7 @@ export default {
     },
     mounted() {
         this.isDatingCardExists = this.$store.getters.isDatingCardExists;
-        
+
         axios.get('/api/dating-card').then(response => {
             this.isDatingCardExists = response.data.status;
             this.$store.dispatch('onDatingCardExists', response.data.datingCard);

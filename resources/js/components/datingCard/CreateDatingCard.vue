@@ -2,7 +2,10 @@
     <form class="mx-auto mt-5" style="width: 100%; max-width: 1200px">
         <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
             <h2 class="center">Создайте анкету</h2>
-            <div class="d-flex mt-3 justify-content-between form">
+            <div style="height: 250px; width: 500px">
+            <img src="https://s5o.ru/storage/simple/cyber/edt/56/61/01/50/cyberebeeae34e69.jpg" style="width: 100%; display: block;" class="imagez">
+            </div>
+                <div class="d-flex mt-3 justify-content-between form">
                 <div class="column">
                     <div class="mb-4">
                         <label class="block text-gray-700 text-sm font-bold mb-2" for="name">
@@ -83,7 +86,7 @@
                                 <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="True">
                                     <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                 </svg>
-                                <div class="flex text-sm text-gray-600">
+                                <div class="flex text-sm text-gray-600 d-flex justify-content-center">
                                     <label for="file-upload" class="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
                                         <span>Загрузить файл</span>
                                         <input multiple @change="handleImageUpload" ref="imageInput" id="file-upload" name="file-upload" type="file" class="sr-only">
@@ -93,7 +96,7 @@
                                 <p class="text-xs text-gray-500">
                                     PNG, JPG до 10 МБ
                                 </p>
-                                <div v-if="images" id="preview">
+                                <div v-if="images" id="preview" class="d-flex">
                                     <div class="border-dashed border-2 border-gray-300 image-preview" v-for="image in images" :key="image.url">
                                         <i @click="deleteFile(image.url)" class="tiny material-icons right absolute delete-image">cancel</i>
                                         <img :src="image.url"/>
@@ -121,6 +124,7 @@
 
 <script>
     import Map from '../maps/Map.vue';
+    import Cropper from 'cropperjs';
     export default {
         components: {
             Map
@@ -144,6 +148,13 @@
         },
         name: 'Profile',
         mounted() {
+            //Вешаешь эту штуку на элемент фотки
+            let f = new Cropper(document.getElementsByClassName('imagez')[0], {
+                aspectRatio: 4/7,
+            });
+            //Ну тут мы получаем base64 с обрезанной части. чтобы в фотку засунуть это нужно в src указать <img>
+            setTimeout(()=>{   console.log(f.getCroppedCanvas().toDataURL());}, 1000);
+
             this.datePicker = M.Datepicker.init(document.querySelectorAll('.datepicker'), {
                 'format' : 'yyyy-mm-d'
             });
@@ -206,9 +217,6 @@
                 }
                 this.checkImages();
                 e.target.value = null;
-            },
-            onDrop() {
-                //console.log(123);
             },
             deleteFile(url) {
                 let fileToDelete = this.images.find(x => x.url === url);

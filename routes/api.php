@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::resource('/dating-card', \App\Http\Controllers\DatingCard\DatingCardController::class)->only(['update', 'store', 'index']);
-    Route::get('/files/{path}', \App\Http\Controllers\GetPrivateFilesController::class)->where('path', '.*');
+    Route::get('/files', \App\Http\Controllers\GetPrivateFilesController::class);
     Route::post('/delete-token', [\App\Http\Controllers\Auth\AuthController::class, 'deleteToken']);
 });
 

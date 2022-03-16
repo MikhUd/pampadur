@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\DatingCard\CreateDatingCardRequest;
 use App\Services\Interfaces\DatingCardServiceContract;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class DatingCardController extends Controller
 {
@@ -26,12 +27,12 @@ class DatingCardController extends Controller
 
     }
 
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         $datingCard = auth()->user()->datingCard;
         return response()->json([
             'status' => (bool)$datingCard,
-            'datingCard' => $datingCard ? $datingCard->withoutRelations() : null,
+            'datingCard' => $datingCard,
         ], 200);
     }
 }
