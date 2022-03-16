@@ -34,6 +34,8 @@ class AuthService implements AuthServiceContract
         }
 
         $user = User::where('email', $request->email)->first();
+        
+        $user->tokens()->delete();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([

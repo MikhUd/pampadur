@@ -16,12 +16,12 @@
                 exact
                 active-class="active"
                 :class="item.class">
-                    <a class="waves-effect waves-light" href="#">
+                    <a class="waves-effect waves-light" href="">
                         {{item.title}}
                     </a>
             </router-link>
             <li class="right" v-if="this.$store.getters.isLoggedIn">
-                <a @click="logout()" class="waves-effect waves-light" href="#">
+                <a @click="logout" class="waves-effect waves-light" href="">
                     Выйти
                 </a>
             </li>
@@ -31,8 +31,6 @@
 </template>
 
 <script>
-    import store from "../../store";
-
     export default {
         computed: {
             nav() {
@@ -41,7 +39,6 @@
         },
         methods: {
             logout() {
-                this.$router.push('/home');
                 this.$store.dispatch('onLogout');
             }
         }

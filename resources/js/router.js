@@ -22,9 +22,6 @@ const router =  new VueRouter({
             path: '/home',
             name: 'home',
             component: () => import('./components/Home'),
-            meta: {
-                guest: false
-            }
         },
         {
             path: '/profile',
