@@ -1,10 +1,14 @@
 <template>
+
     <form class="mx-auto mt-5" style="width: 100%; max-width: 1200px">
+        <div class="overlay" id="modalOverlay"></div>
+        <div class="modal-popup" style="width: 70%" id="modal">
+            <button id="cropButton" type="button" class="d-block m-auto center rounded-full btn bg-gradient-to-r from-orange-400 to-rose-400 hover:from-rose-400 hover:to-orange-400">
+                <p>Сохранить</p>
+            </button>
+        </div>
         <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
             <h2 class="center">Создайте анкету</h2>
-            <div style="height: 250px; width: 500px">
-            <img src="https://s5o.ru/storage/simple/cyber/edt/56/61/01/50/cyberebeeae34e69.jpg" style="width: 100%; display: block;" class="imagez">
-            </div>
                 <div class="d-flex mt-3 justify-content-between form">
                 <div class="column">
                     <div class="mb-4">
@@ -142,18 +146,15 @@
                 datePicker: null,
                 chips: null,
                 images: [],
+                croppingImages: [],
                 errors: {},
                 location: [],
             }
         },
         name: 'Profile',
         mounted() {
-            //Вешаешь эту штуку на элемент фотки
-            let f = new Cropper(document.getElementsByClassName('imagez')[0], {
-                aspectRatio: 4/7,
-            });
-            //Ну тут мы получаем base64 с обрезанной части. чтобы в фотку засунуть это нужно в src указать <img>
-            setTimeout(()=>{   console.log(f.getCroppedCanvas().toDataURL());}, 1000);
+
+
 
             this.datePicker = M.Datepicker.init(document.querySelectorAll('.datepicker'), {
                 'format' : 'yyyy-mm-d'
@@ -208,14 +209,64 @@
                 Object.values(this.chips[0].chipsData).map(el => this.form.tags.push(el.tag));
                 this.checkTags();
             },
+            startCropping() {
+                const overlay = document.getElementById('modalOverlay');
+                const modal = document.getElementById('modal');
+                const cropButton = document.getElementById('cropButton');
+                let croppers = [];
+
+                modal.style.display = "unset";
+                overlay.style.display = "unset";
+                this.croppingImages.map((el) => {
+                    let image = new Image();
+                    image.src = el.url;
+                    let imageDiv = document.createElement('div');
+                    imageDiv.style.maxWidth = "80%";
+                    imageDiv.style.margin = "20px auto";
+                    imageDiv.appendChild(image);
+                    modal.prepend(imageDiv);
+
+                    croppers.push(new Cropper(image, {
+                        aspectRatio: 2/3,
+                        autoCropArea: true,
+                        minContainerWidth: 150,
+                        minCanvasWidth: 200,
+                        minCanvasHeight: 300,
+                        zoomOnWheel: false,
+                    }));
+                });
+                let dataURLtoFile = (dataurl, filename) => {
+                    var arr = dataurl.split(','),
+                        mime = arr[0].match(/:(.*?);/)[1],
+                        bstr = atob(arr[1]),
+                        n = bstr.length,
+                        u8arr = new Uint8Array(n);
+                    while(n--){
+                        u8arr[n] = bstr.charCodeAt(n);
+                    }
+                    let file = new File([u8arr], filename, {type:mime});
+                    file['url'] = URL.createObjectURL(file);
+                    return file;
+                };
+                cropButton.onclick = () => {
+                    croppers.map((el) => {
+                       let name = (Math.random() + 1).toString(36).substring(7);
+                       this.images.push(dataURLtoFile(el.getCroppedCanvas().toDataURL(), name + ".png"));
+                    });
+                    this.croppingImages = [];
+                    modal.innerHTML = "";
+                    modal.appendChild(cropButton);
+                    modal.style.display = "none";
+                    overlay.style.display = "none";
+                    this.checkImages();
+                };
+            },
             handleImageUpload(e) {
                 for (let file of this.$refs.imageInput.files) {
                     file['url'] = URL.createObjectURL(file);
-                    if (!this.images.find(x => x.name === file.name)) {
-                        this.images.push(file);
-                    }
+                    this.croppingImages.push(file)
                 }
-                this.checkImages();
+                this.startCropping();
                 e.target.value = null;
             },
             deleteFile(url) {
@@ -308,6 +359,7 @@
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+
     h2 {
         font-family: 'Pacifico', cursive;
         font-size: 2rem;

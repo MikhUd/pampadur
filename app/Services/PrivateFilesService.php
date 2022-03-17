@@ -2,8 +2,6 @@
 
 namespace App\Services;
 
-
-
 use App\Models\Image;
 use App\Services\Interfaces\PrivateFilesServiceContract;
 use Illuminate\Http\JsonResponse;
