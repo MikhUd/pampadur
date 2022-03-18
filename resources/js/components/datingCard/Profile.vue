@@ -1,9 +1,12 @@
 <template>
-    <div v-if="this.isDatingCardExists">
-        <EditDatingCard></EditDatingCard>
-    </div>
-    <div v-else>
-        <CreateDatingCard @createDatingCard="onCreateDatingCard"></CreateDatingCard>
+    <div>
+        <div v-if="this.isDatingCardExists">
+            <EditDatingCard></EditDatingCard>
+        </div>
+        <div v-else>
+            <CreateDatingCard @createDatingCard="onCreateDatingCard"></CreateDatingCard>
+        </div>
+        <Session/>
     </div>
 </template>
 <script>

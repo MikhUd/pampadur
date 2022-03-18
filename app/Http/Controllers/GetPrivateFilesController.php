@@ -3,18 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Services\Interfaces\PrivateFilesServiceContract;
-use App\Services\PrivateFilesService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class GetPrivateFilesController extends Controller
 {
-    private function getPrivateFilesService()
+    private $privateFilesService;
+
+    public function __construct(PrivateFilesServiceContract $privateFilesService)
     {
-        return app(PrivateFilesServiceContract::class);
+        $this->privateFilesService = $privateFilesService;
     }
+
     public function __invoke(Request $request): JsonResponse
     {
-        return $this->getPrivateFilesService()->getFiles($request);
+        return $this->privateFilesService->getFiles($request);
     }
 }

@@ -7,5 +7,5 @@ use Illuminate\Support\Collection;
 
 interface TagSynchronizerContract
 {
-    public function sync(Collection $tags, HasTags $model): void;
+    public function sync(HasTags $model, Collection $tags): void;
 }

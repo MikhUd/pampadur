@@ -128,7 +128,7 @@
 
 <script>
     import Map from '../maps/Map.vue';
-    import Cropper from 'cropperjs';
+    import helper from '../../helpers/index';
     export default {
         components: {
             Map
@@ -153,9 +153,6 @@
         },
         name: 'Profile',
         mounted() {
-
-
-
             this.datePicker = M.Datepicker.init(document.querySelectorAll('.datepicker'), {
                 'format' : 'yyyy-mm-d'
             });
@@ -169,6 +166,7 @@
                 if (!this.checkAllFields()) {
                     return;
                 }
+
                 let coords = [];
 
                 if (navigator.geolocation) {
@@ -178,7 +176,7 @@
                     });
                     this.location.push(coords[0], coords[1]);
                 }
-                //console.log(coords);
+
                 let formData = new FormData();
                 Object.entries(this.images).map(el => {
                     formData.append('images[]', el[1]);
@@ -225,34 +223,15 @@
                     imageDiv.style.margin = "20px auto";
                     imageDiv.appendChild(image);
                     modal.prepend(imageDiv);
-
-                    croppers.push(new Cropper(image, {
-                        aspectRatio: 2/3,
-                        autoCropArea: true,
-                        minContainerWidth: 150,
-                        minCanvasWidth: 200,
-                        minCanvasHeight: 300,
-                        zoomOnWheel: false,
-                    }));
+                    
+                    croppers.push(helper.getCropperInstance(image));
                 });
-                let dataURLtoFile = (dataurl, filename) => {
-                    var arr = dataurl.split(','),
-                        mime = arr[0].match(/:(.*?);/)[1],
-                        bstr = atob(arr[1]),
-                        n = bstr.length,
-                        u8arr = new Uint8Array(n);
-                    while(n--){
-                        u8arr[n] = bstr.charCodeAt(n);
-                    }
-                    let file = new File([u8arr], filename, {type:mime});
-                    file['url'] = URL.createObjectURL(file);
-                    return file;
-                };
                 cropButton.onclick = () => {
                     croppers.map((el) => {
                        let name = (Math.random() + 1).toString(36).substring(7);
-                       this.images.push(dataURLtoFile(el.getCroppedCanvas().toDataURL(), name + ".png"));
+                       this.images.push(helper.dataURLtoFile(el.getCroppedCanvas().toDataURL(), name + ".png"));
                     });
+
                     this.croppingImages = [];
                     modal.innerHTML = "";
                     modal.appendChild(cropButton);
@@ -358,10 +337,10 @@
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Indie+Flower&display=swap');
 
     h2 {
-        font-family: 'Pacifico', cursive;
+        font-family: 'Abril Fatface', cursive;
         font-size: 2rem;
     }
     .image-preview {

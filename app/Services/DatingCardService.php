@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Http\Requests\DatingCard\CreateDatingCardRequest;
-use App\Models\DatingCard;
 use App\Repositories\Interfaces\DatingCardRepositoryContract;
 use App\Services\Interfaces\DatingCardServiceContract;
 use App\Services\Interfaces\ImageServiceContract;
@@ -33,7 +32,9 @@ class DatingCardService implements DatingCardServiceContract
      */
     public function store(CreateDatingCardRequest $request): JsonResponse
     {
-        if (auth()->user()->datingCard()->exists()) {
+        $user = auth()->user();
+        
+        if ($user->datingCard()->exists()) {
             return response()->json([
                 'success' => false,
                 'message' => 'User can only have one dating card',
@@ -51,11 +52,11 @@ class DatingCardService implements DatingCardServiceContract
                     'images',
                 ])
             );
-            $this->datingCardRepository->bindUser($datingCard, auth()->user());
+            $this->datingCardRepository->bindUser($datingCard, $user);
 
             $this->tagSynchronizer->sync(
+                $datingCard,
                 collect($requestFields['tags']),
-                $datingCard
             );
 
             $this->imageService->attachImages(
@@ -66,7 +67,7 @@ class DatingCardService implements DatingCardServiceContract
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
-            Log::error('Saving dating card failed', ['id' => auth()->user()->id]);
+            Log::error('Saving dating card failed', ['id' => $user->id]);
 
             return response()->json([
                 'success' => false,

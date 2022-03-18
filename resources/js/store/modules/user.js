@@ -50,7 +50,7 @@ export default {
 
                 commit('setActiveSessionTimer', setTimeout(function () {
                     commit('setActiveSessionStatus', false);
-                }, 5 * 1000));
+                }, 20 * 60 * 1000));
             } else {
                 commit('setActiveSessionStatus', true);
                 //this.onLogout

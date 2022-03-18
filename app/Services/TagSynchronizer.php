@@ -21,7 +21,7 @@ class TagSynchronizer implements TagSynchronizerContract
      * 
      * @return void
      */
-    public function sync(Collection $tags, HasTags $model): void
+    public function sync(HasTags $model, Collection $tags): void
     {
         $tagsToAttach = function($tags, $model) {
             foreach ($tags as $tag => $name) {

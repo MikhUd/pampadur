@@ -20,7 +20,7 @@ class AuthService implements AuthServiceContract
     }
 
     /**
-     * Логин
+     * Логин и выдача токена
      *
      * @return JsonResponse
      */
@@ -51,7 +51,7 @@ class AuthService implements AuthServiceContract
     }
 
     /**
-     * Регистрация
+     * Регистрация и выдача токена
      *
      * @return JsonResponse
      */
@@ -74,6 +74,11 @@ class AuthService implements AuthServiceContract
         ], 201);
     }
 
+    /**
+     * Удаление токена
+     *
+     * @return JsonResponse
+     */
     public function deleteToken(): JsonResponse
     {
         auth()->user()->currentAccessToken()->delete();

@@ -4,7 +4,7 @@
         computed: {
             sessionStatus() { 
                 return this.$store.getters.getActiveSessionStatus;    
-            }
+            },
         },
         methods: {
             setActiveSession() {
@@ -15,7 +15,7 @@
             sessionStatus(newValue, oldValue) {
                 this.$store.dispatch('onLogout');
                 this.$router.push('/home');
-            }
+            },
         },
         beforeMount() {
             document.addEventListener('click', this.setActiveSession);
