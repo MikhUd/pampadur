@@ -9,16 +9,14 @@ use App\Services\Interfaces\TagSynchronizerContract;
 
 class TagSynchronizer implements TagSynchronizerContract
 {
-    private $tagRepository;
 
-    public function __construct(TagRepositoryContract $tagRepository)
-    {
-        $this->tagRepository = $tagRepository;
-    }
+    public function __construct(
+        private TagRepositoryContract $tagRepository
+    ) {}
 
     /**
      * Синхронизация тегов с БД
-     * 
+     *
      * @return void
      */
     public function sync(HasTags $model, Collection $tags): void
@@ -44,6 +42,6 @@ class TagSynchronizer implements TagSynchronizerContract
             $tagsToDetach($oldTags, $model);
         } else {
             $tagsToAttach($tags, $model);
-        }  
+        }
     }
 }

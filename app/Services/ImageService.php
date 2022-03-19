@@ -10,16 +10,14 @@ use Illuminate\Support\Facades\Storage;
 
 class ImageService implements ImageServiceContract
 {
-    private $datingCardRepository;
 
-    public function __construct(DatingCardRepositoryContract $datingCardRepository)
-    {
-        $this->datingCardRepository = $datingCardRepository;
-    }
+    public function __construct(
+        private DatingCardRepositoryContract $datingCardRepository
+    ) {}
 
     /**
      * Прикрепление изображений к модели
-     * 
+     *
      * @return void
      */
     public function attachImages(HasImages $model, array $images): void

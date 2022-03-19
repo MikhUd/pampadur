@@ -10,14 +10,12 @@ use Illuminate\Http\Request;
 
 class DatingCardController extends Controller
 {
-    private $datingCardService;
 
-    public function __construct(DatingCardServiceContract $datingCardService)
-    {
-        $this->datingCardService = $datingCardService;
-    }
+    public function __construct(
+        private DatingCardServiceContract $datingCardService
+    ) {}
 
-    public function store(CreateDatingCardRequest $request)
+    public function store(CreateDatingCardRequest $request): JsonResponse
     {
         return $this->datingCardService->store($request);
     }

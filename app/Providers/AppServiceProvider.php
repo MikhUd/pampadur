@@ -14,7 +14,7 @@ use App\Repositories\Interfaces\UserRoleRepositoryContract;
 use App\Repositories\TagRepository;
 use App\Repositories\UserRepository;
 use App\Repositories\UserRoleRepository;
-use App\Services\Auth\AuthService;
+use App\Services\AuthService;
 use App\Services\DatingCardService;
 use App\Services\ImageService;
 use App\Services\Interfaces\AuthServiceContract;
@@ -38,9 +38,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(AuthServiceContract::class, AuthService::class);
-
-        $this->app->bind(UserRepositoryContract::class, function () {
+       $this->app->bind(UserRepositoryContract::class, function () {
             return new UserRepository(new User());
         });
 
@@ -55,6 +53,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(TagRepositoryContract::class, function () {
             return new TagRepository(new Tag());
         });
+
+        $this->app->bind(AuthServiceContract::class, AuthService::class);
 
         $this->app->bind(TagSynchronizerContract::class, TagSynchronizer::class);
 

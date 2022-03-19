@@ -8,12 +8,10 @@ use Illuminate\Http\Request;
 
 class GetPrivateFilesController extends Controller
 {
-    private $privateFilesService;
 
-    public function __construct(PrivateFilesServiceContract $privateFilesService)
-    {
-        $this->privateFilesService = $privateFilesService;
-    }
+    public function __construct(
+        private PrivateFilesServiceContract $privateFilesService
+    ) {}
 
     public function __invoke(Request $request): JsonResponse
     {

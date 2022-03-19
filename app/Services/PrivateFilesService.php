@@ -15,14 +15,14 @@ class PrivateFilesService implements PrivateFilesServiceContract
 {
     use CacheKeys;
 
-    private $options = [
+    private array $options = [
         'path' => 'Path',
         'dating_card' => 'DatingCard',
     ];
 
     /**
      * Получение изображения по путю
-     * 
+     *
      * @return JsonResponse
      */
     private function getByPath(string $path): JsonResponse
@@ -45,7 +45,7 @@ class PrivateFilesService implements PrivateFilesServiceContract
 
     /**
      * Получение изображений по анкете
-     * 
+     *
      * @return JsonResponse
      */
     private function getByDatingCard(): JsonResponse
@@ -67,7 +67,7 @@ class PrivateFilesService implements PrivateFilesServiceContract
 
     /**
      * Получение приватных файлов
-     * 
+     *
      * @return JsonResponse
      */
     public function getFiles(Request $request): JsonResponse
@@ -86,7 +86,7 @@ class PrivateFilesService implements PrivateFilesServiceContract
 
     /**
      * Получение успешного ответа
-     * 
+     *
      * @return JsonResponse
      */
     private function getSuccessfullyResponse(array $items): JsonResponse

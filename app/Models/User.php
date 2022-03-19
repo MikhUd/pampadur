@@ -54,7 +54,7 @@ class User extends Authenticatable
      */
     public $timestamps = true;
 
-    public function setPasswordAttribute($value)
+    public function setPasswordAttribute($value): void
     {
         $this->attributes['password'] = bcrypt($value);
     }
@@ -64,7 +64,7 @@ class User extends Authenticatable
      *
      * @return BelongsTo
      */
-    public function role()
+    public function role(): BelongsTo
     {
         return $this->belongsTo(UserRole::class, 'role_code', 'code');
     }
@@ -74,7 +74,7 @@ class User extends Authenticatable
      *
      * @return HasOne
      */
-    public function datingCard()
+    public function datingCard(): HasOne
     {
         return $this->hasOne(DatingCard::class);
     }

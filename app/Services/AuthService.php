@@ -12,12 +12,10 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthService implements AuthServiceContract
 {
-    private $userService;
 
-    public function __construct(UserServiceContract $userService)
-    {
-        $this->userService = $userService;
-    }
+    public function __construct(
+        private UserServiceContract $userService
+    ) {}
 
     /**
      * Логин и выдача токена
@@ -30,24 +28,25 @@ class AuthService implements AuthServiceContract
             return response()->json([
                 'success' => false,
                 'message' => 'User is already logged in'
-            ], 400);
+            ]);
         }
 
         $user = User::where('email', $request->email)->first();
-        
-        $user->tokens()->delete();
+
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Password is incorrect',
-            ], 400);
+            ]);
         }
+
+        $user->tokens()->delete();
 
         return response()->json([
             'success' => true,
             'token' => $user->createToken('auth_token')->plainTextToken,
-        ], 200);
+        ]);
     }
 
     /**

@@ -14,16 +14,12 @@ use Illuminate\Support\Facades\Log;
 
 class DatingCardService implements DatingCardServiceContract
 {
-    private $datingCardRepository;
-    private $tagSynchronizer;
-    private $imageService;
 
-    public function __construct(DatingCardRepositoryContract $datingCardRepository, TagSynchronizerContract $tagSynchronizer, ImageServiceContract $imageService)
-    {
-        $this->datingCardRepository = $datingCardRepository;
-        $this->tagSynchronizer = $tagSynchronizer;
-        $this->imageService = $imageService;
-    }
+    public function __construct(
+        private DatingCardRepositoryContract $datingCardRepository,
+        private TagSynchronizerContract $tagSynchronizer,
+        private ImageServiceContract $imageService
+    ){}
 
     /**
      * Сохранение анкеты
@@ -33,7 +29,7 @@ class DatingCardService implements DatingCardServiceContract
     public function store(CreateDatingCardRequest $request): JsonResponse
     {
         $user = auth()->user();
-        
+
         if ($user->datingCard()->exists()) {
             return response()->json([
                 'success' => false,

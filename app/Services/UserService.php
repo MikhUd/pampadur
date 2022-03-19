@@ -11,14 +11,11 @@ use Illuminate\Support\Facades\Log;
 
 class UserService implements UserServiceContract
 {
-    private $userRepository;
-    private $userRoleRepository;
 
-    public function __construct(UserRepositoryContract $userRepository, UserRoleRepositoryContract $userRoleRepository)
-    {
-        $this->userRepository = $userRepository;
-        $this->userRoleRepository = $userRoleRepository;
-    }
+    public function __construct(
+        private UserRepositoryContract $userRepository,
+        private UserRoleRepositoryContract $userRoleRepository
+    ) {}
 
     /**
      * Закрепление роли к пользователю

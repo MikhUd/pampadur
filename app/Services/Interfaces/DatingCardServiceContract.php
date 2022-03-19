@@ -7,5 +7,5 @@ use Illuminate\Http\JsonResponse;
 
 interface DatingCardServiceContract
 {
-    public function store(CreateDatingCardRequest $request);
+    public function store(CreateDatingCardRequest $request): JsonResponse;
 }
