@@ -21,7 +21,7 @@ class PrivateFilesService implements PrivateFilesServiceContract
     ];
 
     /**
-     * Получение изображения по путю
+     * Получение изображения по путю.
      *
      * @return JsonResponse
      */
@@ -44,7 +44,7 @@ class PrivateFilesService implements PrivateFilesServiceContract
     }
 
     /**
-     * Получение изображений по анкете
+     * Получение изображений по анкете.
      *
      * @return JsonResponse
      */
@@ -66,7 +66,7 @@ class PrivateFilesService implements PrivateFilesServiceContract
     }
 
     /**
-     * Получение приватных файлов
+     * Получение приватных файлов.
      *
      * @return JsonResponse
      */
@@ -85,7 +85,7 @@ class PrivateFilesService implements PrivateFilesServiceContract
     }
 
     /**
-     * Получение успешного ответа
+     * Получение успешного ответа.
      *
      * @return JsonResponse
      */

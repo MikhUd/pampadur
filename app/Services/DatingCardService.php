@@ -7,6 +7,7 @@ use App\Repositories\Interfaces\DatingCardRepositoryContract;
 use App\Services\Interfaces\DatingCardServiceContract;
 use App\Services\Interfaces\ImageServiceContract;
 use App\Services\Interfaces\TagSynchronizerContract;
+use App\Services\Interfaces\UserServiceContract;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
@@ -18,11 +19,12 @@ class DatingCardService implements DatingCardServiceContract
     public function __construct(
         private DatingCardRepositoryContract $datingCardRepository,
         private TagSynchronizerContract $tagSynchronizer,
-        private ImageServiceContract $imageService
+        private ImageServiceContract $imageService,
+        private UserServiceContract $userService,
     ){}
 
     /**
-     * Сохранение анкеты
+     * Сохранение анкеты.
      *
      * @return JsonResponse
      */
@@ -33,14 +35,14 @@ class DatingCardService implements DatingCardServiceContract
         if ($user->datingCard()->exists()) {
             return response()->json([
                 'success' => false,
-                'message' => 'User can only have one dating card',
+                'message' => 'User can have only one dating card',
             ], 400);
         }
 
         $requestFields = $request->toArray();
         $datingCard = null;
-        DB::beginTransaction();
 
+        DB::beginTransaction();
         try {
             $datingCard = $this->datingCardRepository->create(
                 Arr::except($requestFields, [
@@ -58,6 +60,14 @@ class DatingCardService implements DatingCardServiceContract
             $this->imageService->attachImages(
                 $datingCard,
                 $requestFields['images'],
+            );
+
+            $this->userService->update(
+                $user,
+                [
+                    'user_location' => implode(',', $requestFields['coords']),
+                    'birth_date' => $requestFields['birth_date'],
+                ],
             );
 
             DB::commit();

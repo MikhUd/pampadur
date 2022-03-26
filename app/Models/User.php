@@ -25,7 +25,13 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role_code'
+        'role_code',
+        'user_location',
+        'birth_date',
+    ];
+
+    protected $dates = [
+        'birth_date',
     ];
 
     /**

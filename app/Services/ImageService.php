@@ -16,7 +16,7 @@ class ImageService implements ImageServiceContract
     ) {}
 
     /**
-     * Прикрепление изображений к модели
+     * Прикрепление изображений к модели.
      *
      * @return void
      */

@@ -62,7 +62,6 @@
         data() {
             return {
                 form: {
-                    name: 'username',
                     email: null,
                     password: null,
                     password_confirmation: null,

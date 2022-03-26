@@ -1,6 +1,7 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Auth\AuthController;
+use App\Services\UserService;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,7 +20,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/files', \App\Http\Controllers\GetPrivateFilesController::class);
     Route::post('/delete-token', [\App\Http\Controllers\Auth\AuthController::class, 'deleteToken']);
 });
-
 
 Route::post('/register', [\App\Http\Controllers\Auth\AuthController::class, 'register']);
 Route::post('/get-token', [\App\Http\Controllers\Auth\AuthController::class, 'getToken']);

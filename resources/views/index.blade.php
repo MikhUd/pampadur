@@ -23,7 +23,7 @@
             }
         </style>
         <!--Храним авторизацию пользователя-->
-        <script src="https://api-maps.yandex.ru/2.1/?apikey={{ env('YANDEX_API_KEY') }}&lang=ru_RU" type="text/javascript"></script>
+        <script src="https://api-maps.yandex.ru/2.1/?apikey=f62103c2-c2e3-4eb6-81a9-fce6f3d8c443&lang=ru_RU" type="text/javascript"></script>
     </head>
     <body class="antialiased">
         <div id="app">

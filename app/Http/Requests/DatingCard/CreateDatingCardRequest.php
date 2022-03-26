@@ -27,7 +27,7 @@ class CreateDatingCardRequest extends FormRequest
             'name' => 'required|min:5|max:30',
             'about' => 'required|min:20|max:500',
             'birth_date' => 'required|integer|max:' . strtotime('-18 years'),
-            'tags'  => 'array',
+            'tags'  => 'required|array|min:2',
             'tags.*' => [
                 'required',
                 'string',
@@ -35,7 +35,8 @@ class CreateDatingCardRequest extends FormRequest
             ],
             'gender' => 'required|integer|in:1,2',
             'seeking_for' => 'required|integer|in:1,2',
-            'images' => 'array',
+            'coords' => 'required|array',
+            'images' => 'required|array|min:2',
             'images.*' => [
                 'required',
                 'file',
@@ -54,6 +55,7 @@ class CreateDatingCardRequest extends FormRequest
             'seeking_for' => (int)json_decode($this->seeking_for),
             'gender' => (int)json_decode($this->seeking_for),
             'tags' => json_decode($this->tags),
+            'coords' => json_decode($this->coords),
         ]);
     }
 }

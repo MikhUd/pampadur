@@ -18,7 +18,7 @@ class AuthService implements AuthServiceContract
     ) {}
 
     /**
-     * Логин и выдача токена
+     * Логин и выдача токена.
      *
      * @return JsonResponse
      */
@@ -50,7 +50,7 @@ class AuthService implements AuthServiceContract
     }
 
     /**
-     * Регистрация и выдача токена
+     * Регистрация и выдача токена.
      *
      * @return JsonResponse
      */
@@ -74,7 +74,7 @@ class AuthService implements AuthServiceContract
     }
 
     /**
-     * Удаление токена
+     * Удаление токена.
      *
      * @return JsonResponse
      */

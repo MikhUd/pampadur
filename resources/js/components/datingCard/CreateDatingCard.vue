@@ -1,5 +1,4 @@
 <template>
-
     <form class="mx-auto mt-5" style="width: 100%; max-width: 1200px">
         <div class="overlay" id="modalOverlay"></div>
         <div class="modal-popup" style="width: 70%" id="modal">
@@ -50,7 +49,7 @@
                         </label>
                         <div class="tags">
                             <div class="chips">
-                                <input onpaste="return false;" @keyup="setTags" @keydown.space.prevent class="custom-class" id="tags">
+                                <input onpaste="return false;" @keyup.enter="setTags" @keydown.space.prevent class="custom-class" id="tags">
                             </div>
                         </div>
                         <p class="text-red-500 text-xs italic position-absolute tags__error">{{ errors['tags'] }}</p>
@@ -81,7 +80,7 @@
                         </div>
                         <p class="text-red-500 text-xs italic position-absolute seeking_for__error">{{ errors['seeking_for'] }}</p>
                     </div>
-                    <div class="center cover-photo-wrapper" @drop="onDrop($event, files)">
+                    <div class="center cover-photo-wrapper">
                         <div class="mx-auto mt-20 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
                             <label class="block text-sm font-medium text-gray-700 position-absolute">
                                 <p class="position-relative" style="top:-65px">Припрекить фото</p>
@@ -113,6 +112,9 @@
                 </div>
             </div>
             <div class="mt-3">
+                <label class="block text-gray-700 text-sm font-bold mb-2">
+                    Ваше местоположение
+                </label>
                 <Map @setCoords="onSetCoords"></Map>
             </div>
             <div class="center mt-3">
@@ -141,14 +143,14 @@
                     birth_date: null,
                     tags: [],
                     gender: null,
-                    seeking_for: null
+                    seeking_for: null,
+                    coords: [],
                 },
                 datePicker: null,
                 chips: null,
                 images: [],
                 croppingImages: [],
                 errors: {},
-                location: [],
             }
         },
         name: 'Profile',
@@ -165,16 +167,6 @@
             store() {
                 if (!this.checkAllFields()) {
                     return;
-                }
-
-                let coords = [];
-
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(function(position) {
-                        coords.push(position.coords.latitude);
-                        coords.push(position.coords.longitude);
-                    });
-                    this.location.push(coords[0], coords[1]);
                 }
 
                 let formData = new FormData();
@@ -256,8 +248,12 @@
             },
             checkImages() {
                 this.errors['images'] = '';
-                if (this.images.length < 1) {
-                    this.errors['images'] = 'Загрузите хотя бы 1 фотографию';
+                if (this.images.length < 2) {
+                    this.errors['images'] = 'Загрузите хотя бы 2 фотографии';
+                    return false;
+                }
+                if (this.images.length > 4) {
+                    this.errors['images'] = 'Можно загрузить не более 4 фотографий';
                     return false;
                 }
                 return true;
@@ -320,8 +316,8 @@
                 }
                 return isBothCompleted;
             },
-            onSetCoords() {
-                console.log(123);
+            onSetCoords(data) {
+                this.form.coords = data.coords;
             },
             checkAllFields() {
                 return this.checkBirthDate() &
@@ -331,14 +327,12 @@
                     this.checkSectionBlock() &
                     this.checkImages();
             }
-
         }
     }
 </script>
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Indie+Flower&display=swap');
-
     h2 {
         font-family: 'Abril Fatface', cursive;
         font-size: 2rem;
@@ -366,7 +360,6 @@
     .chips {
         margin-bottom: 10px;
     }
-
     .gender {
         margin-bottom: 32px;
         margin-top: 5px;

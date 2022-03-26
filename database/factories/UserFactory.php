@@ -2,11 +2,9 @@
 
 namespace Database\Factories;
 
-use App\Models\DatingCard;
 use App\Models\UserRole;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
 
 class UserFactory extends Factory
 {
@@ -18,11 +16,11 @@ class UserFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'role_code' => UserRole::inRandomOrder()->first()->code,
-            //Выбирает те картые которые еще не привязаны ни к одному пользователю.
+            'user_location' => '53.'.rand(65, 90).'50000'.','.'87.'.rand(20, 45).'40000',
+            'birth_date' => $this->faker->dateTimeBetween($startDate = '-35 years', $endDate = '-18 years'),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ];

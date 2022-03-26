@@ -20,9 +20,11 @@ use App\Services\ImageService;
 use App\Services\Interfaces\AuthServiceContract;
 use App\Services\Interfaces\DatingCardServiceContract;
 use App\Services\Interfaces\ImageServiceContract;
+use App\Services\Interfaces\LocationServiceContract;
 use App\Services\Interfaces\PrivateFilesServiceContract;
 use App\Services\Interfaces\TagSynchronizerContract;
 use App\Services\Interfaces\UserServiceContract;
+use App\Services\LocationService;
 use App\Services\PrivateFilesService;
 use App\Services\TagSynchronizer;
 use App\Services\UserService;
@@ -66,6 +68,7 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(PrivateFilesServiceContract::class, PrivateFilesService::class);
 
+        $this->app->bind(LocationServiceContract::class, LocationService::class);
     }
 
     /**

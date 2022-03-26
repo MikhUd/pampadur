@@ -15,7 +15,7 @@ class TagSynchronizer implements TagSynchronizerContract
     ) {}
 
     /**
-     * Синхронизация тегов с БД
+     * Синхронизация тегов с БД.
      *
      * @return void
      */
