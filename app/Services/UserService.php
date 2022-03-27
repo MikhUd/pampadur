@@ -9,6 +9,7 @@ use App\Repositories\Interfaces\UserRoleRepositoryContract;
 use App\Services\Interfaces\LocationServiceContract;
 use App\Services\Interfaces\UserServiceContract;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 
 class UserService implements UserServiceContract
@@ -78,11 +79,11 @@ class UserService implements UserServiceContract
     }
 
     /**
-     * Получение ближайших по координатам пользователей.
+     * Получение ближайших по фильтру(distance) пользователей с расстоянием до них.
      *
-     * @return Collection
+     * @return array
      */
-    public function getNearestUsers(User $user, int $distance): Collection
+    public function getNearestUsersWithDistances(User $user, int $distance): array
     {
         $currentUserLocation =  explode(',', $user->user_location);
         $allUserLocations = $this->userRepository->getAllByFilter(
@@ -108,9 +109,24 @@ class UserService implements UserServiceContract
                 return ($value['distance'] <= $distance && $value['id'] !== $user->id);
             })
         );
-
         $userDistancesIds = array_column($userDistancesFiltered, 'id');
-    
-        return $this->userRepository->getAllByFilter(['ids' => $userDistancesIds], ['datingCard']);
+        
+        $nearestUsers = $this->userRepository->getAllByFilter(
+            ['ids' => $userDistancesIds], ['datingCard']
+        )->toArray();
+
+        $nearestUsersWithDistances = [];
+
+        foreach($nearestUsers as $key => $nearestUser){
+            $nearestUser['distance_to_user'] = Arr::get(
+                array_filter($userDistancesFiltered, function($distance) use($nearestUser) {
+                    return $distance['id'] == $nearestUser['id'];
+                }), 
+                $key.'.distance',
+            ); 
+            $nearestUsersWithDistances[] = $nearestUser;
+        }
+
+        return $nearestUsersWithDistances;
     }
 }

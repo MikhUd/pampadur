@@ -12,7 +12,7 @@ class AuthController extends Controller
 {
 
     public function __construct(
-        private AuthServiceContract $authService
+        private AuthServiceContract $authService,
     ) {}
 
     public function getToken(UserLoginRequest $request): JsonResponse

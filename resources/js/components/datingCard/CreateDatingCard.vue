@@ -151,6 +151,7 @@
                 images: [],
                 croppingImages: [],
                 errors: {},
+                colorClasses: ['red', 'pink', 'purple', 'blue', 'teal', 'orange'],
             }
         },
         name: 'Profile',
@@ -162,6 +163,7 @@
                 'limit' : 6
             });
             M.FormSelect.init(document.querySelectorAll('select'));
+            this.setStyles();
         },
         methods: {
             store() {
@@ -195,9 +197,17 @@
                 this.checkBirthDate();
             },
             setTags() {
+                var tagsCount = this.form.tags.length;
+                var index = Math.floor(Math.random() * this.colorClasses.length);
                 this.form.tags = [];
                 Object.values(this.chips[0].chipsData).map(el => this.form.tags.push(el.tag));
+                //Костыль (потом исправить)
+                if (this.form.tags.length > tagsCount) {
+                    $('.chip:last').addClass(this.colorClasses[index]).css({'color':'white'});
+                    this.colorClasses.splice(index, 1);
+                }
                 this.checkTags();
+                console.log(this.colorClasses);
             },
             startCropping() {
                 const overlay = document.getElementById('modalOverlay');
@@ -326,7 +336,11 @@
                     this.checkTags() &
                     this.checkSectionBlock() &
                     this.checkImages();
-            }
+            },
+            setStyles() {
+                $('.datepicker-date-display').css({'backgroundColor':'#ee6e73'});
+                $('ul li span').css({'color':'#ee6e73'});
+            },
         }
     }
 </script>
@@ -369,7 +383,7 @@
     }
     .tags__error,
     .gender__error,
-    .seeking_for__error{
+    .seeking_for__error {
         margin-top: -5px;
     }
     @media only screen and (max-width: 579px) {

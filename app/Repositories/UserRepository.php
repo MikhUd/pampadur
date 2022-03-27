@@ -56,7 +56,7 @@ class UserRepository implements UserRepositoryContract
     }
 
     /**
-     * Получение пользователей по фильтру.
+     * Фильтрация пользователей.
      *
      */
     public function getAllByFilter(array $filters = [], array $with = [])
