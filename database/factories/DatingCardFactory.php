@@ -15,7 +15,7 @@ class DatingCardFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->name(),
+            'name' => $this->faker->realText(rand(10, 50)),
             'about' => $this->faker->realText(rand(20, 80)),
             'gender' => rand(1, 2),
             'seeking_for' => rand(1, 2),

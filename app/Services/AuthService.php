@@ -59,7 +59,7 @@ class AuthService implements AuthServiceContract
         if (auth()->user()) {
             return response()->json([
                 'success' => false,
-                'message' => 'User is already logged in'
+                'message' => 'User is already logged in',
             ], 400);
         }
 
@@ -84,7 +84,7 @@ class AuthService implements AuthServiceContract
 
         return response()->json([
             'status' => true,
-            'message' => 'Token was deleted'
+            'message' => 'Token was deleted',
         ]);
     }
 }

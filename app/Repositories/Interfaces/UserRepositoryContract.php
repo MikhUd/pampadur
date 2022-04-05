@@ -15,4 +15,6 @@ interface UserRepositoryContract
     public function update(User $user, array $fields): ?User;
 
     public function getAllByFilter(array $filters, array $with);
+
+    public function getNearestByDistance(array $currentUserCoords, int $distance);
 }

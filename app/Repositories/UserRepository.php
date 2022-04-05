@@ -6,10 +6,12 @@ use App\Models\User;
 use App\Models\UserRole;
 use App\Repositories\Interfaces\UserRepositoryContract;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class UserRepository implements UserRepositoryContract
 {
     private $model;
+    const EARTH_RADIUS = 6371;
 
     public function __construct(User $user)
     {
@@ -79,6 +81,26 @@ class UserRepository implements UserRepositoryContract
                 $query->whereBetween('birth_date', [$from, $to]);
             })
             ->with($with)
+            ->get();
+    }
+
+    /**
+     * Получение ближайших пользователей по расстоянию.
+     *
+     */
+    public function getNearestByDistance(array $currentUserCoords, int $distance)
+    {
+        $users = $this->model->query();
+
+        return $users
+            ->select(['id', 'email', 'role_code', 'birth_date', DB::raw('round(('.self::EARTH_RADIUS.'
+            * acos(cos(radians('.$currentUserCoords[0].')) * cos(radians(latitude))
+            * cos( radians(longitude) - radians('.$currentUserCoords[1].'))
+            + sin(radians('.$currentUserCoords[0].')) * sin( radians(latitude)))), 0)
+            as distance_to_user')])
+            ->havingRaw('distance_to_user < '.$distance)
+            ->orderBy('id')
+            ->with('datingCard')
             ->get();
     }
 }

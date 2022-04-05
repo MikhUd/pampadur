@@ -15,7 +15,7 @@ class CreateDatingCardsTable extends Migration
     {
         Schema::create('dating_cards', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 30);
+            $table->string('name', 50);
             $table->text('about');
             $table->integer('gender');
             $table->integer('seeking_for');

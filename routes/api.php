@@ -21,6 +21,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/delete-token', [\App\Http\Controllers\Auth\AuthController::class, 'deleteToken']);
 });
 
+Route::get('/test', [\App\Http\Controllers\Auth\AuthController::class, 'test']);
 Route::post('/register', [\App\Http\Controllers\Auth\AuthController::class, 'register']);
 Route::post('/get-token', [\App\Http\Controllers\Auth\AuthController::class, 'getToken']);
 

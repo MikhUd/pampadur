@@ -85,48 +85,6 @@ class UserService implements UserServiceContract
      */
     public function getNearestUsersWithDistances(User $user, int $distance): array
     {
-        $currentUserLocation =  explode(',', $user->user_location);
-        $allUserLocations = $this->userRepository->getAllByFilter(
-            ['select' => ['id', 'user_location']], []
-        )->toArray();
-        $userDistances = [];
-        
-        foreach($allUserLocations as $userLocation) {
-            $userCoords = explode(',', $userLocation['user_location']);
-            array_push($userDistances, [
-                'id' => $userLocation['id'],
-                'distance' => $this->locationService->getDistance(
-                    floatval($userCoords[0] ?? null),
-                    floatval($userCoords[1] ?? null),
-                    floatval($currentUserLocation[0] ?? null),
-                    floatval($currentUserLocation[1] ?? null),
-                )
-            ]);
-        }
-        
-        $userDistancesFiltered = array_merge(
-            array_filter($userDistances, function($value) use ($distance, $user){
-                return ($value['distance'] <= $distance && $value['id'] !== $user->id);
-            })
-        );
-        $userDistancesIds = array_column($userDistancesFiltered, 'id');
-        
-        $nearestUsers = $this->userRepository->getAllByFilter(
-            ['ids' => $userDistancesIds], ['datingCard']
-        )->toArray();
-
-        $nearestUsersWithDistances = [];
-
-        foreach($nearestUsers as $key => $nearestUser){
-            $nearestUser['distance_to_user'] = Arr::get(
-                array_filter($userDistancesFiltered, function($distance) use($nearestUser) {
-                    return $distance['id'] == $nearestUser['id'];
-                }), 
-                $key.'.distance',
-            ); 
-            $nearestUsersWithDistances[] = $nearestUser;
-        }
-
-        return $nearestUsersWithDistances;
+        return $this->userRepository->getNearestByDistance([$user->latitude, $user->longitude], $distance)->toArray();
     }
 }

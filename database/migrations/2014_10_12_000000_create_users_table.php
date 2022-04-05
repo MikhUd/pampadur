@@ -17,7 +17,9 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->string('email')->unique();
             $table->string('role_code', 32);
-            $table->string('user_location', 100)->default('');
+            $table->float('latitude')->nullable();
+            $table->float('longitude')->nullable();
+            //$table->string('user_location')->default('');
             $table->date('birth_date')->nullable();
             $table->string('password');
             $table->timestamps();

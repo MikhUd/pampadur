@@ -13,5 +13,5 @@ interface UserServiceContract
 
     public function update(User $user, array $fields): ?User;
 
-    public function getNearestUsersWithDistances(User $user, int $distance): array;
+    public function getNearestUsersWithDistances(User $user, int $distance);
 }

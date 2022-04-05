@@ -65,7 +65,8 @@ class DatingCardService implements DatingCardServiceContract
             $this->userService->update(
                 $user,
                 [
-                    'user_location' => implode(',', $requestFields['coords']),
+                    'latitude' => $requestFields['coords'][0],
+                    'longitude' => $requestFields['coords'][1],
                     'birth_date' => $requestFields['birth_date'],
                 ],
             );
