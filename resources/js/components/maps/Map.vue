@@ -5,17 +5,17 @@
 <script>
     export default {
         mounted() {
-            var self = this;
+            const self = this;
             ymaps.ready(init);
             function init() {
-                var geolocation = ymaps.geolocation,
+                let geolocation = ymaps.geolocation,
                 myMap = new ymaps.Map('map', {
                     center: [55, 34],
                     zoom: 10
                 }, {
                     searchControlProvider: 'yandex#search'
                 });
-                
+
                 geolocation.get({
                     provider: 'browser',
                     mapStateAutoApply: true
@@ -29,7 +29,3 @@
         }
     }
 </script>
-
-<style scoped>
-
-</style>

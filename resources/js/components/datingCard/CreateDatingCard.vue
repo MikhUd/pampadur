@@ -144,7 +144,7 @@
                     tags: [],
                     gender: null,
                     seeking_for: null,
-                    coords: [],
+                    coords: [43,43],
                 },
                 datePicker: null,
                 chips: null,
@@ -225,7 +225,7 @@
                     imageDiv.style.margin = "20px auto";
                     imageDiv.appendChild(image);
                     modal.prepend(imageDiv);
-                    
+
                     croppers.push(helper.getCropperInstance(image));
                 });
                 cropButton.onclick = () => {
