@@ -4,6 +4,7 @@ namespace App\Http\Controllers\DatingCard;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DatingCard\CreateDatingCardRequest;
+use App\Http\Requests\DatingCard\UpdateDatingCardRequest;
 use App\Services\Interfaces\DatingCardServiceContract;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -20,9 +21,9 @@ class DatingCardController extends Controller
         return $this->datingCardService->store($request);
     }
 
-    public function update($request)
+    public function update(UpdateDatingCardRequest $request): JsonResponse
     {
-
+        return $this->datingCardService->update($request);
     }
 
     public function index(Request $request): JsonResponse

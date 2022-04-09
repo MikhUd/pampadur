@@ -28,4 +28,21 @@ class ImageService implements ImageServiceContract
             ]));
         }
     }
+
+    /**
+     * Обновление изображения
+     *
+     * @return void
+     */
+    public function update(HasImages $model, array $imagesData): void
+    {
+        $ids = $model->images->pluck('id');
+
+        foreach ($imagesData as $data) {
+            if (in_array($data['id'], $ids)) {
+                $image = Image::where('id', $data['id'])->first();
+                $image->path = Storage::put('images', $data['image']);
+            }
+        }
+    }
 }

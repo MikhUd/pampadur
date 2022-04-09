@@ -28,11 +28,7 @@ class CreateDatingCardRequest extends FormRequest
             'about' => 'required|min:20|max:500',
             'birth_date' => 'required|integer|max:' . strtotime('-18 years'),
             'tags'  => 'required|array|min:2',
-            'tags.*' => [
-                'required',
-                'string',
-                'regex:/^[А-Яа-яA-Za-zёЁ]+$/u',
-            ],
+            'tags.*' => 'required|string|regex:/^[А-Яа-яA-Za-zёЁ]+$/u',
             'gender' => 'required|integer|in:1,2',
             'seeking_for' => 'required|integer|in:1,2',
             'coords' => 'required|array',
