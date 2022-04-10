@@ -1,7 +1,7 @@
 <template>
     <form class="mx-auto mt-5" style="width: 100%; max-width: 1200px">
         <div class="overlay" id="modalOverlay"></div>
-        <div class="modal-popup" style="width: 70%" id="modal">
+        <div class="modal-popup" id="modal">
             <button id="cropButton" type="button" class="d-block m-auto center rounded-full btn bg-gradient-to-r from-orange-400 to-rose-400 hover:from-rose-400 hover:to-orange-400">
                 <p>Сохранить</p>
             </button>
@@ -144,7 +144,6 @@
                     tags: [],
                     gender: null,
                     seeking_for: null,
-                    coords: [43,43],
                 },
                 datePicker: null,
                 chips: null,
@@ -156,11 +155,15 @@
         },
         name: 'Profile',
         mounted() {
+            self = this;
             this.datePicker = M.Datepicker.init(document.querySelectorAll('.datepicker'), {
                 'format' : 'yyyy-mm-d'
             });
             this.chips = M.Chips.init(document.querySelectorAll('.chips'), {
-                'limit' : 6
+                'limit' : 6,
+                onChipDelete: function (e, data) {
+                    self.colorClasses.push(data.className.split(' ')[1])
+                },
             });
             M.FormSelect.init(document.querySelectorAll('select'));
             this.setStyles();
@@ -183,7 +186,7 @@
                 axios.post('/api/dating-card', formData, {
                     headers: {"Content-Type": "multipart/form-data"}
                 }).then((response) => {
-                    this.$store.dispatch('onDatingCardExists', response.data.datingCard);
+                    this.$store.dispatch('onDatingCardExists', response.data.datingCard, response.data.imagesCount);
                     this.$emit('createDatingCard');
                 });
             },

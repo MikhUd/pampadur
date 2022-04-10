@@ -23,7 +23,7 @@
 }
 .modal-popup {
     position: absolute;
-    top: 200px;
+    top: 100px;
     left: 0;
     right: 0;
     margin: 0 auto;
@@ -38,5 +38,6 @@
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.75);
     z-index: 999;
     display: none;
-    background-color: #d38a8d;
+    background-color: #d3d0d0;
+    width: 70%;
 }

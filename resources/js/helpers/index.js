@@ -22,11 +22,9 @@ export default{
     },
     getCropperInstance(image) {
         return new Cropper(image, {
-            aspectRatio: 2/3,
+            aspectRatio: 1/1,
             autoCropArea: true,
             minContainerWidth: 150,
-            //minCanvasWidth: 200,
-            //minCanvasHeight: 300,
             minCropBoxHeight: 200,
             zoomable: false,
         });
