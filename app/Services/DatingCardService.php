@@ -15,6 +15,25 @@ use Illuminate\Support\Facades\Log;
 
 class DatingCardService implements DatingCardServiceContract
 {
+    const ATTRIBUTES = [
+        'SIMPLY_CHANGEABLE' => [
+            'name',
+            'about',
+            'gender',
+            'seeking_for',
+            'birth_date',
+        ],
+        'LOGIC_IN_SERVICE' => [
+            'tags' => [
+                'service' => 'tagSynchronizer',
+                'method' => 'update',
+            ],
+            'images' => [
+                'service' => 'imageService',
+                'method' => 'update',
+            ]
+        ]
+    ];
 
     public function __construct(
         private DatingCardRepositoryContract $datingCardRepository,
@@ -89,4 +108,39 @@ class DatingCardService implements DatingCardServiceContract
         ], 201);
     }
 
+    /**
+     * Обновление анкеты.
+     *
+     * @return JsonResponse
+     */
+    public function update(UpdateDatingCardRequest $request): JsonResponse
+    {
+        $user = auth()->user();
+        $datingCard = $user->datingCard;
+
+        if (!$datingCard) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Dating card does not exists',
+            ], 400);
+        }
+
+        foreach (self::ATTRIBUTES['SIMPLY_CHANGEABLE'] as $attr) {
+            if ($request->has($attr)) {
+                $datingCard->{$attr} = $request[$attr];
+            }
+        }
+
+        foreach (self::ATTRIBUTES['LOGIC_IN_SERVICE'] as $attr => $logic) {
+            if ($request->has($attr)) {
+                $this->{$logic['service']}->{$logic['method']}($datingCard, $request[$attr]);
+            }
+        }
+
+        $datingCard->save();
+        return response()->json([
+            'success' => true,
+            'message' => 'Dating card updated',
+        ], 200);
+    }
 }

@@ -44,4 +44,14 @@ class TagSynchronizer implements TagSynchronizerContract
             $tagsToAttach($tags, $model);
         }
     }
+
+    /**
+     * Обновление тегов БД.
+     *
+     * @return void
+     */
+    public function update(HasTags $model, array $tags): void
+    {
+
+    }
 }
