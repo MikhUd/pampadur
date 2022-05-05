@@ -4,7 +4,7 @@ namespace App\Repositories\Interfaces;
 
 use App\Models\User;
 use App\Models\UserRole;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 
 interface UserRepositoryContract
 {
@@ -14,7 +14,7 @@ interface UserRepositoryContract
 
     public function update(User $user, array $fields): ?User;
 
-    public function getAllByFilter(array $filters, array $with);
+    public function getAllByFilter(array $filters, array $with): Collection;
 
-    public function getNearestByDistance(array $currentUserCoords, int $distance);
+    public function getUsersWithDatingCardsByFilters(array $filters): Collection;
 }

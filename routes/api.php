@@ -19,9 +19,11 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::resource('/dating-card', \App\Http\Controllers\DatingCard\DatingCardController::class)->only(['update', 'store', 'index']);
     Route::get('/files', \App\Http\Controllers\GetPrivateFilesController::class);
     Route::post('/delete-token', [\App\Http\Controllers\Auth\AuthController::class, 'deleteToken']);
+    Route::get('/test', [\App\Http\Controllers\Auth\AuthController::class, 'test']);
+    Route::get('/test123', [\App\Http\Controllers\DatingCard\DatingCardController::class, 'index']);
 });
 
-Route::get('/test', [\App\Http\Controllers\Auth\AuthController::class, 'test']);
+
 Route::post('/register', [\App\Http\Controllers\Auth\AuthController::class, 'register']);
 Route::post('/get-token', [\App\Http\Controllers\Auth\AuthController::class, 'getToken']);
 

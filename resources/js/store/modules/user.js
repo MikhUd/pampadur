@@ -3,6 +3,7 @@ export default {
     state: {
         token: localStorage.getItem('token') || null,
         dating_card: JSON.parse(localStorage.getItem('dating_card')) || null,
+        isDatingCardUpdated: true,
         isActiveSession: {
             status: true,
             timer: null,
@@ -22,6 +23,11 @@ export default {
                 localStorage.removeItem('dating_card');
             }
             state.dating_card = datingCard;
+            state.isDatingCardUpdated = true;
+        },
+        setDatingCardUpdatedStatus(state, status = false) {
+            state.isDatingCardUpdated = status;
+            console.log(state.isDatingCardUpdated);
         },
         setActiveSessionStatus(state, data) {
             state.isActiveSession.status = data;
@@ -44,6 +50,9 @@ export default {
         onDatingCardExists(store, datingCard) {
             store.commit('setDatingCard', datingCard);
         },
+        onDatingCardUpdate(store) {
+            store.commit('setDatingCardUpdatedStatus');
+        },
         async checkSession({state, commit}) {
             if (state.isActiveSession.status) {
                 clearTimeout(state.isActiveSession.timer);
@@ -53,7 +62,6 @@ export default {
                 }, 20 * 60 * 1000));
             } else {
                 commit('setActiveSessionStatus', true);
-                //this.onLogout
             }
         },
     },
@@ -63,6 +71,9 @@ export default {
         },
         isDatingCardExists(state) {
             return !!state.dating_card;
+        },
+        isDatingCardUpdated(state) {
+            return !!state.isDatingCardUpdated;
         },
         getToken(state) {
             return state.token;

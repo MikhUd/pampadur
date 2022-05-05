@@ -18,16 +18,18 @@ class TagRepository implements TagRepositoryContract
     /**
      * Создание или получение тега по полю.
      *
+     * @param array $fields
      * @return Tag
      */
-    public function firstOrCreate(array $field): Tag
+    public function firstOrCreate(array $fields): Tag
     {
-        return $this->model->firstOrCreate($field);
+        return $this->model->firstOrCreate($fields);
     }
 
     /**
      * Получение тега по name.
      *
+     * @param array $name
      * @return Tag
      */
     public function getByName(array $name): Tag
@@ -38,6 +40,8 @@ class TagRepository implements TagRepositoryContract
     /**
      * Закрепление модели к тегу.
      *
+     * @param Tag $tag
+     * @param HasTags $model
      * @return void
      */
     public function bindModel(Tag $tag, HasTags $model): void
@@ -48,11 +52,12 @@ class TagRepository implements TagRepositoryContract
     /**
      * Открепление модели от тега.
      *
+     * @param Tag $tag
+     * @param HasTags $model
      * @return void
      */
     public function detachModel(Tag $tag, HasTags $model): void
     {
         $tag->datingCards()->detach($model);
     }
-
 }

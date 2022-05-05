@@ -11,6 +11,11 @@ class Image extends Model
 {
     use HasFactory;
 
+    /**
+     * Атрибуты доступные для массового заполнения.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'path'
     ];

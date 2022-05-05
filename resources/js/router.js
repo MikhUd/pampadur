@@ -4,12 +4,12 @@ import store from './store';
 Vue.use(VueRouter);
 
 
-let authGuard = function (to, from, next) {
+let authGuard = (to, from, next) => {
     if (!store.getters.isLoggedIn) next({name: 'login'});
     else next();
 }
 
-let guestGuard = function (to, from, next) {
+let guestGuard = (to, from, next) => {
     if (store.getters.isLoggedIn) next({name: 'home'});
     else next();
 }
@@ -27,6 +27,12 @@ const router =  new VueRouter({
             path: '/profile',
             name: 'profile',
             component: () => import('./components/datingCard/Profile'),
+            beforeEnter: authGuard
+        },
+        {
+            path: '/meeting',
+            name: 'meeting',
+            component: () => import('./components/meeting/Meeting'),
             beforeEnter: authGuard
         },
         {

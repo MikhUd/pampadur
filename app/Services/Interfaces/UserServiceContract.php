@@ -2,8 +2,10 @@
 
 namespace App\Services\Interfaces;
 
+use App\Http\Requests\Meeting\IndexMeetingRequest;
 use App\Models\User;
 use App\Models\UserRole;
+use Illuminate\Http\JsonResponse;
 
 interface UserServiceContract
 {
@@ -13,5 +15,5 @@ interface UserServiceContract
 
     public function update(User $user, array $fields): ?User;
 
-    public function getNearestUsersWithDistances(User $user, int $distance);
+    public function getUsersWithDatingCardsByFilters(IndexMeetingRequest $request): JsonResponse;
 }

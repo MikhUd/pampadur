@@ -3,7 +3,7 @@
         <div class="overlay" id="modalOverlay"></div>
         <div class="modal-popup" id="modal">
             <button id="cropButton" type="button" class="d-block m-auto center rounded-full btn bg-gradient-to-r from-orange-400 to-rose-400 hover:from-rose-400 hover:to-orange-400">
-                <p>Сохранить</p>
+                <p class="px-2 text-white">Сохранить</p>
             </button>
         </div>
         <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
@@ -49,7 +49,7 @@
                         </label>
                         <div class="tags">
                             <div class="chips">
-                                <input onpaste="return false;" @keyup.enter="setTags" @keydown.space.prevent class="custom-class" id="tags">
+                                <input onpaste="return false;" @keydown.space.prevent class="custom-class" id="tags">
                             </div>
                         </div>
                         <p class="text-red-500 text-xs italic position-absolute tags__error">{{ errors['tags'] }}</p>
@@ -118,10 +118,10 @@
                 <Map @setCoords="onSetCoords"></Map>
             </div>
             <div class="center mt-3">
-                <button v-on:click.prevent="store" id="register"
+                <button v-on:click.prevent="store"
                         class="rounded-full btn bg-gradient-to-r from-orange-400 to-rose-400 hover:from-rose-400 hover:to-orange-400"
                         type="button">
-                    Создать
+                    <p class="px-2 text-white">Создать</p>
                 </button>
             </div>
         </form>
@@ -144,6 +144,7 @@
                     tags: [],
                     gender: null,
                     seeking_for: null,
+                    coords: [53, 43],
                 },
                 datePicker: null,
                 chips: null,
@@ -155,15 +156,19 @@
         },
         name: 'Profile',
         mounted() {
-            self = this;
+            const self = this;
             this.datePicker = M.Datepicker.init(document.querySelectorAll('.datepicker'), {
                 'format' : 'yyyy-mm-d'
             });
             this.chips = M.Chips.init(document.querySelectorAll('.chips'), {
                 'limit' : 6,
-                onChipDelete: function (e, data) {
-                    self.colorClasses.push(data.className.split(' ')[1])
+                onChipDelete: (e, data) => {
+                    self.setTags();
+                    self.colorClasses.push(data.className.split(' ')[1]);
                 },
+                onChipAdd: (e, data) => {
+                    self.setTags();
+                }
             });
             M.FormSelect.init(document.querySelectorAll('select'));
             this.setStyles();
@@ -186,7 +191,6 @@
                 axios.post('/api/dating-card', formData, {
                     headers: {"Content-Type": "multipart/form-data"}
                 }).then((response) => {
-                    this.$store.dispatch('onDatingCardExists', response.data.datingCard, response.data.imagesCount);
                     this.$emit('createDatingCard');
                 });
             },
@@ -200,8 +204,8 @@
                 this.checkBirthDate();
             },
             setTags() {
-                var tagsCount = this.form.tags.length;
-                var index = Math.floor(Math.random() * this.colorClasses.length);
+                const tagsCount = this.form.tags.length;
+                const index = Math.floor(Math.random() * this.colorClasses.length);
                 this.form.tags = [];
                 Object.values(this.chips[0].chipsData).map(el => this.form.tags.push(el.tag));
                 //Костыль (потом исправить)
@@ -210,7 +214,6 @@
                     this.colorClasses.splice(index, 1);
                 }
                 this.checkTags();
-                console.log(this.colorClasses);
             },
             startCropping() {
                 const overlay = document.getElementById('modalOverlay');
@@ -275,6 +278,10 @@
                 this.errors['name'] = '';
                 if (!this.form.name) {
                     this.errors['name'] = 'Имя не может быть пустым';
+                    return false;
+                }
+                if (this.form.name > 30) {
+                    this.errors['name'] = 'Имя не может быть длиннее 30 символов';
                     return false;
                 }
                 return true;

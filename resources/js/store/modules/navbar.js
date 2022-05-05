@@ -14,6 +14,12 @@ export default {
                 class: 'left',
             },
             {
+                path: "/meeting",
+                title: "Знакомства",
+                auth: true,
+                class: 'left',
+            },
+            {
                 path: "/registration",
                 title: "Зарегистрироваться",
                 auth: false,

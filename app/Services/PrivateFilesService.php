@@ -23,6 +23,7 @@ class PrivateFilesService implements PrivateFilesServiceContract
     /**
      * Получение изображения по путю.
      *
+     * @param string $path
      * @return JsonResponse
      */
     private function getByPath(string $path): JsonResponse
@@ -52,7 +53,7 @@ class PrivateFilesService implements PrivateFilesServiceContract
     {
         $user = auth()->user();
         $cacheImages = Cache::remember(
-            $this->getDatingCardImagesByUserIdCacheKey($user->id), 3600, function() use($user) {
+            $this->getDatingCardImagesByUserIdCacheKey($user->id), 3600, function() use ($user) {
             $items = [];
 
             foreach ($user->datingCard->images as $image) {
@@ -68,6 +69,7 @@ class PrivateFilesService implements PrivateFilesServiceContract
     /**
      * Получение приватных файлов.
      *
+     * @param Request $request
      * @return JsonResponse
      */
     public function getFiles(Request $request): JsonResponse
@@ -93,7 +95,7 @@ class PrivateFilesService implements PrivateFilesServiceContract
     {
         return response()->json([
             'success' => true,
-            'items' => $items
+            'items' => $items,
         ]);
     }
 }

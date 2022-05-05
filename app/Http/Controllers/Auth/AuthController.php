@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\UserRegisterRequest;
 use App\Http\Requests\Auth\UserLoginRequest;
+use App\Http\Requests\Meeting\IndexMeetingRequest;
+use App\Http\Resources\Meetings\IndexDatingCardResource;
+use App\Repositories\Interfaces\FilterRepositoryContract;
 use App\Services\Interfaces\AuthServiceContract;
 use App\Services\Interfaces\UserServiceContract;
 use Illuminate\Http\JsonResponse;
@@ -33,9 +36,12 @@ class AuthController extends Controller
         return $this->authService->deleteToken();
     }
 
-    public function test(Request $request)
+    public function test(IndexMeetingRequest $request)
     {
-        //dd(auth()->guard('sanctum')->user());
-        dd($this->userService->getNearestUsersWithDistances(auth()->user(), 15));
+        //dd($this->userService->getNearestUsersByDistanceWithDatingCards(auth()->user(), 1500));
+        return response()->json([
+            'status' => true,
+            'datingCard' => $this->userService->getUsersWithDatingCardsByFilters($request),
+        ], 200);
     }
 }

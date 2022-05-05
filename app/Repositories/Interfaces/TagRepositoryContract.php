@@ -7,7 +7,7 @@ use App\Models\Tag;
 
 interface TagRepositoryContract
 {
-    public function firstOrCreate(array $field): Tag;
+    public function firstOrCreate(array $fields): Tag;
     
     public function getByName(array $name): Tag;
 

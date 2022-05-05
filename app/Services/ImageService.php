@@ -6,43 +6,39 @@ use App\Contracts\HasImages;
 use App\Models\Image;
 use App\Repositories\Interfaces\DatingCardRepositoryContract;
 use App\Services\Interfaces\ImageServiceContract;
+use App\Traits\Cache\CacheKeys;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 class ImageService implements ImageServiceContract
 {
+    use CacheKeys;
 
     public function __construct(
         private DatingCardRepositoryContract $datingCardRepository
     ) {}
 
     /**
-     * Прикрепление изображений к модели.
+     * Синхронизация изображений.
      *
+     * @param HasImages $model
+     * @param array $newImages
      * @return void
      */
-    public function attachImages(HasImages $model, array $images): void
+    public function sync(HasImages $model, array $newImages): void
     {
-        foreach ($images as $image) {
-            $this->datingCardRepository->bindImage($model, new Image([
-                'path' => Storage::put('images', $image)
-            ]));
-        }
-    }
-
-    /**
-     * Обновление изображения
-     *
-     * @return void
-     */
-    public function update(HasImages $model, array $imagesData): void
-    {
-        $ids = $model->images->pluck('id');
-
-        foreach ($imagesData as $data) {
-            if (in_array($data['id'], $ids)) {
-                $image = Image::where('id', $data['id'])->first();
-                $image->path = Storage::put('images', $data['image']);
+        Cache::forget($this->getDatingCardImagesByUserIdCacheKey($model->user_id));
+        if (isset($model->images)) {
+            foreach ($model->images as $oldImage) {
+                $this->datingCardRepository->detachImage($model, $oldImage);
+                Storage::delete($oldImage->path);
             }
+        }
+
+        foreach ($newImages as $newImage) {
+            $this->datingCardRepository->attachImage($model, new Image([
+                'path' => Storage::put('images', $newImage)
+            ]));
         }
     }
 }

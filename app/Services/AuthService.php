@@ -20,6 +20,7 @@ class AuthService implements AuthServiceContract
     /**
      * Логин и выдача токена.
      *
+     * @param UserLoginRequest $request
      * @return JsonResponse
      */
     public function getToken(UserLoginRequest $request): JsonResponse
@@ -37,7 +38,10 @@ class AuthService implements AuthServiceContract
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Password is incorrect',
+                'message' => 'Incorrect password',
+                'errors' => [
+                    'password' => 'Неверный пароль',
+                ],
             ]);
         }
 
@@ -52,6 +56,7 @@ class AuthService implements AuthServiceContract
     /**
      * Регистрация и выдача токена.
      *
+     * @param UserRegisterRequest $request
      * @return JsonResponse
      */
     public function register(UserRegisterRequest $request): JsonResponse

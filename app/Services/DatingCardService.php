@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Http\Requests\DatingCard\CreateDatingCardRequest;
+use App\Http\Requests\DatingCard\UpdateDatingCardRequest;
 use App\Repositories\Interfaces\DatingCardRepositoryContract;
 use App\Services\Interfaces\DatingCardServiceContract;
 use App\Services\Interfaces\ImageServiceContract;
@@ -15,26 +16,6 @@ use Illuminate\Support\Facades\Log;
 
 class DatingCardService implements DatingCardServiceContract
 {
-    const ATTRIBUTES = [
-        'SIMPLY_CHANGEABLE' => [
-            'name',
-            'about',
-            'gender',
-            'seeking_for',
-            'birth_date',
-        ],
-        'LOGIC_IN_SERVICE' => [
-            'tags' => [
-                'service' => 'tagSynchronizer',
-                'method' => 'update',
-            ],
-            'images' => [
-                'service' => 'imageService',
-                'method' => 'update',
-            ]
-        ]
-    ];
-
     public function __construct(
         private DatingCardRepositoryContract $datingCardRepository,
         private TagSynchronizerContract $tagSynchronizer,
@@ -45,6 +26,7 @@ class DatingCardService implements DatingCardServiceContract
     /**
      * Сохранение анкеты.
      *
+     * @param CreateDatingCardRequest $request
      * @return JsonResponse
      */
     public function store(CreateDatingCardRequest $request): JsonResponse
@@ -76,7 +58,7 @@ class DatingCardService implements DatingCardServiceContract
                 collect($requestFields['tags']),
             );
 
-            $this->imageService->attachImages(
+            $this->imageService->sync(
                 $datingCard,
                 $requestFields['images'],
             );
@@ -103,7 +85,7 @@ class DatingCardService implements DatingCardServiceContract
 
         return response()->json([
             'success' => true,
-            'datingCard' => $datingCard->withoutRelations(),
+            'datingCard' => $datingCard,
             'message' => 'Dating card successfully created',
         ], 201);
     }
@@ -111,6 +93,7 @@ class DatingCardService implements DatingCardServiceContract
     /**
      * Обновление анкеты.
      *
+     * @param UpdateDatingCardRequest $request
      * @return JsonResponse
      */
     public function update(UpdateDatingCardRequest $request): JsonResponse
@@ -125,21 +108,26 @@ class DatingCardService implements DatingCardServiceContract
             ], 400);
         }
 
-        foreach (self::ATTRIBUTES['SIMPLY_CHANGEABLE'] as $attr) {
-            if ($request->has($attr)) {
-                $datingCard->{$attr} = $request[$attr];
-            }
+        DB::beginTransaction();
+        try {
+            $requestFields = $request->toArray();
+            $requestFields['tags'] = collect($requestFields['tags']);
+            $datingCard = $this->datingCardRepository->update($datingCard, $requestFields);
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error('Saving dating card failed', ['id' => $user->id]);
+
+            return response()->json([
+                'success' => false,
+                'message' => "Exception while updating dating card. ID:" . $datingCard->id,
+            ], 403);
         }
 
-        foreach (self::ATTRIBUTES['LOGIC_IN_SERVICE'] as $attr => $logic) {
-            if ($request->has($attr)) {
-                $this->{$logic['service']}->{$logic['method']}($datingCard, $request[$attr]);
-            }
-        }
-
-        $datingCard->save();
         return response()->json([
             'success' => true,
+            'datingCard' => $datingCard,
             'message' => 'Dating card updated',
         ], 200);
     }

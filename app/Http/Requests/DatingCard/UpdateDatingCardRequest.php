@@ -24,23 +24,29 @@ class UpdateDatingCardRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'min:5|max:30',
-            'about' => 'min:20|max:500',
-            'birth_date' => 'integer|max:' . strtotime('-18 years'),
-            'tags'  => 'array|min:2',
-            'tags.*' => 'string|regex:/^[А-Яа-яA-Za-zёЁ]+$/u',
-            'gender' => 'integer|in:1,2',
-            'seeking_for' => 'integer|in:1,2',
-            'coords' => 'array',
-            'images' => 'array|min:2',
-            'images.*' => 'array|min:2|max:2',
-            'images.*.id' => 'integer',
-            'images.*.image' => [
+            'id' => 'required|exists:dating_cards,id',
+            'name' => 'required|min:5|max:30',
+            'about' => 'required|min:20|max:500',
+            'tags'  => 'required|array|min:2',
+            'tags.*' => 'required|string|regex:/^[А-Яа-яA-Za-zёЁ]+$/u',
+            'seeking_for' => 'required|integer|in:1,2',
+            'images' => 'required|array|min:2',
+            'images.*' => [
                 'required',
                 'file',
                 'mimes:jpg,png',
                 'max:10240',
             ],
         ];
+    }
+
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'name' => json_decode($this->name),
+            'about' => json_decode($this->about),
+            'seeking_for' => (int)json_decode($this->seeking_for),
+            'tags' => json_decode($this->tags),
+        ]);
     }
 }

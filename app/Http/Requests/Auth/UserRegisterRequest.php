@@ -23,6 +23,13 @@ class UserRegisterRequest extends FormRequest
         ];
     }
 
+    public function messages(): array
+    {
+        return [
+            'email.unique' => 'На такой email уже зарегистрирован аккаунт',
+        ];
+    }
+
     /**
      * Handle a failed validation attempt.
      *
@@ -34,7 +41,10 @@ class UserRegisterRequest extends FormRequest
         $errors = (new ValidationException($validator))->errors();
 
         throw new HttpResponseException(
-            response()->json(['errors' => $errors], JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
+            response()->json([
+                'success' => false,
+                'errors' => $errors
+            ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
         );
     }
 }

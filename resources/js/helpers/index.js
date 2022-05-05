@@ -2,7 +2,7 @@ import axios from "axios"
 import router from "../router";
 import Cropper from 'cropperjs';
 
-export default{
+export default {
     onLogout() {
         axios.post('/api/delete-token');
     },

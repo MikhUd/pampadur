@@ -18,8 +18,33 @@ class UserLoginRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => 'required|email',
+            'email' => 'required|email|exists:users,email',
             'password' => 'required',
         ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'email.exists' => 'Аккаунт с таким email не существует',
+        ];
+    }
+
+    /**
+     * Handle a failed validation attempt.
+     *
+     * @param  \Illuminate\Contracts\Validation\Validator $validator
+     *
+     */
+    protected function failedValidation(Validator $validator)
+    {
+        $errors = (new ValidationException($validator))->errors();
+
+        throw new HttpResponseException(
+            response()->json([
+                'success' => false,
+                'errors' => $errors
+            ])
+        );
     }
 }

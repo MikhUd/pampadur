@@ -31,8 +31,8 @@ class CreateDatingCardRequest extends FormRequest
             'tags.*' => 'required|string|regex:/^[А-Яа-яA-Za-zёЁ]+$/u',
             'gender' => 'required|integer|in:1,2',
             'seeking_for' => 'required|integer|in:1,2',
-            'coords' => 'required|array',
-            'images' => 'required|array|min:2',
+            'coords' => 'required|array|min:2|max:2',
+            'images' => 'required|array|min:2|max:4',
             'images.*' => [
                 'required',
                 'file',

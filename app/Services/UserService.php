@@ -2,31 +2,46 @@
 
 namespace App\Services;
 
+use App\Http\Requests\Meeting\IndexMeetingRequest;
 use App\Models\User;
 use App\Models\UserRole;
 use App\Repositories\Interfaces\UserRepositoryContract;
 use App\Repositories\Interfaces\UserRoleRepositoryContract;
-use App\Services\Interfaces\LocationServiceContract;
+use App\Services\Interfaces\PrivateFilesServiceContract;
 use App\Services\Interfaces\UserServiceContract;
-use Illuminate\Database\Eloquent\Collection;
+use App\Transformers\DatingCard\DatingCardTransformer;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 
 class UserService implements UserServiceContract
 {
+    const FILTERS = [
+        'USER' => [
+            'coords',
+            'birth_date',
+            'distance',
+        ],
+        'DATING_CARD' => [
+            'gender',
+            'tags',
+        ]
+    ];
 
     public function __construct(
         private UserRepositoryContract $userRepository,
         private UserRoleRepositoryContract $userRoleRepository,
-        private LocationServiceContract $locationService,
+        private PrivateFilesServiceContract $privateFilesService,
     ) {}
 
     /**
      * Закрепление роли к пользователю.
      *
+     * @param User $user
+     * @param string $role_code
      * @return UserRole
      */
-    public function bindRole(User $user, string $role_code): ?UserRole
+    public function bindRole(User $user, string $role_code = User::DEFAULT_USER_ROLE_CODE): ?UserRole
     {
         $role = $this->userRoleRepository->firstOrCreate([
             'name' => $role_code,
@@ -49,6 +64,8 @@ class UserService implements UserServiceContract
     /**
      * Создание пользователя.
      *
+     * @param array $fields
+     * @param string $role_code
      * @return User
      */
     public function create(array $fields, string $role_code = User::DEFAULT_USER_ROLE_CODE): ?User
@@ -59,12 +76,16 @@ class UserService implements UserServiceContract
             return $user;
         }
 
+        Log::error('User create failed');
+
         return null;
     }
 
     /**
      * Обновление пользователя.
      *
+     * @param User $user
+     * @param array $fields
      * @return User
      */
     public function update(User $user, array $fields): ?User
@@ -79,12 +100,26 @@ class UserService implements UserServiceContract
     }
 
     /**
-     * Получение ближайших по фильтру(distance) пользователей с расстоянием до них.
+     * Получение пользователей по фильтру с их анкетами.
      *
+     * @param IndexMeetingRequest $request
      * @return array
      */
-    public function getNearestUsersWithDistances(User $user, int $distance): array
+    public function getUsersWithDatingCardsByFilters(IndexMeetingRequest $request): JsonResponse
     {
-        return $this->userRepository->getNearestByDistance([$user->latitude, $user->longitude], $distance)->toArray();
+        $fields = $request->all();
+        $fields['coords'] = [$request->user()->latitude, $request->user()->longitude];
+
+        if ($usersWithDatingCards = $this->userRepository->getUsersWithDatingCardsByFilters($fields)) {
+            return response()->json([
+                'success' => true,
+                'users' => DatingCardTransformer::toArray($usersWithDatingCards),
+            ], 200);
+        }
+        
+        return response()->json([
+            'success' => false,
+            'message' => 'Something went wrong',
+        ], 400);
     }
 }

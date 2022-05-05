@@ -19,7 +19,6 @@ class CreateUsersTable extends Migration
             $table->string('role_code', 32);
             $table->float('latitude')->nullable();
             $table->float('longitude')->nullable();
-            //$table->string('user_location')->default('');
             $table->date('birth_date')->nullable();
             $table->string('password');
             $table->timestamps();

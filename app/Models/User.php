@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\DatingCard;
@@ -16,6 +17,7 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
 
     const DEFAULT_USER_ROLE_CODE = 'xdDsklw3w';
+
     /**
      * Атрибуты доступные для массового заполнения.
      *
@@ -61,7 +63,13 @@ class User extends Authenticatable
      */
     public $timestamps = true;
 
-    public function setPasswordAttribute($value): void
+    /**
+     * Установка хэша для пароля.
+     *
+     * @param string $value
+     * @return void
+     */
+    public function setPasswordAttribute(string $value): void
     {
         $this->attributes['password'] = bcrypt($value);
     }
@@ -84,5 +92,15 @@ class User extends Authenticatable
     public function datingCard(): HasOne
     {
         return $this->hasOne(DatingCard::class);
+    }
+
+    /**
+     * Получение изображений анкеты у пользователя.
+     *
+     * @return HasManyThrough
+     */
+    public function images(): HasManyThrough
+    {
+        return $this->hasManyThrough(Image::class, DatingCard::class, 'user_id', 'imageable_id', 'id', 'id');
     }
 }

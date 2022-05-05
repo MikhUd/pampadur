@@ -10,18 +10,18 @@
                     Почта
                 </label>
                 <input v-model="form.email" v-on:input="checkEmail" class="w-93 shadow appearance-none border rounded py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="email" type="text" placeholder="Email">
-                <p class="text-red-500 text-xs italic">{{ errors['email'] }}</p>
+                <p class="text-red-500 text-xs italic position-absolute">{{ errors['email'] }}</p>
             </div>
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
                     Пароль
                 </label>
                 <input v-model="form.password" v-on:input="checkPassword" class="w-93 shadow appearance-none border border-red-500 rounded py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="******************">
-                <p class="text-red-500 text-xs italic">{{ errors['password'] }}</p>
+                <p class="text-red-500 text-xs italic position-absolute">{{ errors['password'] }}</p>
             </div>
             <div class="center">
-            <button v-on:click.prevent="login" class="rounded-full btn bg-gradient-to-r from-orange-400 to-rose-400 hover:from-rose-400 hover:to-orange-400" type="button">
-                Войти
+            <button v-on:click.prevent="login" class="rounded-pill btn bg-gradient-to-r from-orange-400 to-rose-400 hover:from-rose-400 hover:to-orange-400" type="button">
+                <p class="px-2 text-white">Войти</p>
             </button>
         </div>
         </form>
@@ -54,7 +54,7 @@
                     email: null,
                     password: null
                 },
-                errors: {}
+                errors: {},
             }
         },
         methods: {
@@ -89,13 +89,21 @@
                     return;
                 }
 
-                axios.post('/api/get-token', this.form).then(response => {
-                    if (response.data.success) {
-                        this.$store.dispatch('onLogin', response.data.token);
-                        this.$router.push('/profile');
-                    } else {
-                        this.$set(this.$data, 'errors', {'password': 'Неверный пароль'});
+                axios.post('/api/get-token', this.form)
+                .then(response => {
+                    if (!response.data.success) {
+                        if (response.data.errors.email !== undefined) {
+                            this.$set(this.$data, 'errors', {'email' : response.data.errors.email[0]});
+                        } else {
+                            this.$set(this.$data, 'errors', {'password' : response.data.errors.password});
+                        }
+                        return;
                     }
+                    this.$store.dispatch('onLogin', response.data.token);
+                    this.$router.push('/profile');
+                })
+                .catch(error => {
+                    console.log(error);
                 });
             }
         }

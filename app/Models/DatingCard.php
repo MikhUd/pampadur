@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Models\Tag;
+use Illuminate\Database\Eloquent\Builder;
 
 class DatingCard extends Model implements HasTags, HasImages, HasUser
 {
@@ -60,5 +61,32 @@ class DatingCard extends Model implements HasTags, HasImages, HasUser
     public function images(): MorphMany
     {
         return $this->morphMany(Image::class, 'imageable');
+    }
+
+    /**
+     * Скоп для возврата лайкнутых/дизлайкнутых/не отмеченных анкет.
+     *
+     * @param Builder $query
+     * @param mixed $likeStatus
+     * @return void
+     */
+    public function scopeLiked(Builder $query, mixed $likeStatus = null): void
+    {
+        $currentDatingCardId = auth()->user()->datingCard->id;
+            
+        if (is_null($likeStatus)) {
+            $query->whereNotIn('id', function ($query) use ($currentDatingCardId) {
+                $query->select('liked_id')
+                    ->from('likes')
+                    ->where('liker_id', $currentDatingCardId);
+            }); 
+        } else {
+            $query->whereIn('id', function ($query) use ($currentDatingCardId, $likeStatus) {
+                $query->select('liked_id')
+                    ->from('likes')
+                    ->where('liker_id', $currentDatingCardId)
+                    ->where('is_liked', $likeStatus);
+            });
+        }
     }
 }

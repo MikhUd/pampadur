@@ -12,7 +12,11 @@ interface DatingCardRepositoryContract
 {
     public function create(array $fields): DatingCard;
 
-    public function bindImage(HasImages $model, Image $image): void;
+    public function update(DatingCard $datingCard, array $fields): DatingCard;
+
+    public function attachImage(HasImages $model, Image $image): void;
+
+    public function detachImage(HasImages $model, Image $image): void;
 
     public function bindUser(HasUser $model, User $user): void;
 }
