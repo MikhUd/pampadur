@@ -6,10 +6,14 @@ use App\Contracts\HasImages;
 use App\Contracts\HasUser;
 use App\Models\DatingCard;
 use App\Models\Image;
+use App\Models\Like;
 use App\Models\User;
 use App\Services\Interfaces\TagSynchronizerContract;
 use App\Services\Interfaces\ImageServiceContract;
 use App\Repositories\Interfaces\DatingCardRepositoryContract;
+use Illuminate\Support\Collection;
+use \Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Support\Facades\DB;
 
 class DatingCardRepository implements DatingCardRepositoryContract
 {
@@ -70,7 +74,7 @@ class DatingCardRepository implements DatingCardRepositoryContract
                 app($logic['service'])->{$logic['method']}($datingCard, $fields[$attr]);
             }
         }
-        
+
         $datingCard->save();
 
         return $datingCard;
@@ -110,5 +114,23 @@ class DatingCardRepository implements DatingCardRepositoryContract
     public function bindUser(HasUser $model, User $user): void
     {
         $model->user()->associate($user)->save();
+    }
+
+    /**
+     * Получение анкет по лайкам
+     *
+     * @param Collection $likes
+     * @return Collection
+     */
+    public function getLikerCardsByLikes(Collection $likes): Collection
+    {
+        return EloquentCollection::wrap($likes->load('datingCard')->pluck('datingCard'))->load('user');
+    }
+
+    public function getRandomCardsThatNotHaveBeenAssessed(DatingCard $datingCard, Collection $exclude, int $limit): Collection
+    {
+        return $this->model->query()->whereNotExists(function ($query) use ($datingCard) {
+            $query->select(DB::raw('1'))->from('likes')->where('liker_id', $datingCard->id)->whereRaw('`liked_id` = dating_cards.id');
+        })->whereNotIn('id', $exclude->pluck('id'))->limit($limit)->inRandomOrder()->get();
     }
 }

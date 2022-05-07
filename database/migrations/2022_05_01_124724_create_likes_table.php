@@ -19,6 +19,8 @@ class CreateLikesTable extends Migration
             $table->integer('liked_id')->nullable();
             $table->boolean('is_liked')->default(false);
             $table->date('date')->nullable();
+
+            $table->index(['is_liked', 'liker_id', 'liked_id']);
         });
     }
 

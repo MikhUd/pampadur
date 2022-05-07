@@ -4,13 +4,18 @@ namespace App\Services;
 
 use App\Http\Requests\DatingCard\CreateDatingCardRequest;
 use App\Http\Requests\DatingCard\UpdateDatingCardRequest;
+use App\Models\DatingCard;
 use App\Repositories\Interfaces\DatingCardRepositoryContract;
+use App\Repositories\Interfaces\LikeRepositoryContract;
+use App\Repositories\LikeRepository;
 use App\Services\Interfaces\DatingCardServiceContract;
 use App\Services\Interfaces\ImageServiceContract;
 use App\Services\Interfaces\TagSynchronizerContract;
 use App\Services\Interfaces\UserServiceContract;
+use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -21,6 +26,7 @@ class DatingCardService implements DatingCardServiceContract
         private TagSynchronizerContract $tagSynchronizer,
         private ImageServiceContract $imageService,
         private UserServiceContract $userService,
+        private LikeRepositoryContract $likeRepository,
     ){}
 
     /**
@@ -130,5 +136,34 @@ class DatingCardService implements DatingCardServiceContract
             'datingCard' => $datingCard,
             'message' => 'Dating card updated',
         ], 200);
+    }
+
+    /**
+     * Получение анкет с взаимными лайками
+     *
+     * @param Request $request
+     * @return Collection
+     */
+    public function getCardsWithReciprocalLikes(Request $request): Collection
+    {
+        $reciprocalLikes = $this->likeRepository->getAssessedLikes(auth()->user()->datingCard->id, 1, 1);
+
+        return $this->datingCardRepository->getLikerCardsByLikes($reciprocalLikes);
+    }
+
+    /**
+     * Получение анкет для оценок
+     *
+     * @param Request $request
+     * @return Collection
+     */
+    public function getCardsToAssess(Request $request): Collection
+    {
+        $datingCard = auth()->user()->datingCard;
+        $toAssess = $this->datingCardRepository->getLikerCardsByLikes($this->likeRepository->getNotAssessedLikesByCard($datingCard->id));
+        if ($toAssess->count() < 50) {
+            $toAssess->add($this->datingCardRepository->getRandomCardsThatNotHaveBeenAssessed($datingCard, $toAssess, 50 - $toAssess->count()));
+        }
+        return $toAssess;
     }
 }

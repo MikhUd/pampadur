@@ -7,6 +7,7 @@ use App\Contracts\HasUser;
 use App\Models\DatingCard;
 use App\Models\Image;
 use App\Models\User;
+use Illuminate\Support\Collection;
 
 interface DatingCardRepositoryContract
 {
@@ -19,4 +20,8 @@ interface DatingCardRepositoryContract
     public function detachImage(HasImages $model, Image $image): void;
 
     public function bindUser(HasUser $model, User $user): void;
+
+    public function getLikerCardsByLikes(Collection $likes): Collection;
+
+    public function getRandomCardsThatNotHaveBeenAssessed(DatingCard $datingCard, Collection $exclude, int $limit): Collection;
 }

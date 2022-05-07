@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::resource('/dating-card', \App\Http\Controllers\DatingCard\DatingCardController::class)->only(['update', 'store', 'index']);
+    Route::get('/dating-card/reciprocal-likes', [\App\Http\Controllers\DatingCard\DatingCardController::class, 'getReciprocalLikes']);
+    Route::get('/dating-card/to-assess', [\App\Http\Controllers\DatingCard\DatingCardController::class, 'getDatingCardsToAssess']);
     Route::get('/files', \App\Http\Controllers\GetPrivateFilesController::class);
     Route::post('/delete-token', [\App\Http\Controllers\Auth\AuthController::class, 'deleteToken']);
     Route::get('/test', [\App\Http\Controllers\Auth\AuthController::class, 'test']);

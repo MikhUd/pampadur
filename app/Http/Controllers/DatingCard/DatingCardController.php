@@ -36,4 +36,20 @@ class DatingCardController extends Controller
             'datingCard' => new IndexDatingCardResource($datingCard),
         ], 200);
     }
+
+    public function getReciprocalLikes(Request $request): JsonResponse
+    {
+        return response()->json([
+            'status' => true,
+            'datingCards' => $this->datingCardService->getCardsWithReciprocalLikes($request)->toArray(),
+        ]);
+    }
+
+    public function getDatingCardsToAssess(Request $request): JsonResponse
+    {
+        return response()->json([
+            'status' => true,
+            'datingCards' => $this->datingCardService->getCardsToAssess($request),
+        ]);
+    }
 }
