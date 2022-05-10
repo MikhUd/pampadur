@@ -14,8 +14,5 @@ class MeetingController extends Controller
         private UserServiceContract $userService
     ) {}
 
-    public function __invoke(IndexMeetingRequest $request): JsonResponse
-    {
-        return $this->userService->getUsersByFiltersWithDatingCards($request);
-    }
+
 }

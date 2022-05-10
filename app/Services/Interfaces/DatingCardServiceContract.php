@@ -14,7 +14,7 @@ interface DatingCardServiceContract
 
     public function update(UpdateDatingCardRequest $request): JsonResponse;
 
-    public function getCardsWithReciprocalLikes(Request $request): Collection;
+    public function getCardsWithReciprocalLikes(Request $request): JsonResponse;
 
-    public function getCardsToAssess(Request $request): Collection;
+    public function getCardsToAssess(Request $request): JsonResponse;
 }

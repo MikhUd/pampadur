@@ -35,13 +35,4 @@ class AuthController extends Controller
     {
         return $this->authService->deleteToken();
     }
-
-    public function test(IndexMeetingRequest $request)
-    {
-        //dd($this->userService->getNearestUsersByDistanceWithDatingCards(auth()->user(), 1500));
-        return response()->json([
-            'status' => true,
-            'datingCard' => $this->userService->getUsersWithDatingCardsByFilters($request),
-        ], 200);
-    }
 }

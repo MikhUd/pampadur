@@ -39,17 +39,11 @@ class DatingCardController extends Controller
 
     public function getReciprocalLikes(Request $request): JsonResponse
     {
-        return response()->json([
-            'status' => true,
-            'datingCards' => $this->datingCardService->getCardsWithReciprocalLikes($request)->toArray(),
-        ]);
+        return $this->datingCardService->getCardsWithReciprocalLikes($request);
     }
 
     public function getDatingCardsToAssess(Request $request): JsonResponse
     {
-        return response()->json([
-            'status' => true,
-            'datingCards' => $this->datingCardService->getCardsToAssess($request),
-        ]);
+        return $this->datingCardService->getCardsToAssess($request);
     }
 }

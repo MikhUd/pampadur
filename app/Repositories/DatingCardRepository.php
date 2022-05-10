@@ -117,20 +117,28 @@ class DatingCardRepository implements DatingCardRepositoryContract
     }
 
     /**
-     * Получение анкет по лайкам
+     * Получение анкет по лайкам.
      *
      * @param Collection $likes
      * @return Collection
      */
     public function getLikerCardsByLikes(Collection $likes): Collection
     {
-        return EloquentCollection::wrap($likes->load('datingCard')->pluck('datingCard'))->load('user');
+        return EloquentCollection::wrap($likes->load('datingCard')->pluck('datingCard'))->load(['user', 'images']);
     }
 
+    /**
+     * Получение рандомных анкет, которых не видел текущий пользователь и которые не лайкнули анкету текущего пользователя.
+     *
+     * @param DatingCard $datingCard
+     * @param Collection $exclude
+     * @param int $limit
+     * @return Collection
+     */
     public function getRandomCardsThatNotHaveBeenAssessed(DatingCard $datingCard, Collection $exclude, int $limit): Collection
     {
         return $this->model->query()->whereNotExists(function ($query) use ($datingCard) {
             $query->select(DB::raw('1'))->from('likes')->where('liker_id', $datingCard->id)->whereRaw('`liked_id` = dating_cards.id');
-        })->whereNotIn('id', $exclude->pluck('id'))->limit($limit)->inRandomOrder()->get();
+        })->whereNotIn('id', $exclude->pluck('id'))->limit($limit)->with(['user', 'images'])->inRandomOrder()->get();
     }
 }

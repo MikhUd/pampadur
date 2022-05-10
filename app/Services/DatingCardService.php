@@ -12,6 +12,7 @@ use App\Services\Interfaces\DatingCardServiceContract;
 use App\Services\Interfaces\ImageServiceContract;
 use App\Services\Interfaces\TagSynchronizerContract;
 use App\Services\Interfaces\UserServiceContract;
+use App\Transformers\DatingCard\DatingCardTransformer;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Arr;
@@ -139,31 +140,53 @@ class DatingCardService implements DatingCardServiceContract
     }
 
     /**
-     * Получение анкет с взаимными лайками
+     * Получение анкет с взаимными лайками.
      *
      * @param Request $request
      * @return Collection
      */
-    public function getCardsWithReciprocalLikes(Request $request): Collection
+    public function getCardsWithReciprocalLikes(Request $request): JsonResponse
     {
         $reciprocalLikes = $this->likeRepository->getAssessedLikes(auth()->user()->datingCard->id, 1, 1);
 
-        return $this->datingCardRepository->getLikerCardsByLikes($reciprocalLikes);
+        if ($datingCards = $this->datingCardRepository->getLikerCardsByLikes($reciprocalLikes)) {
+            return response()->json([
+                'status' => true,
+                'datingCards' => $datingCards,
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'There are no dating cards',
+        ], 400);
     }
 
     /**
-     * Получение анкет для оценок
+     * Получение 50 анкет для оценок в рандомном порядке.
      *
      * @param Request $request
      * @return Collection
      */
-    public function getCardsToAssess(Request $request): Collection
+    public function getCardsToAssess(Request $request): JsonResponse
     {
         $datingCard = auth()->user()->datingCard;
-        $toAssess = $this->datingCardRepository->getLikerCardsByLikes($this->likeRepository->getNotAssessedLikesByCard($datingCard->id));
-        if ($toAssess->count() < 50) {
-            $toAssess->add($this->datingCardRepository->getRandomCardsThatNotHaveBeenAssessed($datingCard, $toAssess, 50 - $toAssess->count()));
+        $cardsWhichLikedCurrent = $this->datingCardRepository->getLikerCardsByLikes($this->likeRepository->getNotAssessedLikesByCard($datingCard->id));
+        $cardsWhichLikedCurrent->map(fn($card) => $card->liked_me = true);
+        if ($cardsWhichLikedCurrent->count() < 50) {
+            $cardstoAssess = $cardsWhichLikedCurrent->merge($this->datingCardRepository->getRandomCardsThatNotHaveBeenAssessed($datingCard, $cardsWhichLikedCurrent, 50 - $cardsWhichLikedCurrent->count()));
         }
-        return $toAssess;
+
+        if ($cardstoAssess) {
+            return response()->json([
+                'status' => true,
+                'datingCards' => DatingCardTransformer::toArray($cardstoAssess->shuffle()),
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'There are no dating cards',
+        ], 400);
     }
 }

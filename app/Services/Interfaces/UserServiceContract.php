@@ -14,6 +14,4 @@ interface UserServiceContract
     public function create(array $fields): ?User;
 
     public function update(User $user, array $fields): ?User;
-
-    public function getUsersWithDatingCardsByFilters(IndexMeetingRequest $request): JsonResponse;
 }

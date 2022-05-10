@@ -27,9 +27,11 @@ class LikeRepository implements LikeRepositoryContract
     }
 
     /**
-     * Получение взимно оцененных лайков лайков
+     * Получение взимно оцененных лайков лайков.
      *
      * @param int $datingCardId
+     * @param int $assess
+     * @param int $backAssess
      * @return Collection
      */
     public function getAssessedLikes(int $datingCardId, int $assess = null, int $backAssess = null): Collection
@@ -38,6 +40,7 @@ class LikeRepository implements LikeRepositoryContract
         if (isset($backAssess)) {
             $query->where('is_liked', $backAssess);
         }
+
         return $query->where('liked_id', $datingCardId)->whereIn('liker_id', function ($query) use ($datingCardId, $assess) {
             $query->select('liked_id')->from('likes')->where('liker_id', $datingCardId);
             if (isset($assess)) {
@@ -47,7 +50,7 @@ class LikeRepository implements LikeRepositoryContract
     }
 
     /**
-     * Получение не оценненых лайков пользователем
+     * Получение лайков на текущую анкету пользователя от анкет, на которые пользователь еще не поставил отметку.
      *
      * @param int $datingCardId
      * @return Collection

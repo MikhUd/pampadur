@@ -98,28 +98,4 @@ class UserService implements UserServiceContract
 
         return null;
     }
-
-    /**
-     * Получение пользователей по фильтру с их анкетами.
-     *
-     * @param IndexMeetingRequest $request
-     * @return array
-     */
-    public function getUsersWithDatingCardsByFilters(IndexMeetingRequest $request): JsonResponse
-    {
-        $fields = $request->all();
-        $fields['coords'] = [$request->user()->latitude, $request->user()->longitude];
-
-        if ($usersWithDatingCards = $this->userRepository->getUsersWithDatingCardsByFilters($fields)) {
-            return response()->json([
-                'success' => true,
-                'users' => DatingCardTransformer::toArray($usersWithDatingCards),
-            ], 200);
-        }
-        
-        return response()->json([
-            'success' => false,
-            'message' => 'Something went wrong',
-        ], 400);
-    }
 }
