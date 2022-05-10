@@ -11,12 +11,16 @@ use App\Models\User;
 use App\Services\Interfaces\TagSynchronizerContract;
 use App\Services\Interfaces\ImageServiceContract;
 use App\Repositories\Interfaces\DatingCardRepositoryContract;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 use \Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Facades\DB;
+use App\Traits\Repositories\CanFilterQuery;
 
 class DatingCardRepository implements DatingCardRepositoryContract
 {
+    use CanFilterQuery;
+
     private $model;
     const ATTRIBUTES = [
         'SIMPLY_CHANGEABLE' => [
@@ -135,10 +139,18 @@ class DatingCardRepository implements DatingCardRepositoryContract
      * @param int $limit
      * @return Collection
      */
-    public function getRandomCardsThatNotHaveBeenAssessed(DatingCard $datingCard, Collection $exclude, int $limit): Collection
+    public function getRandomCardsThatNotHaveBeenAssessed(
+        DatingCard $datingCard,
+        Collection $exclude,
+        int $limit,
+        array $filters
+    ): Collection
     {
-        return $this->model->query()->whereNotExists(function ($query) use ($datingCard) {
+        $query = $this->model->query()->whereNotExists(function ($query) use ($datingCard) {
             $query->select(DB::raw('1'))->from('likes')->where('liker_id', $datingCard->id)->whereRaw('`liked_id` = dating_cards.id');
-        })->whereNotIn('id', $exclude->pluck('id'))->limit($limit)->with(['user', 'images'])->inRandomOrder()->get();
+        })->whereNotIn('id', $exclude->pluck('id'))->limit($limit)->with(['user', 'images'])->inRandomOrder();
+
+        return $this->filter($query, $filters)->get();
     }
+
 }

@@ -114,9 +114,11 @@
                 }
                 axios.post('/api/register', this.form)
                 .then((response) => {
-                    if (response.response.data.errors.email) {
-                        this.$set(this.$data, 'errors', {'email' : response.response.data.errors.email[0]});
-                        return;
+                    if (response.data.errors) {
+                        if (response.data.errors.email) {
+                            this.$set(this.$data, 'errors', {'email': response.response.data.errors.email[0]});
+                            return;
+                        }
                     }
                     if (response.data.success) {
                         this.$store.dispatch('onLogin', response.data.token);

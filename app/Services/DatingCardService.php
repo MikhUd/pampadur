@@ -171,16 +171,24 @@ class DatingCardService implements DatingCardServiceContract
     public function getCardsToAssess(Request $request): JsonResponse
     {
         $datingCard = auth()->user()->datingCard;
-        $cardsWhichLikedCurrent = $this->datingCardRepository->getLikerCardsByLikes($this->likeRepository->getNotAssessedLikesByCard($datingCard->id));
+        $filters = $request->all();
+
+        $cardsWhichLikedCurrent = $this->datingCardRepository->getLikerCardsByLikes($this->likeRepository->getNotAssessedLikesByCard($datingCard->id, $filters));
         $cardsWhichLikedCurrent->map(fn($card) => $card->liked_me = true);
+
         if ($cardsWhichLikedCurrent->count() < 50) {
-            $cardstoAssess = $cardsWhichLikedCurrent->merge($this->datingCardRepository->getRandomCardsThatNotHaveBeenAssessed($datingCard, $cardsWhichLikedCurrent, 50 - $cardsWhichLikedCurrent->count()));
+            $cardsToAssess = $cardsWhichLikedCurrent->merge($this->datingCardRepository->getRandomCardsThatNotHaveBeenAssessed(
+                $datingCard,
+                $cardsWhichLikedCurrent,
+                50 - $cardsWhichLikedCurrent->count(),
+                $filters
+            ));
         }
 
-        if ($cardstoAssess) {
+        if ($cardsToAssess) {
             return response()->json([
                 'status' => true,
-                'datingCards' => DatingCardTransformer::toArray($cardstoAssess->shuffle()),
+                'datingCards' => DatingCardTransformer::toArray($cardsToAssess->shuffle()),
             ]);
         }
 

@@ -23,5 +23,10 @@ interface DatingCardRepositoryContract
 
     public function getLikerCardsByLikes(Collection $likes): Collection;
 
-    public function getRandomCardsThatNotHaveBeenAssessed(DatingCard $datingCard, Collection $exclude, int $limit): Collection;
+    public function getRandomCardsThatNotHaveBeenAssessed(
+        DatingCard $datingCard,
+        Collection $exclude,
+        int $limit,
+        array $filters
+    ): Collection;
 }

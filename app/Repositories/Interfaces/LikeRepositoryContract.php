@@ -11,5 +11,5 @@ interface LikeRepositoryContract
 
     public function getAssessedLikes(int $datingCardId, int $assess = null, int $backAssess = null): Collection;
 
-    public function getNotAssessedLikesByCard(int $datingCardId): Collection;
+    public function getNotAssessedLikesByCard(int $datingCardId, array $filters): Collection;
 }

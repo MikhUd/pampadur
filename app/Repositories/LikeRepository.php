@@ -4,10 +4,13 @@ namespace App\Repositories;
 
 use App\Models\Like;
 use App\Repositories\Interfaces\LikeRepositoryContract;
+use App\Traits\Repositories\CanFilterQuery;
 use Illuminate\Support\Collection;
 
 class LikeRepository implements LikeRepositoryContract
 {
+    use CanFilterQuery;
+
     private $model;
 
     public function __construct(Like $like)
@@ -53,12 +56,15 @@ class LikeRepository implements LikeRepositoryContract
      * Получение лайков на текущую анкету пользователя от анкет, на которые пользователь еще не поставил отметку.
      *
      * @param int $datingCardId
+     * @param array $filters
      * @return Collection
      */
-    public function getNotAssessedLikesByCard(int $datingCardId): Collection
+    public function getNotAssessedLikesByCard(int $datingCardId, array $filters): Collection
     {
-        return $this->model->query()->liked()->where('liked_id', $datingCardId)->whereNotIn('liker_id', function ($query) use ($datingCardId) {
+        $query = $this->model->query()->liked()->where('liked_id', $datingCardId)->whereNotIn('liker_id', function ($query) use ($datingCardId) {
             $query->select('liked_id')->from('likes')->where('liker_id', $datingCardId);
-        })->get();
+        });
+
+        return $this->filter($query, $filters)->get();
     }
 }
