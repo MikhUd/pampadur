@@ -15,11 +15,9 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 use \Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Facades\DB;
-use App\Traits\Repositories\CanFilterQuery;
 
 class DatingCardRepository implements DatingCardRepositoryContract
 {
-    use CanFilterQuery;
 
     private $model;
     const ATTRIBUTES = [
@@ -153,4 +151,19 @@ class DatingCardRepository implements DatingCardRepositoryContract
         return $this->filter($query, $filters)->get();
     }
 
+    /**
+     * Применяет переданные фильтры к запросу
+     *
+     * @param Builder $query
+     * @param array $filters
+     * @return Builder
+     */
+    private function filter(Builder &$query, array $filters): Builder
+    {
+        foreach ($filters as $filter => $value) {
+            $query->where($filter, $value);
+        }
+
+        return $query;
+    }
 }
