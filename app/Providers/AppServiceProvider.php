@@ -54,7 +54,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $this->app->bind(DatingCardRepositoryContract::class, function () {
-            return new DatingCardRepository(new DatingCard());
+            return new DatingCardRepository(new DatingCard(), new FilterRepository);
         });
 
         $this->app->bind(TagRepositoryContract::class, function () {
@@ -62,7 +62,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $this->app->bind(LikeRepositoryContract::class, function() {
-            return new LikeRepository(new Like());
+            return new LikeRepository(new Like(), new FilterRepository);
         });
 
         $this->app->bind(FilterRepositoryContract::class, FilterRepository::class);

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 class Like extends Model
 {
@@ -25,7 +26,7 @@ class Like extends Model
      */
     public $timestamps = false;
 
-    /**
+    /**.
      * Связь карточки пользователя оставившего лайк
      *
      * @return BelongsTo
@@ -36,7 +37,17 @@ class Like extends Model
     }
 
     /**
-     * Скоуп для лайка
+     * Связь с пользователем который поставил лайк.
+     *
+     * @return HasOneThrough
+     */
+    public function user(): HasOneThrough
+    {
+        return $this->hasOneThrough(User::class, DatingCard::class, 'user_id', 'id', 'liker_id', 'user_id');
+    }
+
+    /**
+     * Скоуп для лайка.
      *
      * @return void
      */

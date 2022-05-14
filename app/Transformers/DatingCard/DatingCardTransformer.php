@@ -27,6 +27,7 @@ class DatingCardTransformer
                 'liked_me' => isset($item->liked_me) ? true : false,
                 'user' => [
                     'id' => $item->user->id ?? null,
+                    'distance' => isset($item->user->distance_to_user) ? intval($item->user->distance_to_user) : null,
                     'age' => Carbon::parse($item->user->birth_date)->diffInYears(Carbon::now()),
                 ],
                 'images' => [

@@ -2,13 +2,14 @@
 
 namespace App\Http\Requests\Meeting;
 
+use DateTime;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Validation\ValidationException;
 
-class IndexMeetingRequest extends FormRequest
+class ShowDatingCardsRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -20,10 +21,11 @@ class IndexMeetingRequest extends FormRequest
         return [
             'gender' => 'nullable|integer|in:1,2',
             'distance' => 'nullable|integer|min:3',
-            'birth_date_range' => 'nullable|array|min:2|max:2',
-            'birth_date_range.*' => [
+            'age_range' => 'nullable|array|min:2|max:2',
+            'tag' => 'nullable|string',
+            'age_range.*' => [
                 'required',
-                'date',
+                'int',
             ],
             'like_status' => 'nullable|integer|in:0,1',
         ];
@@ -32,7 +34,7 @@ class IndexMeetingRequest extends FormRequest
     protected function prepareForValidation()
     {
         $this->merge([
-            'coords' => explode(',', $this->coords),
+            'age_range' => explode(',', $this->age_range),
         ]);
     }
 

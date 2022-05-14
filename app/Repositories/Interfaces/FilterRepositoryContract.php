@@ -1,9 +1,9 @@
 <?php
 
 namespace App\Repositories\Interfaces;
+use Illuminate\Database\Eloquent\Builder;
 
 interface FilterRepositoryContract
 {
-    public function processingDatingCardFilters(array $filters): void;
-    public function processingUserFilters(array $filters): void;
+    public function processingDatingCardFilters(Builder $query, array $filters): Builder;
 }

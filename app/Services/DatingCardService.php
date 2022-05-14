@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Http\Requests\DatingCard\CreateDatingCardRequest;
 use App\Http\Requests\DatingCard\UpdateDatingCardRequest;
+use App\Http\Requests\Meeting\ShowDatingCardsRequest;
 use App\Models\DatingCard;
 use App\Repositories\Interfaces\DatingCardRepositoryContract;
 use App\Repositories\Interfaces\LikeRepositoryContract;
@@ -168,12 +169,15 @@ class DatingCardService implements DatingCardServiceContract
      * @param Request $request
      * @return Collection
      */
-    public function getCardsToAssess(Request $request): JsonResponse
+    public function getCardsToAssess(ShowDatingCardsRequest $request): JsonResponse
     {
         $datingCard = auth()->user()->datingCard;
         $filters = $request->all();
+        $filters['coords'] = [$request->user()->latitude, $request->user()->longitude];
 
-        $cardsWhichLikedCurrent = $this->datingCardRepository->getLikerCardsByLikes($this->likeRepository->getNotAssessedLikesByCard($datingCard->id, $filters));
+        $cardsWhichLikedCurrent = $this->datingCardRepository->getLikerCardsByLikes(
+            $this->likeRepository->getNotAssessedLikesByCard($datingCard->id, $filters)
+        );
         $cardsWhichLikedCurrent->map(fn($card) => $card->liked_me = true);
 
         if ($cardsWhichLikedCurrent->count() < 50) {

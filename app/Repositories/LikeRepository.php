@@ -3,17 +3,20 @@
 namespace App\Repositories;
 
 use App\Models\Like;
+use App\Repositories\Interfaces\FilterRepositoryContract;
 use App\Repositories\Interfaces\LikeRepositoryContract;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 class LikeRepository implements LikeRepositoryContract
 {
     private $model;
+    private $filterRepository;
 
-    public function __construct(Like $like)
+    public function __construct(Like $like, FilterRepositoryContract $filterRepository)
     {
         $this->model = $like;
+        $this->filterRepository = $filterRepository;
     }
 
     /**
@@ -63,22 +66,6 @@ class LikeRepository implements LikeRepositoryContract
             $query->select('liked_id')->from('likes')->where('liker_id', $datingCardId);
         });
 
-        return $this->filter($query, $filters)->get();
-    }
-
-    /**
-     * Применяет переданные фильтры к запросу
-     *
-     * @param Builder $query
-     * @param array $filters
-     * @return Builder
-     */
-    private function filter(Builder &$query, array $filters): Builder
-    {
-        return $query->whereRelation('datingCard', function ($query) use ($filters) {
-            foreach ($filters as $filter => $value) {
-                $query->where($filter, $value);
-            }
-        });
+        return $this->filterRepository->processingDatingCardFilters($query, $filters)->get();
     }
 }

@@ -4,6 +4,7 @@ namespace App\Services\Interfaces;
 
 use App\Http\Requests\DatingCard\CreateDatingCardRequest;
 use App\Http\Requests\DatingCard\UpdateDatingCardRequest;
+use App\Http\Requests\Meeting\ShowDatingCardsRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
@@ -16,5 +17,5 @@ interface DatingCardServiceContract
 
     public function getCardsWithReciprocalLikes(Request $request): JsonResponse;
 
-    public function getCardsToAssess(Request $request): JsonResponse;
+    public function getCardsToAssess(ShowDatingCardsRequest $request): JsonResponse;
 }

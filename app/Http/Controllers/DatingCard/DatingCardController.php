@@ -5,7 +5,9 @@ namespace App\Http\Controllers\DatingCard;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DatingCard\CreateDatingCardRequest;
 use App\Http\Requests\DatingCard\UpdateDatingCardRequest;
+use App\Http\Requests\Meeting\ShowDatingCardsRequest;
 use App\Http\Resources\DatingCard\IndexDatingCardResource;
+use App\Models\Like;
 use App\Services\Interfaces\DatingCardServiceContract;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -42,7 +44,7 @@ class DatingCardController extends Controller
         return $this->datingCardService->getCardsWithReciprocalLikes($request);
     }
 
-    public function getDatingCardsToAssess(Request $request): JsonResponse
+    public function getDatingCardsToAssess(ShowDatingCardsRequest $request): JsonResponse
     {
         return $this->datingCardService->getCardsToAssess($request);
     }

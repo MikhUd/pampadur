@@ -11,7 +11,8 @@ use App\Models\User;
 use App\Services\Interfaces\TagSynchronizerContract;
 use App\Services\Interfaces\ImageServiceContract;
 use App\Repositories\Interfaces\DatingCardRepositoryContract;
-use Illuminate\Database\Query\Builder;
+use App\Repositories\Interfaces\FilterRepositoryContract;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use \Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Facades\DB;
@@ -20,6 +21,7 @@ class DatingCardRepository implements DatingCardRepositoryContract
 {
 
     private $model;
+    private $filterRepository;
     const ATTRIBUTES = [
         'SIMPLY_CHANGEABLE' => [
             'name',
@@ -39,10 +41,15 @@ class DatingCardRepository implements DatingCardRepositoryContract
             ]
         ]
     ];
+    const RELATIONS = [
+        'user',
+        'images',
+    ];
 
-    public function __construct(DatingCard $user)
+    public function __construct(DatingCard $datingCard, FilterRepositoryContract $filterRepository)
     {
-        $this->model = $user;
+        $this->model = $datingCard;
+        $this->filterRepository = $filterRepository;
     }
 
     /**
@@ -126,7 +133,7 @@ class DatingCardRepository implements DatingCardRepositoryContract
      */
     public function getLikerCardsByLikes(Collection $likes): Collection
     {
-        return EloquentCollection::wrap($likes->load('datingCard')->pluck('datingCard'))->load(['user', 'images']);
+        return EloquentCollection::wrap($likes->load('datingCard')->pluck('datingCard'))->load(self::RELATIONS);
     }
 
     /**
@@ -146,24 +153,9 @@ class DatingCardRepository implements DatingCardRepositoryContract
     {
         $query = $this->model->query()->whereNotExists(function ($query) use ($datingCard) {
             $query->select(DB::raw('1'))->from('likes')->where('liker_id', $datingCard->id)->whereRaw('`liked_id` = dating_cards.id');
-        })->whereNotIn('id', $exclude->pluck('id'))->limit($limit)->with(['user', 'images'])->inRandomOrder();
+        })->whereNotIn('id', $exclude->pluck('id'))->limit($limit)->inRandomOrder();
 
-        return $this->filter($query, $filters)->get();
-    }
-
-    /**
-     * Применяет переданные фильтры к запросу
-     *
-     * @param Builder $query
-     * @param array $filters
-     * @return Builder
-     */
-    private function filter(Builder &$query, array $filters): Builder
-    {
-        foreach ($filters as $filter => $value) {
-            $query->where($filter, $value);
-        }
-
-        return $query;
+        dd($this->filterRepository->processingDatingCardFilters($query, $filters)->limit(1)->get());
+        return $this->filterRepository->processingDatingCardFilters($query, $filters)->get();
     }
 }
