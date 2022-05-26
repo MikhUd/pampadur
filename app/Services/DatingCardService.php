@@ -150,7 +150,7 @@ class DatingCardService implements DatingCardServiceContract
     {
         $reciprocalLikes = $this->likeRepository->getAssessedLikes(auth()->user()->datingCard->id, 1, 1);
 
-        if ($datingCards = $this->datingCardRepository->getLikerCardsByLikes($reciprocalLikes)) {
+        if ($datingCards = $this->datingCardRepository->getLikerCardsByLikes($reciprocalLikes, [])) {
             return response()->json([
                 'status' => true,
                 'datingCards' => $datingCards,
@@ -166,7 +166,7 @@ class DatingCardService implements DatingCardServiceContract
     /**
      * Получение 50 анкет для оценок в рандомном порядке.
      *
-     * @param Request $request
+     * @param ShowDatingCardsRequest $request
      * @return Collection
      */
     public function getCardsToAssess(ShowDatingCardsRequest $request): JsonResponse
@@ -174,10 +174,13 @@ class DatingCardService implements DatingCardServiceContract
         $datingCard = auth()->user()->datingCard;
         $filters = $request->all();
         $filters['coords'] = [$request->user()->latitude, $request->user()->longitude];
+        //Условный ограничитель показа анкет,которые лайкнули текущую, без него сразу будут доставаться все анкеты, которые лайкнули.
+        $filters['limit'] = 10;
 
         $cardsWhichLikedCurrent = $this->datingCardRepository->getLikerCardsByLikes(
-            $this->likeRepository->getNotAssessedLikesByCard($datingCard->id, $filters)
+            $this->likeRepository->getNotAssessedLikesByCard($datingCard->id), $filters
         );
+
         $cardsWhichLikedCurrent->map(fn($card) => $card->liked_me = true);
 
         if ($cardsWhichLikedCurrent->count() < 50) {
@@ -192,6 +195,7 @@ class DatingCardService implements DatingCardServiceContract
         if ($cardsToAssess) {
             return response()->json([
                 'status' => true,
+                'count' => $cardsToAssess->count(),
                 'datingCards' => DatingCardTransformer::toArray($cardsToAssess->shuffle()),
             ]);
         }

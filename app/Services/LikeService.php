@@ -9,11 +9,16 @@ use Illuminate\Http\JsonResponse;
 
 class LikeService implements LikeServiceContract
 {
-
     public function __construct(
         private LikeRepositoryContract $likeRepository
     ) {}
 
+    /**
+     * Добавление лайка/дизлайка на анкету.
+     *
+     * @param LikeRequest $request
+     * @return JsonResponse
+     */
     public function setLikeOrDislike(LikeRequest $request): JsonResponse
     {
         if ($like = $this->likeRepository->setLikeOrDislike($request->all())) {

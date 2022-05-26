@@ -16,18 +16,6 @@ use Illuminate\Support\Facades\Log;
 
 class UserService implements UserServiceContract
 {
-    const FILTERS = [
-        'USER' => [
-            'coords',
-            'birth_date',
-            'distance',
-        ],
-        'DATING_CARD' => [
-            'gender',
-            'tags',
-        ]
-    ];
-
     public function __construct(
         private UserRepositoryContract $userRepository,
         private UserRoleRepositoryContract $userRoleRepository,

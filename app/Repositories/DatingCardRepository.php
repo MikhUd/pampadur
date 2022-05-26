@@ -19,7 +19,6 @@ use Illuminate\Support\Facades\DB;
 
 class DatingCardRepository implements DatingCardRepositoryContract
 {
-
     private $model;
     private $filterRepository;
     const ATTRIBUTES = [
@@ -129,11 +128,15 @@ class DatingCardRepository implements DatingCardRepositoryContract
      * Получение анкет по лайкам.
      *
      * @param Collection $likes
+     * @param array $filters
      * @return Collection
      */
-    public function getLikerCardsByLikes(Collection $likes): Collection
+    public function getLikerCardsByLikes(Collection $likes, array $filters): Collection
     {
-        return EloquentCollection::wrap($likes->load('datingCard')->pluck('datingCard'))->load(self::RELATIONS);
+        $query = $this->model->query();
+        $query->whereIn('id', $likes->pluck('liker_id')->toArray());
+
+        return $this->getFilters($query, $filters);
     }
 
     /**
@@ -146,16 +149,28 @@ class DatingCardRepository implements DatingCardRepositoryContract
      */
     public function getRandomCardsThatNotHaveBeenAssessed(
         DatingCard $datingCard,
-        Collection $exclude,
+        Collection $exclude = null,
         int $limit,
         array $filters
     ): Collection
     {
         $query = $this->model->query()->whereNotExists(function ($query) use ($datingCard) {
             $query->select(DB::raw('1'))->from('likes')->where('liker_id', $datingCard->id)->whereRaw('`liked_id` = dating_cards.id');
-        })->whereNotIn('id', $exclude->pluck('id'))->limit($limit)->inRandomOrder();
+        })->whereNotIn('id', $exclude->pluck('id'));
+        $filters['limit'] = $limit;
+        
+        return $this->getFilters($query, $filters);
+    }
 
-        dd($this->filterRepository->processingDatingCardFilters($query, $filters)->limit(1)->get());
-        return $this->filterRepository->processingDatingCardFilters($query, $filters)->get();
+    /**
+     * Получение фильтров на анкеты.
+     *
+     * @param Builder $query
+     * @param array $filters
+     * @return Collection
+     */
+    private function getFilters(Builder $query, array $filters): Collection
+    {
+        return $this->filterRepository->processingDatingCardFilters($query, $filters);
     }
 }

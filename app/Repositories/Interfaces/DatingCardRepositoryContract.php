@@ -21,7 +21,7 @@ interface DatingCardRepositoryContract
 
     public function bindUser(HasUser $model, User $user): void;
 
-    public function getLikerCardsByLikes(Collection $likes): Collection;
+    public function getLikerCardsByLikes(Collection $likes, array $filters): Collection;
 
     public function getRandomCardsThatNotHaveBeenAssessed(
         DatingCard $datingCard,

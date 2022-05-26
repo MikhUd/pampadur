@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthService implements AuthServiceContract
 {
-
     public function __construct(
         private UserServiceContract $userService
     ) {}

@@ -9,7 +9,6 @@ use App\Services\Interfaces\TagSynchronizerContract;
 
 class TagSynchronizer implements TagSynchronizerContract
 {
-
     public function __construct(
         private TagRepositoryContract $tagRepository
     ) {}

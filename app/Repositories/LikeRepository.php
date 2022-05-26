@@ -3,20 +3,16 @@
 namespace App\Repositories;
 
 use App\Models\Like;
-use App\Repositories\Interfaces\FilterRepositoryContract;
 use App\Repositories\Interfaces\LikeRepositoryContract;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 class LikeRepository implements LikeRepositoryContract
 {
     private $model;
-    private $filterRepository;
 
-    public function __construct(Like $like, FilterRepositoryContract $filterRepository)
+    public function __construct(Like $like)
     {
         $this->model = $like;
-        $this->filterRepository = $filterRepository;
     }
 
     /**
@@ -31,7 +27,7 @@ class LikeRepository implements LikeRepositoryContract
     }
 
     /**
-     * Получение взимно оцененных лайков лайков.
+     * Получение взимно оцененных лайков.
      *
      * @param int $datingCardId
      * @param int $assess
@@ -60,12 +56,12 @@ class LikeRepository implements LikeRepositoryContract
      * @param array $filters
      * @return Collection
      */
-    public function getNotAssessedLikesByCard(int $datingCardId, array $filters): Collection
+    public function getNotAssessedLikesByCard(int $datingCardId): Collection
     {
         $query = $this->model->query()->liked()->where('liked_id', $datingCardId)->whereNotIn('liker_id', function ($query) use ($datingCardId) {
             $query->select('liked_id')->from('likes')->where('liker_id', $datingCardId);
         });
 
-        return $this->filterRepository->processingDatingCardFilters($query, $filters)->get();
+        return $query->get();
     }
 }
