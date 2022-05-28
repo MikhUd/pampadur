@@ -125,21 +125,6 @@ class DatingCardRepository implements DatingCardRepositoryContract
     }
 
     /**
-     * Получение анкет по лайкам.
-     *
-     * @param Collection $likes
-     * @param array $filters
-     * @return Collection
-     */
-    public function getLikerCardsByLikes(Collection $likes, array $filters): Collection
-    {
-        $query = $this->model->query();
-        $query->whereIn('id', $likes->pluck('liker_id')->toArray());
-
-        return $this->getFilters($query, $filters);
-    }
-
-    /**
      * Получение рандомных анкет, которых не видел текущий пользователь и которые не лайкнули анкету текущего пользователя.
      *
      * @param DatingCard $datingCard
@@ -158,7 +143,28 @@ class DatingCardRepository implements DatingCardRepositoryContract
             $query->select(DB::raw('1'))->from('likes')->where('liker_id', $datingCard->id)->whereRaw('`liked_id` = dating_cards.id');
         })->whereNotIn('id', $exclude->pluck('id'));
         $filters['limit'] = $limit;
-        
+
+        return $this->getFilters($query, $filters);
+    }
+
+    /**
+     * Получение карт лайков на текущую анкету пользователя от анкет, на которые пользователь еще не поставил отметку.
+     *
+     * @param int $datingCardId
+     * @param array $filters
+     * @return Collection
+     */
+    public function getCardsWithNotAssessedLikesById(int $datingCardId, array $filters): Collection
+    {
+        $query = $this->model->query()
+            ->selectRaw('dating_cards.*')
+            ->join('likes', 'liker_id', '=', 'dating_cards.id')
+            ->where('liked_id', $datingCardId)
+            ->where('is_liked', 1)
+            ->whereNotIn('liker_id', function ($query) use ($datingCardId) {
+                $query->select('liked_id')->from('likes')->where('liker_id', $datingCardId);
+            });
+
         return $this->getFilters($query, $filters);
     }
 

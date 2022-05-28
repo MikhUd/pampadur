@@ -9,14 +9,14 @@ class ImageTransformer
 {
     /**
      * Трансформирование коллекции изображений.
-     * 
+     *
      * @param Collection $collection
      * @return array
      */
     public static function toArray(Collection $collection): array
     {
         return $collection->map(function($item, $key) {
-            return base64_encode(file_get_contents(Storage::path($item->path)));
+            return $item->path;
         })->toArray();
     }
 }

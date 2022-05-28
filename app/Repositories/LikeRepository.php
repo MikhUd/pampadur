@@ -48,20 +48,4 @@ class LikeRepository implements LikeRepositoryContract
             }
         })->get();
     }
-
-    /**
-     * Получение лайков на текущую анкету пользователя от анкет, на которые пользователь еще не поставил отметку.
-     *
-     * @param int $datingCardId
-     * @param array $filters
-     * @return Collection
-     */
-    public function getNotAssessedLikesByCard(int $datingCardId): Collection
-    {
-        $query = $this->model->query()->liked()->where('liked_id', $datingCardId)->whereNotIn('liker_id', function ($query) use ($datingCardId) {
-            $query->select('liked_id')->from('likes')->where('liker_id', $datingCardId);
-        });
-
-        return $query->get();
-    }
 }

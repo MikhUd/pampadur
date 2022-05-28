@@ -6,6 +6,8 @@ use App\Http\Requests\DatingCard\CreateDatingCardRequest;
 use App\Http\Requests\DatingCard\UpdateDatingCardRequest;
 use App\Http\Requests\Meeting\ShowDatingCardsRequest;
 use App\Models\DatingCard;
+use App\Models\Image;
+use App\Repositories\FilterRepository;
 use App\Repositories\Interfaces\DatingCardRepositoryContract;
 use App\Repositories\Interfaces\LikeRepositoryContract;
 use App\Repositories\LikeRepository;
@@ -13,16 +15,21 @@ use App\Services\Interfaces\DatingCardServiceContract;
 use App\Services\Interfaces\ImageServiceContract;
 use App\Services\Interfaces\TagSynchronizerContract;
 use App\Services\Interfaces\UserServiceContract;
+use App\Traits\Cache\CacheKeys;
 use App\Transformers\DatingCard\DatingCardTransformer;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redis;
 
 class DatingCardService implements DatingCardServiceContract
 {
+    use CacheKeys;
+
     public function __construct(
         private DatingCardRepositoryContract $datingCardRepository,
         private TagSynchronizerContract $tagSynchronizer,
@@ -171,38 +178,40 @@ class DatingCardService implements DatingCardServiceContract
      */
     public function getCardsToAssess(ShowDatingCardsRequest $request): JsonResponse
     {
-        $datingCard = auth()->user()->datingCard;
-        $filters = $request->all();
-        $filters['coords'] = [$request->user()->latitude, $request->user()->longitude];
-        //Условный ограничитель показа анкет,которые лайкнули текущую, без него сразу будут доставаться все анкеты, которые лайкнули.
-        $filters['limit'] = 10;
+        return Cache::tags([auth()->user()->email . 'dd'])->rememberForever($this->getDatingCardsToAssessCacheKey($request->all()), function () use ($request) {
+            Cache::tags([auth()->user()->email . 'dd'])->flush();
+            $datingCard = auth()->user()->datingCard;
+            $filters = $request->all();
+            $filters['coords'] = [$request->user()->latitude, $request->user()->longitude];
+            //Условный ограничитель показа анкет,которые лайкнули текущую, без него сразу будут доставаться все анкеты, которые лайкнули.
+            $filters['limit'] = 10;
 
-        $cardsWhichLikedCurrent = $this->datingCardRepository->getLikerCardsByLikes(
-            $this->likeRepository->getNotAssessedLikesByCard($datingCard->id), $filters
-        );
+            $cardsToAssess = $this->datingCardRepository->getCardsWithNotAssessedLikesById($datingCard->id, $filters);
+            $cardsToAssess->map(fn($card) => $card->liked_me = true);
 
-        $cardsWhichLikedCurrent->map(fn($card) => $card->liked_me = true);
+            $maxCount = Cache::rememberForever($this->getMaxCountDatingCardsToAssessCacheKey(), fn() => 50);
 
-        if ($cardsWhichLikedCurrent->count() < 50) {
-            $cardsToAssess = $cardsWhichLikedCurrent->merge($this->datingCardRepository->getRandomCardsThatNotHaveBeenAssessed(
-                $datingCard,
-                $cardsWhichLikedCurrent,
-                50 - $cardsWhichLikedCurrent->count(),
-                $filters
-            ));
-        }
+            if ($cardsToAssess->count() < $maxCount) {
+                $cardsToAssess = $cardsToAssess->merge($this->datingCardRepository->getRandomCardsThatNotHaveBeenAssessed(
+                    $datingCard,
+                    $cardsToAssess,
+                    50 - $cardsToAssess->count(),
+                    $filters
+                ));
+            }
 
-        if ($cardsToAssess) {
+            if ($cardsToAssess->isNotEmpty()) {
+                return response()->json([
+                    'status' => true,
+                    'count' => $cardsToAssess->count(),
+                    'datingCards' => DatingCardTransformer::toArray($cardsToAssess->shuffle()),
+                ]);
+            }
+
             return response()->json([
-                'status' => true,
-                'count' => $cardsToAssess->count(),
-                'datingCards' => DatingCardTransformer::toArray($cardsToAssess->shuffle()),
-            ]);
-        }
-
-        return response()->json([
-            'success' => false,
-            'message' => 'There are no dating cards',
-        ], 400);
+                'success' => false,
+                'message' => 'There are no dating cards',
+            ], 400);
+        });
     }
 }

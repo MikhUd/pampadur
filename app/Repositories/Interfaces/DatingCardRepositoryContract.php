@@ -21,12 +21,12 @@ interface DatingCardRepositoryContract
 
     public function bindUser(HasUser $model, User $user): void;
 
-    public function getLikerCardsByLikes(Collection $likes, array $filters): Collection;
-
     public function getRandomCardsThatNotHaveBeenAssessed(
         DatingCard $datingCard,
         Collection $exclude,
         int $limit,
         array $filters
     ): Collection;
+
+    public function getCardsWithNotAssessedLikesById(int $datingCardId, array $filters): Collection;
 }

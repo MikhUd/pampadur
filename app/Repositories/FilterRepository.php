@@ -15,10 +15,13 @@ class FilterRepository implements FilterRepositoryContract
 {
     const EARTH_RADIUS = 6371;
     const WITH = ['tags', 'images'];
-    
+    const FILTERS = [
+        'age_range',
+        'distance'
+    ];
     /**
      * Обработка фильтров на анкету.
-     * 
+     *
      * @param Builder $query
      * @param array $filters
      * @return Collection
@@ -45,7 +48,7 @@ class FilterRepository implements FilterRepositoryContract
 
     /**
      * Получение фильтров на анкету.
-     * 
+     *
      * @param Builder $query
      * @param array $filters
      * @return Builder
@@ -54,8 +57,8 @@ class FilterRepository implements FilterRepositoryContract
     {
         return $query
             ->when(isset($filters['gender']), fn($query) => $query->where('gender', $filters['gender']))
-            ->when(isset($filters['tag']), fn($query) => 
-                $query->whereRelation('tags', 
+            ->when(isset($filters['tag']), fn($query) =>
+                $query->whereRelation('tags',
                     fn($query) => $query->whereRaw('lower(name) like (?)', ['%' . Str::lower($filters['tag']) . '%'])
                 )
             )
@@ -64,9 +67,9 @@ class FilterRepository implements FilterRepositoryContract
 
     /**
      * Получение фильтров на пользователя.
-     * 
+     *
      * @param BelongsTo $query
-     * @param array $filters 
+     * @param array $filters
      * @return Builder
      */
     private function getUserFilters(Builder $query, array $filters = []): Builder

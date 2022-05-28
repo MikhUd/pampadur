@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 
 class GetPrivateFilesController extends Controller
 {
-
     public function __construct(
         private PrivateFilesServiceContract $privateFilesService
     ) {}

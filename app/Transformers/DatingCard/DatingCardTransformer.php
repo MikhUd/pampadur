@@ -10,7 +10,7 @@ class DatingCardTransformer
 {
     /**
      * Трансформирование коллекции анкет.
-     * 
+     *
      * @param Collection $collection
      * @return array
      */
