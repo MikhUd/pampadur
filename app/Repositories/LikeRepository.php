@@ -27,7 +27,18 @@ class LikeRepository implements LikeRepositoryContract
     }
 
     /**
-     * Получение взимно оцененных лайков.
+     * Получение лайка по параметрам.
+     *
+     * @param array $fields
+     * @return Like
+     */
+    public function getLikeByFields(array $fields): ?Like
+    {
+        return $this->model->where($fields)->first();
+    }
+
+    /**
+     * Получение взаимных лайков.
      *
      * @param int $datingCardId
      * @param int $assess

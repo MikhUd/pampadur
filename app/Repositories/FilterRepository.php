@@ -14,11 +14,15 @@ use Illuminate\Support\Collection;
 class FilterRepository implements FilterRepositoryContract
 {
     const EARTH_RADIUS = 6371;
-    const WITH = ['tags', 'images'];
+    const RELATIONS = [
+        'tags',
+        'images'
+    ];
     const FILTERS = [
         'age_range',
         'distance'
     ];
+
     /**
      * Обработка фильтров на анкету.
      *
@@ -42,8 +46,9 @@ class FilterRepository implements FilterRepositoryContract
 
         return $this->getDatingCardFilters($query, $filters)
             ->limit($filters['limit'])
-            ->with(self::WITH)
-            ->get();
+            ->with(self::RELATIONS)
+            ->get()
+        ;
     }
 
     /**

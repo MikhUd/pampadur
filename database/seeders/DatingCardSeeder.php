@@ -21,6 +21,5 @@ class DatingCardSeeder extends Seeder
             $card->tags()->attach(Tag::inRandomOrder()->limit(5)->get());
             $card->user()->associate(User::doesntHave("datingCard")->inRandomOrder()->first())->save();
         });
-
     }
 }

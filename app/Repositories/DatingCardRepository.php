@@ -12,13 +12,17 @@ use App\Services\Interfaces\TagSynchronizerContract;
 use App\Services\Interfaces\ImageServiceContract;
 use App\Repositories\Interfaces\DatingCardRepositoryContract;
 use App\Repositories\Interfaces\FilterRepositoryContract;
+use App\Traits\Cache\CacheKeys;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use \Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class DatingCardRepository implements DatingCardRepositoryContract
 {
+    use CacheKeys;
+
     private $model;
     private $filterRepository;
     const ATTRIBUTES = [
@@ -125,6 +129,30 @@ class DatingCardRepository implements DatingCardRepositoryContract
     }
 
     /**
+     * Получение анкет по id.
+     *
+     * @param array $ids
+     * @param array $with
+     * @return Collection
+     */
+    public function getDatingCardsByIds(array $ids, array $with = []): Collection
+    {
+        $cacheTags = [
+            $this->getDatingCardsCacheTag(),
+        ];
+
+        foreach ($ids as $id) {
+            $cacheTags[] = $this->getDatingCardsByIdsCacheTag($id);
+        }
+
+        return Cache::tags($cacheTags)
+            ->rememberForever($this->getDatingCardsByIdsCacheKey($ids), function() use ($ids, $with) {
+                return $this->model->whereIn('id', $ids)->with(empty($with) ? self::RELATIONS : $with)->get();
+            })
+        ;
+    }
+
+    /**
      * Получение рандомных анкет, которых не видел текущий пользователь и которые не лайкнули анкету текущего пользователя.
      *
      * @param DatingCard $datingCard
@@ -134,7 +162,7 @@ class DatingCardRepository implements DatingCardRepositoryContract
      */
     public function getRandomCardsThatNotHaveBeenAssessed(
         DatingCard $datingCard,
-        Collection $exclude = null,
+        Collection $exclude,
         int $limit,
         array $filters
     ): Collection

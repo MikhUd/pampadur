@@ -13,6 +13,18 @@ class Like extends Model
     use HasFactory;
 
     /**
+     * Атрибуты доступные для массового заполнения.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'liker_id',
+        'liked_id',
+        'is_liked',
+        'date'
+    ];
+
+    /**
      * Таблица, связанная с моделью.
      *
      * @var string

@@ -1,7 +1,5 @@
 <?php
 
-use App\Http\Controllers\Auth\AuthController;
-use App\Services\UserService;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,8 +19,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/dating-card/to-assess', [\App\Http\Controllers\DatingCard\DatingCardController::class, 'getDatingCardsToAssess']);
     Route::get('/files', \App\Http\Controllers\GetPrivateFilesController::class);
     Route::post('/delete-token', [\App\Http\Controllers\Auth\AuthController::class, 'deleteToken']);
-    Route::get('/test', [\App\Http\Controllers\Auth\AuthController::class, 'test']);
-    Route::get('/test123', [\App\Http\Controllers\DatingCard\DatingCardController::class, 'index']);
+    Route::post('/like/set', [\App\Http\Controllers\DatingCard\LikeController::class, 'setLikeOrDislike']);
 });
 
 

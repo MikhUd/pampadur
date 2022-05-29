@@ -21,6 +21,8 @@ interface DatingCardRepositoryContract
 
     public function bindUser(HasUser $model, User $user): void;
 
+    public function getDatingCardsByIds(array $ids, array $with): Collection;
+
     public function getRandomCardsThatNotHaveBeenAssessed(
         DatingCard $datingCard,
         Collection $exclude,

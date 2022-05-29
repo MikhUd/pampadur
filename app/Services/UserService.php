@@ -2,16 +2,12 @@
 
 namespace App\Services;
 
-use App\Http\Requests\Meeting\IndexMeetingRequest;
 use App\Models\User;
 use App\Models\UserRole;
 use App\Repositories\Interfaces\UserRepositoryContract;
 use App\Repositories\Interfaces\UserRoleRepositoryContract;
 use App\Services\Interfaces\PrivateFilesServiceContract;
 use App\Services\Interfaces\UserServiceContract;
-use App\Transformers\DatingCard\DatingCardTransformer;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 
 class UserService implements UserServiceContract

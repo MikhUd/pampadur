@@ -5,12 +5,8 @@ namespace App\Services;
 use App\Http\Requests\DatingCard\CreateDatingCardRequest;
 use App\Http\Requests\DatingCard\UpdateDatingCardRequest;
 use App\Http\Requests\Meeting\ShowDatingCardsRequest;
-use App\Models\DatingCard;
-use App\Models\Image;
-use App\Repositories\FilterRepository;
 use App\Repositories\Interfaces\DatingCardRepositoryContract;
 use App\Repositories\Interfaces\LikeRepositoryContract;
-use App\Repositories\LikeRepository;
 use App\Services\Interfaces\DatingCardServiceContract;
 use App\Services\Interfaces\ImageServiceContract;
 use App\Services\Interfaces\TagSynchronizerContract;
@@ -24,7 +20,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Redis;
 
 class DatingCardService implements DatingCardServiceContract
 {
@@ -157,9 +152,10 @@ class DatingCardService implements DatingCardServiceContract
     {
         $reciprocalLikes = $this->likeRepository->getAssessedLikes(auth()->user()->datingCard->id, 1, 1);
 
-        if ($datingCards = $this->datingCardRepository->getLikerCardsByLikes($reciprocalLikes, [])) {
+        if ($datingCards = $this->datingCardRepository->getDatingCardsByIds($reciprocalLikes->pluck('liker_id')->toArray(), [])) {
             return response()->json([
                 'status' => true,
+                'count' => $datingCards->count(),
                 'datingCards' => $datingCards,
             ]);
         }
@@ -178,40 +174,44 @@ class DatingCardService implements DatingCardServiceContract
      */
     public function getCardsToAssess(ShowDatingCardsRequest $request): JsonResponse
     {
-        return Cache::tags([auth()->user()->email . 'dd'])->rememberForever($this->getDatingCardsToAssessCacheKey($request->all()), function () use ($request) {
-            Cache::tags([auth()->user()->email . 'dd'])->flush();
-            $datingCard = auth()->user()->datingCard;
-            $filters = $request->all();
-            $filters['coords'] = [$request->user()->latitude, $request->user()->longitude];
-            //Условный ограничитель показа анкет,которые лайкнули текущую, без него сразу будут доставаться все анкеты, которые лайкнули.
-            $filters['limit'] = 10;
+        return Cache::tags([$this->getDatingCardsCacheTag(), $this->getDatingCardsToAssessCacheTag(auth()->user()->id)])->rememberForever(
+            $this->getDatingCardsToAssessByFiltersCacheKey($request->all(), $email = auth()->user()->email), function () use ($request, $email) {
+                Cache::tags([$this->getDatingCardsToAssessCacheTag(auth()->user()->id)])->flush();
+                $datingCard = auth()->user()->datingCard;
+                $filters = $request->all();
+                $filters['coords'] = [$request->user()->latitude, $request->user()->longitude];
+                //Условный ограничитель показа анкет, которые лайкнули текущую, без него сразу будут доставаться все анкеты, которые лайкнули.
+                $filters['limit'] = 10;
 
-            $cardsToAssess = $this->datingCardRepository->getCardsWithNotAssessedLikesById($datingCard->id, $filters);
-            $cardsToAssess->map(fn($card) => $card->liked_me = true);
+                $cardsToAssess = $this->datingCardRepository->getCardsWithNotAssessedLikesById($datingCard->id, $filters);
+                $cardsToAssess->map(fn($card) => $card->liked_me = true);
 
-            $maxCount = Cache::rememberForever($this->getMaxCountDatingCardsToAssessCacheKey(), fn() => 50);
+                $maxCount = Cache::tags([$this->getDatingCardsCacheTag(), $this->getDailyMaxCountDatingCardsToAssessCacheTag($email)])->rememberForever(
+                    $this->getDailyMaxCountDatingCardsToAssessCacheKey($email), fn() => 50
+                );
 
-            if ($cardsToAssess->count() < $maxCount) {
-                $cardsToAssess = $cardsToAssess->merge($this->datingCardRepository->getRandomCardsThatNotHaveBeenAssessed(
-                    $datingCard,
-                    $cardsToAssess,
-                    50 - $cardsToAssess->count(),
-                    $filters
-                ));
-            }
+                if ($cardsToAssess->count() < $maxCount) {
+                    $cardsToAssess = $cardsToAssess->merge($this->datingCardRepository->getRandomCardsThatNotHaveBeenAssessed(
+                        $datingCard,
+                        $cardsToAssess,
+                        $maxCount - $cardsToAssess->count(),
+                        $filters
+                    ));
+                }
 
-            if ($cardsToAssess->isNotEmpty()) {
+                if ($cardsToAssess->isNotEmpty()) {
+                    return response()->json([
+                        'status' => true,
+                        'count' => $cardsToAssess->count(),
+                        'datingCards' => DatingCardTransformer::toArray($cardsToAssess->shuffle()),
+                    ], 200);
+                }
+
                 return response()->json([
-                    'status' => true,
-                    'count' => $cardsToAssess->count(),
-                    'datingCards' => DatingCardTransformer::toArray($cardsToAssess->shuffle()),
-                ]);
-            }
-
-            return response()->json([
-                'success' => false,
-                'message' => 'There are no dating cards',
-            ], 400);
-        });
+                    'success' => false,
+                    'message' => 'There are no dating cards',
+                ], 400);
+            })
+        ;
     }
 }
