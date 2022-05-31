@@ -8,13 +8,29 @@ use Illuminate\Support\Collection;
 
 interface UserRepositoryContract
 {
+    /**
+     * Создание пользователя.
+     *
+     * @param array $fields
+     * @return User
+     */
     public function create(array $fields): User;
 
+    /**
+     * Прикрепление роли к пользователю.
+     * 
+     * @param User $user
+     * @param UserRole $role
+     * @return User
+     */
     public function bindRole(User $user, UserRole $role): User;
 
+    /**
+     * Обновление пользователя.
+     * 
+     * @param User $user
+     * @param array $fields
+     * @return User
+     */
     public function update(User $user, array $fields): ?User;
-
-    public function getAllByFilter(array $filters, array $with): Collection;
-
-    public function getUsersWithDatingCardsByFilters(array $filters): Collection;
 }

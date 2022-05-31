@@ -21,7 +21,7 @@ class LikeRepository implements LikeRepositoryContract
      * @param array $fields
      * @return Like
      */
-    public function setLikeOrDislike(array $fields): Like
+    public function createLike(array $fields): Like
     {
         return $this->model->create($fields);
     }

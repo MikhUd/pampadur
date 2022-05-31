@@ -7,5 +7,11 @@ use Illuminate\Http\JsonResponse;
 
 interface LikeServiceContract
 {
-    public function setLikeOrDislike(LikeRequest $request): JsonResponse;
+    /**
+     * Добавление лайка/дизлайка на анкету.
+     *
+     * @param LikeRequest $request
+     * @return JsonResponse
+     */
+    public function createLike(LikeRequest $request): JsonResponse;
 }

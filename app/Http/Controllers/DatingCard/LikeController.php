@@ -14,8 +14,8 @@ class LikeController extends Controller
         private LikeServiceContract $likeService
     ) {}
 
-    public function setLikeOrDislike(LikeRequest $request): JsonResponse
+    public function createLike(LikeRequest $request): JsonResponse
     {
-        return $this->likeService->setLikeOrDislike($request);
+        return $this->likeService->createLike($request);
     }
 }

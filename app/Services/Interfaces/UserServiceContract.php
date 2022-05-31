@@ -2,16 +2,35 @@
 
 namespace App\Services\Interfaces;
 
-use App\Http\Requests\Meeting\IndexMeetingRequest;
 use App\Models\User;
 use App\Models\UserRole;
-use Illuminate\Http\JsonResponse;
 
 interface UserServiceContract
 {
-    public function bindRole(User $user, string $role_code): ?UserRole;
-
+    /**
+     * Создание пользователя.
+     *
+     * @param array $fields
+     * @param string $role_code
+     * @return User
+     */
     public function create(array $fields): ?User;
 
+    /**
+     * Обновление пользователя.
+     *
+     * @param User $user
+     * @param array $fields
+     * @return User
+     */
     public function update(User $user, array $fields): ?User;
+
+    /**
+     * Закрепление роли к пользователю.
+     *
+     * @param User $user
+     * @param string $role_code
+     * @return UserRole
+     */
+    public function bindRole(User $user, string $role_code): ?UserRole;
 }

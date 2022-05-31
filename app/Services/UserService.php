@@ -19,33 +19,6 @@ class UserService implements UserServiceContract
     ) {}
 
     /**
-     * Закрепление роли к пользователю.
-     *
-     * @param User $user
-     * @param string $role_code
-     * @return UserRole
-     */
-    public function bindRole(User $user, string $role_code = User::DEFAULT_USER_ROLE_CODE): ?UserRole
-    {
-        $role = $this->userRoleRepository->firstOrCreate([
-            'name' => $role_code,
-            'code' => $role_code,
-        ]);
-
-        if (!empty($role['code'])) {
-            Log::info('Binding role for user', ['id' => $user->id]);
-
-            $result = $this->userRepository->bindRole($user, $role);
-
-            return $result;
-        }
-
-        Log::error('Binding role for user failed', ['id' => $user->id]);
-
-        return null;
-    }
-
-    /**
      * Создание пользователя.
      *
      * @param array $fields
@@ -79,6 +52,33 @@ class UserService implements UserServiceContract
         }
 
         Log::error('User update failed', ['id' => $user->id]);
+
+        return null;
+    }
+
+    /**
+     * Закрепление роли к пользователю.
+     *
+     * @param User $user
+     * @param string $role_code
+     * @return UserRole
+     */
+    public function bindRole(User $user, string $role_code = User::DEFAULT_USER_ROLE_CODE): ?UserRole
+    {
+        $role = $this->userRoleRepository->firstOrCreate([
+            'name' => $role_code,
+            'code' => $role_code,
+        ]);
+
+        if (!empty($role['code'])) {
+            Log::info('Binding role for user', ['id' => $user->id]);
+
+            $result = $this->userRepository->bindRole($user, $role);
+
+            return $result;
+        }
+
+        Log::error('Binding role for user failed', ['id' => $user->id]);
 
         return null;
     }

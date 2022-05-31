@@ -146,7 +146,7 @@ class DatingCardService implements DatingCardServiceContract
      * Получение анкет с взаимными лайками.
      *
      * @param Request $request
-     * @return Collection
+     * @return JsonResponse
      */
     public function getCardsWithReciprocalLikes(Request $request): JsonResponse
     {
@@ -170,12 +170,16 @@ class DatingCardService implements DatingCardServiceContract
      * Получение 50 анкет для оценок в рандомном порядке.
      *
      * @param ShowDatingCardsRequest $request
-     * @return Collection
+     * @return JsonResponse
      */
     public function getCardsToAssess(ShowDatingCardsRequest $request): JsonResponse
     {
-        return Cache::tags([$this->getDatingCardsCacheTag(), $this->getDatingCardsToAssessCacheTag(auth()->user()->id)])->rememberForever(
-            $this->getDatingCardsToAssessByFiltersCacheKey($request->all(), $email = auth()->user()->email), function () use ($request, $email) {
+        $maxCount = Cache::tags([$this->getDatingCardsCacheTag(), $this->getDailyMaxCountDatingCardsToAssessCacheTag($email = auth()->user()->email)])->rememberForever(
+            $this->getDailyMaxCountDatingCardsToAssessCacheKey($email), fn() => 50
+        );
+
+        $cardsToAssess = Cache::tags([$this->getDatingCardsCacheTag(), $this->getDatingCardsToAssessCacheTag(auth()->user()->id)])->rememberForever(
+            $this->getDatingCardsToAssessByFiltersCacheKey($request->all(), $email), function () use ($request, $maxCount) {
                 Cache::tags([$this->getDatingCardsToAssessCacheTag(auth()->user()->id)])->flush();
                 $datingCard = auth()->user()->datingCard;
                 $filters = $request->all();
@@ -186,10 +190,6 @@ class DatingCardService implements DatingCardServiceContract
                 $cardsToAssess = $this->datingCardRepository->getCardsWithNotAssessedLikesById($datingCard->id, $filters);
                 $cardsToAssess->map(fn($card) => $card->liked_me = true);
 
-                $maxCount = Cache::tags([$this->getDatingCardsCacheTag(), $this->getDailyMaxCountDatingCardsToAssessCacheTag($email)])->rememberForever(
-                    $this->getDailyMaxCountDatingCardsToAssessCacheKey($email), fn() => 50
-                );
-
                 if ($cardsToAssess->count() < $maxCount) {
                     $cardsToAssess = $cardsToAssess->merge($this->datingCardRepository->getRandomCardsThatNotHaveBeenAssessed(
                         $datingCard,
@@ -198,20 +198,24 @@ class DatingCardService implements DatingCardServiceContract
                         $filters
                     ));
                 }
+                return DatingCardTransformer::toArray($cardsToAssess->shuffle());
+            }
+        );
 
-                if ($cardsToAssess->isNotEmpty()) {
-                    return response()->json([
-                        'status' => true,
-                        'count' => $cardsToAssess->count(),
-                        'datingCards' => DatingCardTransformer::toArray($cardsToAssess->shuffle()),
-                    ], 200);
-                }
+        //Если человек оценивает анкеты, то maxCount уменьшается и нам нужно из закэшированного массива убирать количество оцененных анкет (из начала)
+        $cardsToAssess = array_slice($cardsToAssess, 50 - $maxCount);
 
-                return response()->json([
-                    'success' => false,
-                    'message' => 'There are no dating cards',
-                ], 400);
-            })
-        ;
+        if (!empty($cardsToAssess)) {
+            return response()->json([
+                'status' => true,
+                'count' => count($cardsToAssess),
+                'datingCards' => $cardsToAssess,
+            ], 200);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'There are no dating cards',
+        ], 400);
     }
 }

@@ -25,7 +25,7 @@ class LikeService implements LikeServiceContract
      * @param LikeRequest $request
      * @return JsonResponse
      */
-    public function setLikeOrDislike(LikeRequest $request): JsonResponse
+    public function createLike(LikeRequest $request): JsonResponse
     {
         $fields = $request->all();
 
@@ -47,7 +47,7 @@ class LikeService implements LikeServiceContract
             fn() => $count - 1
         );
 
-        if ($like = $this->likeRepository->setLikeOrDislike($fields)) {
+        if ($like = $this->likeRepository->createLike($fields)) {
             return response()->json([
                 'success' => true,
                 'Like' => $like,

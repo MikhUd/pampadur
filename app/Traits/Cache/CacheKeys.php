@@ -12,11 +12,6 @@ trait CacheKeys
         return 'datingCards';
     }
 
-    public function getDatingCardImagesByUserIdCacheKey(int $userId): string
-    {
-        return 'datingCardImages|' . $userId;
-    }
-
     public function getDatingCardsToAssessByFiltersCacheKey(array $fields, string $userEmail): string
     {
         return 'datingCards|toAssess|' . $userEmail . json_encode(Arr::only($fields, FilterRepository::FILTERS));

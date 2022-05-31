@@ -129,6 +129,18 @@ class DatingCardRepository implements DatingCardRepositoryContract
     }
 
     /**
+     * Получение анкеты по параметрам.
+     *
+     * @param array $fields
+     * @param array $with
+     * @return Collection
+     */
+    public function getDatingCard(array $fields, array $with = []): ?DatingCard
+    {
+        return $this->model->where($fields)->with($with)->first();
+    }
+
+    /**
      * Получение анкет по id.
      *
      * @param array $ids
@@ -153,7 +165,7 @@ class DatingCardRepository implements DatingCardRepositoryContract
     }
 
     /**
-     * Получение рандомных анкет, которых не видел текущий пользователь и которые не лайкнули анкету текущего пользователя.
+     * Получение рандомных анкет, которых не видел текущий пользователь и которые не лайкнули анкету текущего пользователя (текущий их не оценивал и они его тоже).
      *
      * @param DatingCard $datingCard
      * @param Collection $exclude
@@ -176,7 +188,7 @@ class DatingCardRepository implements DatingCardRepositoryContract
     }
 
     /**
-     * Получение карт лайков на текущую анкету пользователя от анкет, на которые пользователь еще не поставил отметку.
+     * Получение анкет с лайками на текущую анкету пользователя, на которые пользователь еще не поставил отметку (которые лайкнули текущего, а текущий их не видел).
      *
      * @param int $datingCardId
      * @param array $filters

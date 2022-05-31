@@ -19,7 +19,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/dating-card/to-assess', [\App\Http\Controllers\DatingCard\DatingCardController::class, 'getDatingCardsToAssess']);
     Route::get('/files', \App\Http\Controllers\GetPrivateFilesController::class);
     Route::post('/delete-token', [\App\Http\Controllers\Auth\AuthController::class, 'deleteToken']);
-    Route::post('/like/set', [\App\Http\Controllers\DatingCard\LikeController::class, 'setLikeOrDislike']);
+    Route::post('/like/set', [\App\Http\Controllers\DatingCard\LikeController::class, 'createLike']);
 });
 
 
