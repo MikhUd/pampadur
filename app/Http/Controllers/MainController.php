@@ -10,10 +10,10 @@ class MainController extends Controller
     /**
      * @return View
      */
-    public function __invoke()
+    public function __invoke(): View
     {
         return view('index', [
-            'auth_user' => Auth::user(),
+            'auth_user' => auth()->user(),
         ]);
     }
 }

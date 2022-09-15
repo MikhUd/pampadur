@@ -42,7 +42,7 @@ class UserRole extends Model
      *
      * @return HasMany
      */
-    public function users()
+    public function users(): HasMany
     {
         return $this->hasMany(User::class, 'role_code', 'code');
     }

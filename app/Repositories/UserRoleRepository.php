@@ -14,6 +14,13 @@ class UserRoleRepository implements UserRoleRepositoryContract
         $this->model = $userRole;
     }
 
+    /**
+     * Создание или получение роли.
+     *
+     * @param array $find
+     * @param array $create
+     * @return UserRole
+     */
     public function firstOrCreate(array $find, array $create = []): UserRole
     {
         return $this->model->firstOrCreate($find, $create);

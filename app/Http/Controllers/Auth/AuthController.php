@@ -3,32 +3,36 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\UserRegisterRequest;
-use App\Http\Requests\UserLoginRequest;
-use App\Services\Auth\AuthService;
+use App\Http\Requests\Auth\UserRegisterRequest;
+use App\Http\Requests\Auth\UserLoginRequest;
+use App\Http\Requests\Meeting\IndexMeetingRequest;
+use App\Http\Resources\Meetings\IndexDatingCardResource;
+use App\Repositories\Interfaces\FilterRepositoryContract;
+use App\Services\Interfaces\AuthServiceContract;
+use App\Services\Interfaces\UserServiceContract;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
-    protected $authService;
 
-    public function __construct(AuthService $authService)
+    public function __construct(
+        private AuthServiceContract $authService,
+        private UserServiceContract $userService,
+    ) {}
+
+    public function getToken(UserLoginRequest $request): JsonResponse
     {
-        $this->authService = $authService;
+        return $this->authService->getToken($request);
     }
 
-    public function login(UserLoginRequest $request)
-    {
-        return $this->authService->login($request);
-    }
-
-    public function register(UserRegisterRequest $request)
+    public function register(UserRegisterRequest $request): JsonResponse
     {
         return $this->authService->register($request);
     }
 
-    public function logout(Request $request)
+    public function deleteToken(): JsonResponse
     {
-        return $this->authService->logout($request);
+        return $this->authService->deleteToken();
     }
 }

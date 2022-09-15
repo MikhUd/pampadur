@@ -6,3 +6,39 @@
 
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
+@import '~cropperjs';
+body {
+    overflow: visible !important;
+}
+.modal {
+    height: inherit;
+}
+.overlay{
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, .75);
+    width: 100%;
+    height: 120%;
+    z-index: 99;
+    display: none;
+}
+.modal-popup {
+    position: absolute;
+    top: 100px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    display: -webkit-flex;
+    display: -ms-flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 38px 18px 32px 18px;
+    width: 100%;
+    max-width: 632px;
+    z-index: 999;
+    display: none;
+    background-color: #ffffff;
+    width: 70%;
+}

@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Auth;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Validation\ValidationException;
 
-class UserRegisterRequest extends FormRequest
+class UserLoginRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -18,9 +18,15 @@ class UserRegisterRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|min:5|max:25',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|between:6,25|confirmed',
+            'email' => 'required|email|exists:users,email',
+            'password' => 'required',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'email.exists' => 'Аккаунт с таким email не существует',
         ];
     }
 
@@ -35,7 +41,10 @@ class UserRegisterRequest extends FormRequest
         $errors = (new ValidationException($validator))->errors();
 
         throw new HttpResponseException(
-            response()->json(['errors' => $errors], JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
+            response()->json([
+                'success' => false,
+                'errors' => $errors
+            ])
         );
     }
 }

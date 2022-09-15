@@ -11,8 +11,5 @@ import Navbar from './panels/Navbar';
         components: {
             Navbar
         },
-        mounted() {
-            this.$store.commit('setAuthUser', window.auth_user);
-        }
     }
 </script>

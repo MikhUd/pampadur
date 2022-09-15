@@ -1,0 +1,410 @@
+<template>
+    <form class="mx-auto mt-5" style="width: 100%; max-width: 1200px">
+        <div class="overlay" id="modalOverlay"></div>
+        <div class="modal-popup" id="modal">
+            <button id="cropButton" type="button" class="d-block m-auto center rounded-full btn bg-gradient-to-r from-orange-400 to-rose-400 hover:from-rose-400 hover:to-orange-400">
+                <p class="px-2 text-white">Сохранить</p>
+            </button>
+        </div>
+        <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            <h2 class="center">Создайте анкету</h2>
+                <div class="d-flex mt-3 justify-content-between form">
+                <div class="column">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="name">
+                            Имя
+                        </label>
+                        <input v-model="form.name" v-on:input="checkName" placeholder="Александр" id="name" type="text" class="validate">
+                        <p class="text-red-500 text-xs italic position-absolute name__error">{{ errors['name'] }}</p>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-gray-700 text-sm font-bold" for="about">
+                            О себе
+                        </label>
+                        <div class="area_about">
+                            <form class="col s12">
+                                <div class="row">
+                                    <div class="input-field col s12">
+                                        <textarea v-model="form.about" v-on:input="checkAbout" id="about" class="materialize-textarea"></textarea>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="position-absolute">
+                            <p class="text-red-500 text-xs italic d-block position-relative about__error">{{ errors['about'] }}</p>
+                        </div>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="birth_date">
+                            Дата рождения
+                        </label>
+                        <div class="birth_date">
+                            <input @change="setBirthDate" type="text" class="datepicker" id="birth_date">
+                        </div>
+                        <p class="text-red-500 text-xs italic position-absolute birth_date__error">{{ errors['birth_date'] }}</p>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="tags">
+                            Теги
+                        </label>
+                        <div class="tags">
+                            <div class="chips">
+                                <input onpaste="return false;" @keydown.space.prevent class="custom-class" id="tags">
+                            </div>
+                        </div>
+                        <p class="text-red-500 text-xs italic position-absolute tags__error">{{ errors['tags'] }}</p>
+                    </div>
+                </div>
+                <div class="mb-3 column">
+                    <div class="mb-6">
+                        <label class="block text-gray-700 text-sm font-bold" for="gender">
+                            Пол
+                        </label>
+                        <div class="gender">
+                            <select @change="checkSectionBlock" v-model="form.gender" id="gender">
+                                <option value="1">Мужской</option>
+                                <option value="2">Женский</option>
+                            </select>
+                        </div>
+                        <p class="text-red-500 text-xs italic position-absolute gender__error">{{ errors['gender'] }}</p>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-gray-700 text-sm font-bold" for="seeking_for">
+                            Ищу
+                        </label>
+                        <div class="input-field col s12">
+                            <select @change="checkSectionBlock" v-model="form.seeking_for" id="seeking_for">
+                                <option value="1">Девушку</option>
+                                <option value="2">Парня</option>
+                            </select>
+                        </div>
+                        <p class="text-red-500 text-xs italic position-absolute seeking_for__error">{{ errors['seeking_for'] }}</p>
+                    </div>
+                    <div class="center cover-photo-wrapper">
+                        <div class="mx-auto mt-20 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+                            <label class="block text-sm font-medium text-gray-700 position-absolute">
+                                <p class="position-relative" style="top:-65px">Припрекить фото</p>
+                            </label>
+                            <div class="space-y-1 text-center">
+                                <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="True">
+                                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                                <div class="flex text-sm text-gray-600 d-flex justify-content-center">
+                                    <label for="file-upload" class="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
+                                        <span>Загрузить файл</span>
+                                        <input multiple @change="handleImageUpload" ref="imageInput" id="file-upload" name="file-upload" type="file" class="sr-only">
+                                    </label>
+                                    <p class="pl-1">или перетащите</p>
+                                </div>
+                                <p class="text-xs text-gray-500">
+                                    PNG, JPG до 10 МБ
+                                </p>
+                                <div v-if="images" id="preview" class="d-flex">
+                                    <div class="border-dashed border-2 border-gray-300 image-preview" v-for="image in images" :key="image.url">
+                                        <i @click="deleteFile(image.url)" class="tiny material-icons right absolute delete-image">cancel</i>
+                                        <img :src="image.url"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-red-500 text-xs italic position-absolute images__error">{{ errors['images'] }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-3">
+                <label class="block text-gray-700 text-sm font-bold mb-2">
+                    Ваше местоположение
+                </label>
+                <Map @setCoords="onSetCoords"></Map>
+            </div>
+            <div class="center mt-3">
+                <button v-on:click.prevent="store"
+                        class="rounded-full btn bg-gradient-to-r from-orange-400 to-rose-400 hover:from-rose-400 hover:to-orange-400"
+                        type="button">
+                    <p class="px-2 text-white">Создать</p>
+                </button>
+            </div>
+        </form>
+    </form>
+</template>
+
+<script>
+    import Map from '../maps/Map.vue';
+    import helper from '../../helpers/index';
+    export default {
+        components: {
+            Map
+        },
+        data() {
+            return {
+                form: {
+                    name: null,
+                    about: null,
+                    birth_date: null,
+                    tags: [],
+                    gender: null,
+                    seeking_for: null,
+                    coords: [53, 43],
+                },
+                datePicker: null,
+                chips: null,
+                images: [],
+                croppingImages: [],
+                errors: {},
+                colorClasses: ['red', 'pink', 'purple', 'blue', 'teal', 'orange'],
+            }
+        },
+        name: 'Profile',
+        mounted() {
+            const self = this;
+            this.datePicker = M.Datepicker.init(document.querySelectorAll('.datepicker'), {
+                'format' : 'yyyy-mm-d'
+            });
+            this.chips = M.Chips.init(document.querySelectorAll('.chips'), {
+                'limit' : 6,
+                onChipDelete: (e, data) => {
+                    self.setTags();
+                    self.colorClasses.push(data.className.split(' ')[1]);
+                },
+                onChipAdd: (e, data) => {
+                    self.setTags();
+                }
+            });
+            M.FormSelect.init(document.querySelectorAll('select'));
+            this.setStyles();
+        },
+        methods: {
+            store() {
+                if (!this.checkAllFields()) {
+                    return;
+                }
+
+                let formData = new FormData();
+                Object.entries(this.images).map(el => {
+                    formData.append('images[]', el[1]);
+                });
+
+                Object.entries(this.form).map(el => {
+                    formData.append(el[0], JSON.stringify(el[1]));
+                });
+
+                axios.post('/api/dating-card', formData, {
+                    headers: {"Content-Type": "multipart/form-data"}
+                }).then((response) => {
+                    this.$emit('createDatingCard');
+                });
+            },
+            reactiveErrorsArray() {
+                let errors = this.errors;
+                this.$set(this.$data, 'errors', {});
+                this.$set(this.$data, 'errors', errors);
+            },
+            setBirthDate() {
+                this.form.birth_date = this.datePicker.toString();
+                this.checkBirthDate();
+            },
+            setTags() {
+                const tagsCount = this.form.tags.length;
+                const index = Math.floor(Math.random() * this.colorClasses.length);
+                this.form.tags = [];
+                Object.values(this.chips[0].chipsData).map(el => this.form.tags.push(el.tag));
+                //Костыль (потом исправить)
+                if (this.form.tags.length > tagsCount) {
+                    $('.chip:last').addClass(this.colorClasses[index]).css({'color':'white'});
+                    this.colorClasses.splice(index, 1);
+                }
+                this.checkTags();
+            },
+            startCropping() {
+                const overlay = document.getElementById('modalOverlay');
+                const modal = document.getElementById('modal');
+                const cropButton = document.getElementById('cropButton');
+                let croppers = [];
+
+                modal.style.display = "unset";
+                overlay.style.display = "unset";
+                this.croppingImages.map((el) => {
+                    let image = new Image();
+                    image.src = el.url;
+                    let imageDiv = document.createElement('div');
+                    imageDiv.style.maxWidth = "80%";
+                    imageDiv.style.margin = "20px auto";
+                    imageDiv.appendChild(image);
+                    modal.prepend(imageDiv);
+
+                    croppers.push(helper.getCropperInstance(image));
+                });
+                cropButton.onclick = () => {
+                    croppers.map((el) => {
+                       let name = (Math.random() + 1).toString(36).substring(7);
+                       this.images.push(helper.dataURLtoFile(el.getCroppedCanvas().toDataURL(), name + ".png"));
+                    });
+
+                    this.croppingImages = [];
+                    modal.innerHTML = "";
+                    modal.appendChild(cropButton);
+                    modal.style.display = "none";
+                    overlay.style.display = "none";
+                    this.checkImages();
+                };
+            },
+            handleImageUpload(e) {
+                for (let file of this.$refs.imageInput.files) {
+                    file['url'] = URL.createObjectURL(file);
+                    this.croppingImages.push(file)
+                }
+                this.startCropping();
+                e.target.value = null;
+            },
+            deleteFile(url) {
+                let fileToDelete = this.images.find(x => x.url === url);
+                let index = this.images.indexOf(fileToDelete);
+                this.images.splice(index, 1);
+                this.checkImages();
+            },
+            checkImages() {
+                this.errors['images'] = '';
+                if (this.images.length < 2) {
+                    this.errors['images'] = 'Загрузите хотя бы 2 фотографии';
+                    return false;
+                }
+                if (this.images.length > 4) {
+                    this.errors['images'] = 'Можно загрузить не более 4 фотографий';
+                    return false;
+                }
+                return true;
+            },
+            checkName() {
+                this.errors['name'] = '';
+                if (!this.form.name) {
+                    this.errors['name'] = 'Имя не может быть пустым';
+                    return false;
+                }
+                if (this.form.name > 30) {
+                    this.errors['name'] = 'Имя не может быть длиннее 30 символов';
+                    return false;
+                }
+                return true;
+            },
+            checkAbout() {
+                this.errors['about'] = '';
+                if (!this.form.about || this.form.about.length < 20) {
+                    this.errors['about'] = 'Побольше расскажите о себе';
+                    return false;
+                }
+                if (this.form.about.length > 50) {
+                    this.errors['about'] = 'Не так много';
+                    return false;
+                }
+                return true;
+            },
+            checkTags() {
+                this.reactiveErrorsArray();
+                this.errors['tags'] = '';
+                if (this.form.tags.length < 2) {
+                    this.errors['tags'] = 'Пожалуйста укажите не меньше 2 тегов';
+                    return false;
+                }
+                return true;
+            },
+            checkBirthDate() {
+                this.reactiveErrorsArray();
+                this.errors['birth_date'] = '';
+                const birthDate = Date.parse(this.form.birth_date);
+                const eighteenYearsOldDateOfBirth = new Date().setFullYear(new Date().getFullYear() - 18);
+                if (!birthDate) {
+                    this.errors['birth_date'] = 'Укажите возраст';
+                    return false;
+                }
+                if (eighteenYearsOldDateOfBirth < birthDate) {
+                    this.errors['birth_date'] = 'Вам нет 18 лет';
+                    return false;
+                }
+                return true;
+            },
+            checkSectionBlock() {
+                this.errors['seeking_for'] = '';
+                this.errors['gender'] = '';
+                let isBothCompleted = true;
+                if (!this.form.gender) {
+                    isBothCompleted = false;
+                    this.errors['gender'] = 'Укажите пол';
+                }
+                if (!this.form.seeking_for) {
+                    isBothCompleted = false;
+                    this.errors['seeking_for'] = 'Укажите кого ищете';
+                }
+                return isBothCompleted;
+            },
+            onSetCoords(data) {
+                this.form.coords = data.coords;
+            },
+            checkAllFields() {
+                return this.checkBirthDate() &
+                    this.checkAbout() &
+                    this.checkName() &
+                    this.checkTags() &
+                    this.checkSectionBlock() &
+                    this.checkImages();
+            },
+            setStyles() {
+                $('.datepicker-date-display').css({'backgroundColor':'#ee6e73'});
+                $('ul li span').css({'color':'#ee6e73'});
+            },
+        }
+    }
+</script>
+
+<style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Indie+Flower&display=swap');
+    h2 {
+        font-family: 'Abril Fatface', cursive;
+        font-size: 2rem;
+    }
+    .image-preview {
+        max-width: 70px;
+    }
+    .delete-image:hover {
+        cursor: pointer;
+        color: red;
+    }
+    textarea {
+        height: 44px;
+    }
+    .cover-photo-wrapper {
+        margin-left:auto;
+    }
+    .column {
+        width: 45%;
+    }
+    .about__error {
+        margin-top: -37px;
+    }
+    .birth_date,
+    .chips {
+        margin-bottom: 10px;
+    }
+    .gender {
+        margin-bottom: 32px;
+        margin-top: 5px;
+    }
+    .birth_date__error {
+        margin-top: -7px;
+    }
+    .tags__error,
+    .gender__error,
+    .seeking_for__error {
+        margin-top: -5px;
+    }
+    @media only screen and (max-width: 579px) {
+        .cover-photo-wrapper {
+            margin: 0 auto;
+        }
+        .form {
+            flex-direction: column;
+        }
+        .column {
+            width: 100%;
+        }
+    }
+</style>

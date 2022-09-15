@@ -3,35 +3,61 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use Faker\Factory;
-use Tests\TestCase;
+use App\Services\UserService;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
+use Tests\TestCase;
+
 
 class AuthTest extends TestCase
 {
     use WithFaker;
 
-    public function __construct(?string $name = null, array $data = [], $dataName = '')
-    {
-        parent::__construct($name, $data, $dataName);
-        $this->faker = Factory::create();
-    }
-
-    /** @test */
+    /**
+     * @test
+     */
     public function registration_test()
     {
-        $data = [
-            'email' => $this->faker->unique()->safeEmail,
-            'name' => $this->faker->name,
-            'password' => 'testpassword'
-        ];
-
-        $this->post('/registration', $data);
-        $this->assertResponseStatus(200);
-
+        DB::beginTransaction();
+        $data = $this->getUser();
+        $response = $this->post('/api/register', $data);
+        $this->assertEquals(201, $response->status());
         $createdUser = User::where('email', $data['email'])->first();
         $this->assertNotNull($createdUser);
-        $this->assertEquals($createdUser->email, auth()->user()->email);
+        DB::rollBack();
+    }
+
+    /**
+     * @test
+     */
+    public function authenticate_test()
+    {
+        DB::beginTransaction();
+        $data = $this->getUser();
+
+        User::create($data);
+
+        $response = $this->post('/api/get-token', Arr::only($data, ['email', 'password']));
+        $this->assertEquals(200, $response->status());
+        DB::rollBack();
+    }
+
+    /**
+     * @test
+     */
+    public function repeatedAuthenticate_test()
+    {
+        DB::beginTransaction();
+        $data = $this->getUser();
+
+        $user = User::create($data);
+        $this->actingAs($user);
+
+        $response = $this->postJson('/api/get-token', Arr::only($data, ['email', 'password']));
+
+        $response->assertStatus(200);
+        $response->assertJson(fn($json) => $json->where('success', false)->etc());
+        DB::rollBack();
     }
 }

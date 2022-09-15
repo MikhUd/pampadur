@@ -3,7 +3,18 @@ import VueRouter from 'vue-router';
 import store from './store';
 Vue.use(VueRouter);
 
-let router =  new VueRouter({
+
+let authGuard = (to, from, next) => {
+    if (!store.getters.isLoggedIn) next({name: 'login'});
+    else next();
+}
+
+let guestGuard = (to, from, next) => {
+    if (store.getters.isLoggedIn) next({name: 'home'});
+    else next();
+}
+
+const router =  new VueRouter({
     mode: 'history',
 
     routes: [
@@ -13,37 +24,35 @@ let router =  new VueRouter({
             component: () => import('./components/Home'),
         },
         {
+            path: '/profile',
+            name: 'profile',
+            component: () => import('./components/datingCard/Profile'),
+            beforeEnter: authGuard
+        },
+        {
+            path: '/meeting',
+            name: 'meeting',
+            component: () => import('./components/meeting/Meeting'),
+            beforeEnter: authGuard
+        },
+        {
+            path: '/',
+            name: 'welcome',
+            component: () => import('./components/Welcome'),
+        },
+        {
             path: '/login',
             name: 'login',
             component: () => import('./components/auth/Login'),
-            meta: {
-                guest: true
-            }
+            beforeEnter: guestGuard
         },
         {
             path: '/registration',
             name: 'registration',
             component: () => import('./components/auth/Registration'),
-            meta: {
-                guest: true
-            }
+            beforeEnter: guestGuard
         }
     ]
-});
-
-router.beforeEach((to, from, next) => {
-    if (to.matched.some(record => record.meta.guest)) {
-        // На територию guest'ov)) не может зайти любой....
-        // История тащемто простая, но довольно муторная, как бы это oxxюмиронно не звучало)))))
-        // Тип не каждый авторизованный может зайти, даже не то что бы не каждый, вааще не какой!!!
-        if (localStorage.getItem('user') !== null) {
-
-            next({
-                path: '/home'
-            })
-        }
-    }
-    next();
 });
 
 export default router;

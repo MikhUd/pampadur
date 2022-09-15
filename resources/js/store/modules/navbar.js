@@ -1,28 +1,40 @@
 export default {
     state: {
-        nav:[
+        nav: [
             {
-                path:'/home',
-                title:'Главная',
+                path: '/home',
+                title: 'Главная',
                 auth: true,
-                class:'left',
+                class: 'left',
+            },
+            {
+                path: '/profile',
+                title: 'Профиль',
+                auth: true,
+                class: 'left',
+            },
+            {
+                path: "/meeting",
+                title: "Знакомства",
+                auth: true,
+                class: 'left',
             },
             {
                 path: "/registration",
-                title: "Регистрация",
+                title: "Зарегистрироваться",
                 auth: false,
-                class:'right',
+                class: 'right',
             },
             {
                 path: "/login",
-                title: "Логин",
+                title: "Войти",
                 auth: false,
-                class:'right',
+                class: 'right',
             },
         ]
     },
-    mutations:{},
-    getters:{
+    mutations: {},
+    getters: {
         nav: s => auth => s.nav.filter(n => n.auth === auth),
     }
 }

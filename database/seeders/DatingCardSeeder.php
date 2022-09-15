@@ -17,10 +17,9 @@ class DatingCardSeeder extends Seeder
      */
     public function run()
     {
-        DatingCard::factory(10)->create()->each(function ($card) {
+        DatingCard::factory(1000)->create()->each(function ($card) {
             $card->tags()->attach(Tag::inRandomOrder()->limit(5)->get());
             $card->user()->associate(User::doesntHave("datingCard")->inRandomOrder()->first())->save();
         });
-
     }
 }

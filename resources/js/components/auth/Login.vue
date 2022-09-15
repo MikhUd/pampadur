@@ -1,38 +1,49 @@
 <template>
-        <form class="mx-auto mt-5" style="width: 100%; max-width: 500px">
-            <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
-                        Email
-                    </label>
-                    <input v-model="form.email" v-on:input="checkEmail" class="w-93 shadow appearance-none border rounded py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="email" type="text" placeholder="Email">
-                    <p class="text-red-500 text-xs italic">{{ errors['email'] }}</p>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
-                        Password
-                    </label>
-                    <input v-model="form.password" v-on:input="checkPassword" class="w-93 shadow appearance-none border border-red-500 rounded py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="******************">
-                    <p class="text-red-500 text-xs italic">{{ errors['password'] }}</p>
-                </div>
-                <div class="flex items-center justify-between">
-                <button v-on:click.prevent="login" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
-                    Sign In
-                </button>
-                <a class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="#">
-                    Forgot Password?
-                </a>
-                </div>
-            </form>
-            <p class="text-center text-gray-500 text-xs">
-                &copy;2022 Pampadur. All rights reserved.
-            </p>
+    <form class="mx-auto mt-5" style="width: 100%; max-width: 500px">
+        <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            <div>
+                <img draggable="false" class="mx-auto login_logo" src="https://avatanplus.com/files/resources/original/598f24e92db0815dd7282ee3.png">
+            </div>
+            <h2 class="center">Войдите</h2>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
+                    Почта
+                </label>
+                <input v-model="form.email" v-on:input="checkEmail" class="w-93 shadow appearance-none border rounded py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="email" type="text" placeholder="Email">
+                <p class="text-red-500 text-xs italic position-absolute">{{ errors['email'] }}</p>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                    Пароль
+                </label>
+                <input v-model="form.password" v-on:input="checkPassword" class="w-93 shadow appearance-none border border-red-500 rounded py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="******************">
+                <p class="text-red-500 text-xs italic position-absolute">{{ errors['password'] }}</p>
+            </div>
+            <div class="center">
+            <button v-on:click.prevent="login" class="rounded-pill btn bg-gradient-to-r from-orange-400 to-rose-400 hover:from-rose-400 hover:to-orange-400" type="button">
+                <p class="px-2 text-white">Войти</p>
+            </button>
+        </div>
         </form>
+        <p class="text-center text-gray-500 text-xs">
+            &copy;2022 Pampadur. All rights reserved.
+        </p>
+    </form>
 </template>
 <style scoped>
-.w-93.px-3 {
-    width:93%;
-}
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+    .w-93.px-3 {
+        width:93%;
+    }
+
+    .login_logo {
+        width: 100px;
+    }
+
+    h2 {
+        font-family: 'Pacifico', cursive;
+        font-size: 2rem;
+    }
 </style>
 <script>
     export default {
@@ -43,7 +54,7 @@
                     email: null,
                     password: null
                 },
-                errors: {}
+                errors: {},
             }
         },
         methods: {
@@ -78,9 +89,21 @@
                     return;
                 }
 
-                axios.post('/login', this.form).then(response => {
-                    this.$router.push('/home');
-                    this.$store.dispatch('login', response.data.user);
+                axios.post('/api/get-token', this.form)
+                .then(response => {
+                    if (!response.data.success) {
+                        if (response.data.errors.email !== undefined) {
+                            this.$set(this.$data, 'errors', {'email' : response.data.errors.email[0]});
+                        } else {
+                            this.$set(this.$data, 'errors', {'password' : response.data.errors.password});
+                        }
+                        return;
+                    }
+                    this.$store.dispatch('onLogin', response.data.token);
+                    this.$router.push('/profile');
+                })
+                .catch(error => {
+                    console.log(error);
                 });
             }
         }

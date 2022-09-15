@@ -6,26 +6,64 @@ use App\Models\User;
 use App\Models\UserRole;
 use App\Repositories\Interfaces\UserRepositoryContract;
 use App\Repositories\Interfaces\UserRoleRepositoryContract;
+use App\Services\Interfaces\PrivateFilesServiceContract;
 use App\Services\Interfaces\UserServiceContract;
 use Illuminate\Support\Facades\Log;
 
 class UserService implements UserServiceContract
 {
-    const DEFAULT_USER_ROLE_CODE = 'xdDsklw3w';
+    public function __construct(
+        private UserRepositoryContract $userRepository,
+        private UserRoleRepositoryContract $userRoleRepository,
+        private PrivateFilesServiceContract $privateFilesService,
+    ) {}
 
-    private $userRepository;
-    private $userRoleRepository;
-
-    public function __construct(UserRepositoryContract $userRepository, UserRoleRepositoryContract $userRoleRepository)
+    /**
+     * Создание пользователя.
+     *
+     * @param array $fields
+     * @param string $role_code
+     * @return User
+     */
+    public function create(array $fields, string $role_code = User::DEFAULT_USER_ROLE_CODE): ?User
     {
-        $this->userRepository = $userRepository;
-        $this->userRoleRepository = $userRoleRepository;
+        $fields['role_code'] = $role_code;
+
+        if ($user = $this->userRepository->create($fields)) {
+            return $user;
+        }
+
+        Log::error('User create failed');
+
+        return null;
     }
 
     /**
+     * Обновление пользователя.
+     *
+     * @param User $user
+     * @param array $fields
+     * @return User
+     */
+    public function update(User $user, array $fields): ?User
+    {
+        if ($updatedUser = $this->userRepository->update($user, $fields)) {
+            return $updatedUser;
+        }
+
+        Log::error('User update failed', ['id' => $user->id]);
+
+        return null;
+    }
+
+    /**
+     * Закрепление роли к пользователю.
+     *
+     * @param User $user
+     * @param string $role_code
      * @return UserRole
      */
-    public function bindRole(User $user, $role_code = self::DEFAULT_USER_ROLE_CODE): ?UserRole
+    public function bindRole(User $user, string $role_code = User::DEFAULT_USER_ROLE_CODE): ?UserRole
     {
         $role = $this->userRoleRepository->firstOrCreate([
             'name' => $role_code,
@@ -41,20 +79,6 @@ class UserService implements UserServiceContract
         }
 
         Log::error('Binding role for user failed', ['id' => $user->id]);
-
-        return null;
-    }
-
-    /**
-     * @return User
-     */
-    public function create(array $fields, string $role = self::DEFAULT_USER_ROLE_CODE): ?User
-    {
-        $fields['role_code'] = $role;
-        
-        if ($user = $this->userRepository->create($fields)) {
-           return $user;
-        }
 
         return null;
     }
